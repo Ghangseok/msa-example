@@ -1,0 +1,32 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+out/
+bin/
+.vscode/
+
+# Spring Initializr
+HELP.md
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Local secrets and environment (keep *.example files)
+.env
+.env.*
+!.env.example
+*.local.yml
+*.local.yaml
+
+# Claude Code personal settings
+.claude/settings.local.json
