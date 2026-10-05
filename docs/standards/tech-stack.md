@@ -1,6 +1,6 @@
 # 기술 스택
 
-- 상태: **확정 (2026-10-04, 2026-10-05 정적 분석 행 추가)**
+- 상태: **확정 (2026-10-04, 2026-10-05 정적 분석 행 추가, 2026-10-05 로컬 실행 인프라 버전 절 추가)**
 - 쓰는 곳: `/speckit-constitution`, `/speckit-plan`의 Technical Context
 
 | 항목 | 선택 | 근거 |
@@ -23,6 +23,19 @@
 | 정적 분석 | SpotBugs (Gradle 플러그인) | 2026-10-05 사용자 결정. Error Prone은 2.43.0부터 실행에 JDK 21이 필요해서 이 저장소의 JDK 17에 맞지 않는다 `[문헌]`. 정확한 버전과 끌 규칙은 plan에서 정한다. 검사 목록은 [coding-conventions.md](coding-conventions.md) 3-8절 |
 | 로컬 실행 | Docker Desktop, kind, kubectl, Helm | ADR-0003, [references/docker-desktop.md](../references/docker-desktop.md) |
 | 형상 관리 | Git, GitHub Flow | [git-workflow.md](git-workflow.md) |
+
+## 로컬 실행 인프라 버전
+
+2026-10-05 사용자 결정이다. 값은 "정의한 곳" 칸의 파일에 고정되어 있고, 이 표는 그 파일과 같아야 한다. 띄우고 내리는 방법은 [references/docker-desktop.md](../references/docker-desktop.md) 3-4절과 4-1절에 있다.
+
+| 구성 요소 | 버전 | 정의한 곳 |
+|---|---|---|
+| Oracle XE 이미지 (로컬 실행과 Testcontainers에서 같은 이미지) | `gvenzl/oracle-xe:21.3.0-slim-faststart` | `infra/compose/compose.yaml` |
+| Keycloak | `quay.io/keycloak/keycloak:26.8.0` | `infra/compose/compose.yaml` |
+| 관측 도구 | `grafana/otel-lgtm:0.35.0` | `infra/compose/compose.yaml` |
+| kind 노드 | `kindest/node:v1.36.4` (digest까지 고정) | `infra/kind/cluster.yaml` |
+| Envoy Gateway | Helm 차트 `gateway-helm` v1.9.2 | `tools/infra-up.ps1` |
+| 로컬 이미지 레지스트리 | `registry:3.1.2` | `tools/infra-up.ps1` |
 
 ## Java 17이라서 생기는 제약
 

@@ -1,6 +1,6 @@
 # 도메인 분석 — 주문과 재고
 
-- 상태: 초안 (2026-10-04, OQ-001~009 모두 결정)
+- 상태: **확정 (2026-10-05)** (2026-10-04 초안, OQ-001~009 모두 결정)
 - 출처: P = [마이크로서비스와 쿠버네티스 기초](../references/msa-k8s-primer.md)
 - 관련: [UC-001](../requirements/uc-001-place-order.md), [UC-002](../requirements/uc-002-view-orders.md), [NFR](../requirements/non-functional.md), [STD](../standards/architecture-rules.md)
 

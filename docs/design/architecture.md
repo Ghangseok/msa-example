@@ -1,6 +1,6 @@
 # 아키텍처 설계 — 주문·재고 (현재 단계)
 
-- 상태: 초안 (2026-10-04, OQ-001~009, ADR-0005~0007 반영)
+- 상태: **확정 (2026-10-05)** (2026-10-04 초안, OQ-001~009, ADR-0005~0007 반영). 5절과 6절의 경로, 필드, 열 이름은 `/speckit-plan`이 확정할 때까지 제안으로 둔다
 - 출처: P = [마이크로서비스와 쿠버네티스 기초](../references/msa-k8s-primer.md)
 - 관련: [ADR-0003](../adr/0003-local-k8s-runtime.md), [ADR-0004](../adr/0004-sync-reservation-call.md), [ADR-0005](../adr/0005-oracle-xe-instance-per-service.md), [ADR-0006](../adr/0006-keycloak-jwt-auth.md), [ADR-0007](../adr/0007-envoy-gateway.md), [도메인 분석](../analysis/domain-analysis.md), [STD](../standards/architecture-rules.md), [기술 스택](../standards/tech-stack.md)
 
@@ -45,7 +45,7 @@ flowchart LR
 - 무상태 앱(주문, 재고)은 kind 클러스터 안에, 상태를 가진 인프라(Oracle, Keycloak)는 클러스터 밖 docker compose로 띄운다. 클러스터를 지웠다 다시 만들어도 데이터가 남는다. (ADR-0005)
 - 서비스마다 Oracle XE 컨테이너가 하나씩 있다. 주문 서비스는 `order-db`만, 재고 서비스는 `inventory-db`만 안다. 한쪽 DB가 멈춰도 다른 서비스의 DB는 영향을 받지 않는다. (ADR-0005, STD-001)
 - 재고 서비스는 외부에 열지 않는다. (OQ-001)
-- compose의 컨테이너는 `kind` Docker 네트워크에 붙여, 클러스터 안의 Pod가 `order-db:1521`처럼 이름으로 찾게 한다. 실제로 되는지는 plan에서 확인한다. `[현장]`
+- compose의 컨테이너는 `kind` Docker 네트워크에 붙여, 클러스터 안의 Pod가 `order-db:1521`처럼 이름으로 찾게 한다. 2026-10-05에 클러스터 안 임시 Pod에서 `order-db:1521`, `inventory-db:1521`, `keycloak:8080`, `lgtm:4318`로 모두 연결되는 것을 확인했다. ([references/docker-desktop.md](../references/docker-desktop.md) 3-4절)
 
 ## 2. 쿠버네티스 객체
 
@@ -175,7 +175,7 @@ sequenceDiagram
 
 1. RESERVATIONS에서 주문 번호를 찾는다. 있으면 REQUEST_HASH를 비교해 다르면 409, 같으면 저장된 결과를 돌려준다.
 2. 없으면 항목의 재고 행을 **상품 ID 순서로 하나씩** `SELECT QUANTITY FROM STOCK WHERE PRODUCT_ID = :상품 FOR UPDATE`로 잠그고 읽는다. 행이 없는 상품은 없는 상품 목록에, 수량이 모자란 상품은 부족한 상품 목록에 모은다.
-3. 없는 상품이나 부족한 상품이 하나라도 있으면 아무 수량도 바꾸지 않고 결과를 REJECTED로 정한다. 없으면 항목마다 수량을 줄이고 결과를 RESERVED로 정한다.
+3. 없는 상품이나 부족한 상품이 하나라도 있으면 아무 수량도 바꾸지 않고 결과를 REJECTED로 정한다. 사유는 없는 상품이 하나라도 있으면 "상품 없음", 아니면 "재고 부족"이고, 두 목록은 모두 돌려준다(UC-001 A2, 2026-10-05 결정). 없으면 항목마다 수량을 줄이고 결과를 RESERVED로 정한다.
 4. RESERVATIONS와 RESERVATION_ITEMS에 결과를 넣고 커밋한다. 같은 주문 번호가 동시에 들어와 고유 제약에 걸리면 전체를 롤백하고 1번부터 다시 한다.
 
 **해제 처리 (재고 DB, 한 트랜잭션)**
@@ -195,7 +195,7 @@ sequenceDiagram
 - 고객이나 E2E 테스트는 Keycloak에서 토큰을 받아 `Authorization: Bearer`로 보낸다.
 - 주문 서비스는 OAuth2 Resource Server로 JWT의 서명, 만료, 발급자를 검증한다. 역할은 Keycloak realm 역할(`CUSTOMER`, `ADMIN`)을 Spring Security 권한으로 바꿔 쓴다.
 - 재고 서비스는 외부에 열지 않으므로 이번 단계에서 서비스 간 인증을 하지 않는다. (ADR-0006의 감수할 점)
-- 토큰의 발급자(`iss`)는 토큰을 받은 주소로 정해진다. 고객이 `localhost`로 받은 토큰을 클러스터 안에서 다른 주소로 검증하면 발급자가 달라 실패한다. Keycloak의 hostname을 하나로 고정하고 그 값으로 검증한다. `[현장]`
+- 토큰의 발급자(`iss`)는 토큰을 받은 주소로 정해진다. 고객이 `localhost`로 받은 토큰을 클러스터 안에서 다른 주소로 검증하면 발급자가 달라 실패한다. Keycloak의 hostname을 하나로 고정하고 그 값으로 검증한다. `[현장]` 고정한 값은 `http://localhost:8180/realms/msa`다. 클러스터 안 Pod가 `keycloak:8080`으로 받아도 같은 값이 나오는 것을 2026-10-05에 확인했다. ([references/docker-desktop.md](../references/docker-desktop.md) 4-1절)
 
 ## 8. 상태 확인과 수명 주기
 

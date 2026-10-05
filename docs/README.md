@@ -24,18 +24,18 @@ spec-kit이 따라야 하는 기준 문서와 참고 자료를 두는 곳이다.
 |---|---|---|
 | [references/msa-k8s-primer.md](references/msa-k8s-primer.md) | 마이크로서비스와 쿠버네티스 기초 (아래 문서들의 원문) | 완료 |
 | [references/docker-desktop.md](references/docker-desktop.md) | Docker Desktop 설정 위치, 이 프로젝트의 권장 설정, 문제 해결 | 2026-10-05 확인 |
-| [requirements/uc-001-place-order.md](requirements/uc-001-place-order.md) | UC-001 주문 생성 | 초안 |
-| [requirements/uc-002-view-orders.md](requirements/uc-002-view-orders.md) | UC-002 주문 조회 (고객, 관리자) | 초안 |
-| [requirements/non-functional.md](requirements/non-functional.md) | 비기능 요구사항 NFR-001~009 | 초안 |
-| [analysis/domain-analysis.md](analysis/domain-analysis.md) | 서비스 경계, 주문·예약 상태, 멱등성, 중복 주문, 장애 모드, 미결 사항 OQ-001~009 (모두 결정) | 초안 |
-| [design/architecture.md](design/architecture.md) | 런타임 구성, 요청 흐름, 재시도, 인터페이스, 데이터, 인증 | 초안 |
+| [requirements/uc-001-place-order.md](requirements/uc-001-place-order.md) | UC-001 주문 생성 | 확정 |
+| [requirements/uc-002-view-orders.md](requirements/uc-002-view-orders.md) | UC-002 주문 조회 (고객, 관리자) | 확정 |
+| [requirements/non-functional.md](requirements/non-functional.md) | 비기능 요구사항 NFR-001~009 | 확정 |
+| [analysis/domain-analysis.md](analysis/domain-analysis.md) | 서비스 경계, 주문·예약 상태, 멱등성, 중복 주문, 장애 모드, 미결 사항 OQ-001~009 (모두 결정) | 확정 |
+| [design/architecture.md](design/architecture.md) | 런타임 구성, 요청 흐름, 재시도, 인터페이스, 데이터, 인증 | 확정 (5·6절의 경로·필드·열 이름은 plan까지 제안) |
 | [standards/architecture-rules.md](standards/architecture-rules.md) | 아키텍처 규칙 STD-001~019 | 확정 |
 | [standards/tech-stack.md](standards/tech-stack.md) | 기술 스택과 버전 | 확정 |
 | [standards/testing.md](standards/testing.md) | 테스트 전략 (B안: 서비스 통합 중심) | 확정 |
 | [standards/coding-conventions.md](standards/coding-conventions.md) | 코딩 규약 (A안: 계층형 + MyBatis) | 확정 |
 | [standards/git-workflow.md](standards/git-workflow.md) | 브랜치, 커밋, PR 규칙 (GitHub Flow + spec 단위 브랜치) | 확정 |
-| [test-cases/order-placement.md](test-cases/order-placement.md) | 주문 생성·조회 테스트 TC-001~014 | 초안 |
-| [test-cases/operations.md](test-cases/operations.md) | 운영 상황 테스트 TC-101~109 | 초안 |
+| [test-cases/order-placement.md](test-cases/order-placement.md) | 주문 생성·조회 테스트 TC-001~015 | 확정 |
+| [test-cases/operations.md](test-cases/operations.md) | 운영 상황 테스트 TC-101~109 | 확정 |
 | [adr/](adr/) | ADR-0001~0007 | 모두 채택 |
 
 ## ID 규칙
