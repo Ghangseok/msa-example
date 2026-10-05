@@ -1,6 +1,6 @@
 # 코딩 규약
 
-- 상태: **확정 (2026-10-04)** — A안(전통 계층형 + MyBatis)
+- 상태: **확정 (2026-10-04, 2026-10-05 기계 검사 절 추가)** — A안(전통 계층형 + MyBatis)
 - 쓰는 곳: `/speckit-constitution`, 각 서비스의 `services/<svc>/CLAUDE.md`
 
 ## 1. 고른 안과 비교한 안
@@ -113,3 +113,27 @@ dto는 어디서나 쓸 수 있다
 ### 3-7. 테스트 코드
 
 - 테스트 이름은 `@DisplayName`에 한국어로 쓰고, 인수 시나리오면 TC ID를 앞에 붙인다. ([testing.md](testing.md))
+
+### 3-8. 기계로 검사하는 규칙
+
+글로만 있는 규칙은 지키지 않아도 빌드가 통과한다. 그래서 아래 규칙은 매 빌드에서 기계로 검사한다(2026-10-05 결정). 검사 코드는 첫 서비스를 만들 때 함께 만든다. 검사 코드를 둘 위치(서비스마다, `libs/`, Gradle 빌드 로직)와 허용 목록 파일의 위치·형식은 plan에서 정한다.
+
+| 규칙 | 검사 방법 | 잡지 못하는 것 |
+|---|---|---|
+| Lombok을 쓰지 않는다 (3-5절) | Gradle 빌드: 어떤 configuration에든 `org.projectlombok` 그룹이 들어오면 빌드를 실패시킨다. 보조로 소스에서 `import lombok.`을 찾는다. ArchUnit으로는 잡지 못한다. Lombok 애너테이션은 컴파일하면 사라지는 `SOURCE` 보존이기 때문이다 | — |
+| 애너테이션 SQL을 쓰지 않는다 (3-2절) | ArchUnit: `@Select`, `@Insert`, `@Update`, `@Delete`, `@SelectProvider`, `@InsertProvider`, `@UpdateProvider`, `@DeleteProvider`를 쓰지 못하게 한다 | — |
+| `${}`와 `SELECT *`를 쓰지 않는다 (3-2절) | 테스트가 Mapper XML을 XML 파서로 읽고, 문장 요소(`select`, `insert`, `update`, `delete`, `sql`)의 글자를 검사한다. XML 주석은 빼고 본다. `${`는 허용 목록에 있는 것만 통과시킨다. `COUNT(*)`는 잡지 않는다 | — |
+| 19c 이후 SQL 기능을 쓰지 않는다 (3-3절) | Mapper XML과 Flyway SQL에서 금지 키워드를 찾는다: `IF NOT EXISTS`, `IF EXISTS`, `BOOLEAN`(열 타입), `JSON`(열 타입. `IS JSON` 조건은 제외), `SQL_MACRO`, `VECTOR`, `DOMAIN`, `ANNOTATIONS` | 흔한 단어로 쓰는 23ai 문법: `FROM` 없는 `SELECT`, `GROUP BY`의 별칭, `VALUES`로 여러 행 넣기, `UPDATE`의 조인. PR 리뷰로 본다 |
+| 원격 호출을 DB 트랜잭션 안에서 하지 않는다 (3-1절) | ArchUnit: `@Transactional`이 붙은 메서드와 클래스는 `client` 패키지의 클래스를 직접 부르지 않는다 | 다른 빈을 거쳐 부르는 경우 |
+| 검사를 끄는 표시를 사용자 승인 없이 넣지 않는다 (저장소 루트 `CLAUDE.md` 7절) | 소스 글자 검사: `src/**/*.java`와 `build.gradle`에서 `@Disabled`, `@DisabledIf`, `@EnabledIf`, `Assumptions.assume`, `@SuppressWarnings`, `@SuppressFBWarnings`, `NOPMD`, `spotless:off`, `@formatter:off`, `FreezingArchRule`, 테스트 작업의 `exclude`를 찾는다. 허용 목록(파일 경로, 표시, 이유, 승인한 PR 번호)에 없으면 실패한다. 허용 목록이 바뀌면 PR에서 사용자가 승인한다 | 명령줄에서 테스트를 건너뛰는 것(`-x test`). CI 필수 검사가 생기면 막는다 |
+| 인수 시나리오 테스트에 테스트 케이스 ID를 남긴다 (`docs/standards/testing.md` 3절) | `docs/test-cases/*.md`의 테스트 케이스 제목마다, `@DisplayName`이 그 ID로 시작하는 테스트가 하나 이상 있는지 검사한다. 운영 테스트(`TC-1NN`)는 E2E 목록으로 따로 낸다 | — |
+| 일반 버그 패턴 | SpotBugs(Gradle 플러그인). 오탐을 끄는 `@SuppressFBWarnings`는 위 허용 목록 대상이다 | — |
+
+## 용어
+
+이 절에는 2026-10-05 개정에서 처음 나온 용어만 적었다. 이 문서의 다른 용어는 나중에 채운다.
+
+- **보존 정책 (retention policy)**: Java 애너테이션이 어디까지 남는지 정한 값이다. `SOURCE`는 컴파일하면 사라지고 `RUNTIME`은 실행 중에도 남는다. 이 문서에서는 ArchUnit으로 찾을 수 있는 애너테이션인지 가르는 기준이다.
+- **허용 목록 (allowlist)**: 규칙의 예외로 승인한 것만 적어 둔 파일이다. 이 저장소에서는 검사를 끄는 표시와 `${}` 예외를 적고, 사용자가 PR에서 승인한다.
+- **오탐 (false positive)**: 문제가 없는데 검사 도구가 문제라고 알리는 것이다. SpotBugs를 처음 붙일 때 끌 규칙을 정하는 이유다.
+- **정적 분석 (static analysis)**: 프로그램을 실행하지 않고 소스나 클래스 파일만 읽어 문제를 찾는 검사다. 이 저장소에서는 SpotBugs를 쓴다.
