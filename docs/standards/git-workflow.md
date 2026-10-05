@@ -64,9 +64,9 @@ Refs: 001-place-order, TC-003, STD-005
 | PR 템플릿 `.github/pull_request_template.md` | 완료 (2026-10-04) |
 | GitHub 원격 저장소 만들기 | 완료 (2026-10-04, 사용자). 공개 저장소 https://github.com/Ghangseok/msa-example |
 | `gh auth login` | 완료 (2026-10-04, 사용자) |
-| 병합 설정 (6-1절) | 완료 (2026-10-04, 사용자). squash 기본 메시지만 바꾸면 된다 |
-| 첫 커밋, `git remote add origin`, 첫 push | 할 일 |
-| main 규칙(ruleset) 켜기 (6-2절) | 첫 push 뒤에 |
+| 병합 설정 (6-1절) | 완료 (2026-10-04, 사용자). squash 기본 메시지도 PR 제목과 본문으로 설정되어 있다 (2026-10-05 `gh api`로 확인) |
+| 첫 커밋, `git remote add origin`, 첫 push | 완료 (2026-10-04). 커밋 `0b5b8c8`. 규칙을 켜기 전이라 main에 바로 올렸다 |
+| main 규칙(ruleset) 켜기 (6-2절) | 완료 (2026-10-04, 사용자). 이제부터 main은 PR로만 바꾼다 |
 | 필수 검사(CI)를 규칙에 추가 | CI를 만든 뒤에 |
 | spec-kit git 확장 켜기 | 선택 |
 
@@ -89,7 +89,7 @@ squash 기본 메시지를 "제목과 본문"으로 두는 이유: PR 본문의 
 
 | 항목 | 값 |
 |---|---|
-| Enforcement status | **Active** (첫 push 뒤에) |
+| Enforcement status | **Active** (2026-10-04 켬, 2026-10-05 `gh api`로 확인) |
 | Bypass list | 비움. 소유자도 main에 직접 push하지 못한다 |
 | Target branches | Include default branch |
 | Restrict deletions | 켬 |
