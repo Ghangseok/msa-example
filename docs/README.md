@@ -29,7 +29,7 @@ spec-kit이 따라야 하는 기준 문서와 참고 자료를 두는 곳이다.
 | [requirements/non-functional.md](requirements/non-functional.md) | 비기능 요구사항 NFR-001~009 | 초안 |
 | [analysis/domain-analysis.md](analysis/domain-analysis.md) | 서비스 경계, 주문·예약 상태, 멱등성, 중복 주문, 장애 모드, 미결 사항 OQ-001~009 (모두 결정) | 초안 |
 | [design/architecture.md](design/architecture.md) | 런타임 구성, 요청 흐름, 재시도, 인터페이스, 데이터, 인증 | 초안 |
-| [standards/architecture-rules.md](standards/architecture-rules.md) | 아키텍처 규칙 STD-001~019 | 초안 |
+| [standards/architecture-rules.md](standards/architecture-rules.md) | 아키텍처 규칙 STD-001~019 | 확정 |
 | [standards/tech-stack.md](standards/tech-stack.md) | 기술 스택과 버전 | 확정 |
 | [standards/testing.md](standards/testing.md) | 테스트 전략 (B안: 서비스 통합 중심) | 확정 |
 | [standards/coding-conventions.md](standards/coding-conventions.md) | 코딩 규약 (A안: 계층형 + MyBatis) | 확정 |
