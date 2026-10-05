@@ -99,7 +99,7 @@
 | kind 클러스터 | `msa` (노드 컨테이너 `msa-control-plane`, `msa-worker`, `msa-worker2`) | `kindest/node:v1.36.4` (digest까지 고정) | `infra/kind/cluster.yaml` |
 | Docker 네트워크 | `kind` (kind가 만든다). IPv4 `172.18.0.0/16`과 IPv6 `fc00:f853:ccd:e793::/64`가 함께 켜져 있다 | — | — |
 | 로컬 이미지 레지스트리 | `kind-registry` (`localhost:5001`). `kind load` 대신 쓴다 | `registry:3.1.2` | `tools/infra-up.ps1`, 노드 설정은 `infra/kind/registry-hosts.toml`, `infra/kind/local-registry-hosting.yaml` |
-| Envoy Gateway | 네임스페이스 `envoy-gateway-system`, Helm 릴리스 `eg`, Gateway `default/msa-gateway` `[제안]` | Helm 차트 `gateway-helm` v1.9.2 | `tools/infra-up.ps1`, `infra/k8s/gateway/` |
+| Envoy Gateway | 네임스페이스 `envoy-gateway-system`, Helm 릴리스 `eg`, Gateway `default/msa-gateway` | Helm 차트 `gateway-helm` v1.9.2 | `tools/infra-up.ps1`, `infra/k8s/gateway/` |
 | Oracle XE 컨테이너 + 데이터 볼륨 (서비스마다) | `order-db` + `order-db-data`, `inventory-db` + `inventory-db-data`, 나중에 `payment-db` | `gvenzl/oracle-xe:21.3.0-slim-faststart` | `infra/compose/compose.yaml`, DB를 처음 만들 때 실행하는 SQL은 `infra/compose/oracle-init/` |
 | Keycloak 컨테이너 | `keycloak` (realm `msa`) | `quay.io/keycloak/keycloak:26.8.0` | `infra/compose/compose.yaml`, realm은 `infra/keycloak/realm-msa.json` |
 | 관측 도구 컨테이너 | `lgtm` | `grafana/otel-lgtm:0.35.0` | `infra/compose/compose.yaml` |
@@ -112,7 +112,7 @@
 
 ### 3-5. 호스트 포트
 
-모든 포트는 이 PC(`127.0.0.1`)에서만 연다. 같은 네트워크의 다른 PC에서는 접속할 수 없다. 80번은 2026-10-05 사용자 결정이고, 나머지 포트를 `127.0.0.1`에만 연 것은 `[제안]`이다.
+모든 포트는 이 PC(`127.0.0.1`)에서만 연다. 같은 네트워크의 다른 PC에서는 접속할 수 없다. 2026-10-05 사용자 결정이다.
 
 | 포트 | 용도 |
 |---|---|
@@ -206,7 +206,7 @@ kubectl get pods -A
 | 회사 VPN을 켜면 컨테이너 통신이 끊긴다 | Docker 내부 서브넷(기본 192.168.65.0/24)이 VPN 주소와 겹친다 | Settings > Resources > Network에서 서브넷을 바꾼다 |
 | 디스크가 부족하다 | 이미지, 빌드 캐시, 볼륨이 쌓였다 | `docker system df`로 확인한 뒤 `docker image prune`, `docker builder prune`. 볼륨은 내용을 확인하고 지운다 |
 | 토큰 검증이 `iss` 불일치로 실패한다 | Keycloak 주소가 클러스터 안팎에서 다르다 | [design 7절](../design/architecture.md#7-인증-adr-0006) |
-| Oracle 로그에 `DATABASE IS READY TO USE!`가 있는데 접속하면 `ORA-12514: TNS:listener does not currently know of service requested`가 난다. `docker exec order-db lsnrctl status`가 `The listener supports no services`라고 답한다 | `kind` 네트워크는 IPv6가 켜져 있어서 컨테이너 호스트 이름이 IPv6 주소로도 풀린다. DB의 `LOCAL_LISTENER`가 비어 있으면 DB는 호스트 이름으로 리스너를 찾는다. 그런데 리스너는 IPv4(`0.0.0.0:1521`)에서만 듣는다. 그래서 서비스(XEPDB1)를 등록하지 못한다. 등록 주소를 IPv6로 주면 등록되지 않고 IPv4로 주면 등록되는 것을 시험으로 확인했다 (2026-10-05에 실제로 겪음) | `infra/compose/oracle-init/01-local-listener.sql`이 DB를 처음 만들 때 `LOCAL_LISTENER`를 `127.0.0.1`로 고정한다 `[제안]`. 이 설정은 데이터 볼륨의 spfile에 남는다. 이 파일이 생기기 전에 만든 볼륨이면 `.\tools\infra-down.ps1 -RemoveData`로 지우고 다시 띄운다 |
+| Oracle 로그에 `DATABASE IS READY TO USE!`가 있는데 접속하면 `ORA-12514: TNS:listener does not currently know of service requested`가 난다. `docker exec order-db lsnrctl status`가 `The listener supports no services`라고 답한다 | `kind` 네트워크는 IPv6가 켜져 있어서 컨테이너 호스트 이름이 IPv6 주소로도 풀린다. DB의 `LOCAL_LISTENER`가 비어 있으면 DB는 호스트 이름으로 리스너를 찾는다. 그런데 리스너는 IPv4(`0.0.0.0:1521`)에서만 듣는다. 그래서 서비스(XEPDB1)를 등록하지 못한다. 등록 주소를 IPv6로 주면 등록되지 않고 IPv4로 주면 등록되는 것을 시험으로 확인했다 (2026-10-05에 실제로 겪음) | `infra/compose/oracle-init/01-local-listener.sql`이 DB를 처음 만들 때 `LOCAL_LISTENER`를 `127.0.0.1`로 고정한다(2026-10-05 사용자 결정). 이 설정은 데이터 볼륨의 spfile에 남는다. 이 파일이 생기기 전에 만든 볼륨이면 `.\tools\infra-down.ps1 -RemoveData`로 지우고 다시 띄운다 |
 | 한국어가 든 `.ps1`을 Windows PowerShell 5.1로 실행하면 한국어가 `?쒓뎅??`처럼 깨진다 | 이 PC의 PowerShell은 5.1뿐이다. 5.1은 BOM이 없는 스크립트 파일을 시스템 코드 페이지(CP949)로 읽는다. 같은 내용을 BOM 없이 저장하면 깨지고 BOM을 붙이면 제대로 나오는 것을 시험으로 확인했다 (2026-10-05) | `.ps1`을 UTF-8 BOM으로 저장한다. `tools/`의 스크립트는 BOM으로 저장되어 있다. VS Code에서는 오른쪽 아래 인코딩 표시를 눌러 "UTF-8 with BOM"으로 저장한다 |
 | PowerShell에서 `sqlplus`에 SQL을 파이프로 넘기면 `SP2-0734: unknown command beginning "connect..."`가 난다. 따옴표 안의 `connect` 앞에 보이지 않는 문자(BOM)가 붙어 있다 | PowerShell 5.1이 네이티브 명령의 표준 입력으로 보내는 문자열 앞에 BOM을 붙인다. sqlplus는 BOM을 명령의 일부로 읽는다 (2026-10-05에 실제로 겪음) | Git Bash에서 파이프로 넘긴다. 또는 `docker exec -it order-db sqlplus /nolog`로 들어가서 직접 입력한다 (4-1절) |
 | `tools/`의 스크립트 출력을 파일로 돌리면 빨간 `NativeCommandError` 줄이 섞인다. 예: `Unable to find image ... locally`, `Deleting cluster "msa" ...` | PowerShell 5.1은 출력을 돌릴 때 docker와 kind가 stderr에 쓴 진행 메시지를 오류 기록으로 바꿔 보여 준다. 실제 오류가 아니다 (2026-10-05에 실제로 겪음) | 무시해도 된다. 스크립트는 명령마다 종료 코드로 성공을 판단하고, 실패하면 "…실패 (종료 코드 N)"를 보여 주고 멈춘다 |
