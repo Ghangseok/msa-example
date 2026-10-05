@@ -30,3 +30,6 @@ logs/
 
 # Claude Code personal settings
 .claude/settings.local.json
+
+# Python bytecode (created when spec-kit runs .specify/scripts/python)
+__pycache__/
