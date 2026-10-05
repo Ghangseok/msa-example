@@ -23,7 +23,7 @@ spec-kit이 따라야 하는 기준 문서와 참고 자료를 두는 곳이다.
 | 문서 | 내용 | 상태 |
 |---|---|---|
 | [references/msa-k8s-primer.md](references/msa-k8s-primer.md) | 마이크로서비스와 쿠버네티스 기초 (아래 문서들의 원문) | 완료 |
-| [references/docker-desktop.md](references/docker-desktop.md) | Docker Desktop 설정 위치, 이 프로젝트의 권장 설정, 문제 해결 | 2026-10-04 확인 |
+| [references/docker-desktop.md](references/docker-desktop.md) | Docker Desktop 설정 위치, 이 프로젝트의 권장 설정, 문제 해결 | 2026-10-05 확인 |
 | [requirements/uc-001-place-order.md](requirements/uc-001-place-order.md) | UC-001 주문 생성 | 초안 |
 | [requirements/uc-002-view-orders.md](requirements/uc-002-view-orders.md) | UC-002 주문 조회 (고객, 관리자) | 초안 |
 | [requirements/non-functional.md](requirements/non-functional.md) | 비기능 요구사항 NFR-001~009 | 초안 |
