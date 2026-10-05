@@ -25,7 +25,8 @@
 | Mapper | MyBatis SQL이 실제 Oracle에서 맞게 도는지. 잠금, 조건부 갱신, 1:N 매핑, 19c 호환 SQL | `@MybatisTest` + Testcontainers(Oracle 21c XE) | `services/<svc>/src/test` | 매 빌드 |
 | 서비스 통합 | API → service → DB 전 구간. 멱등, 동시 예약, 교착, 재시도, 제한 시간, 서킷 브레이커, 인증 | `@SpringBootTest`, Testcontainers(Oracle 21c XE), WireMock, Spring Security Test | `services/<svc>/src/test` | 매 빌드 |
 | 계약 | 재고 API가 `contracts/`의 OpenAPI를 지키는지(제공자), 주문이 쓰는 WireMock 응답이 같은 OpenAPI를 따르는지(소비자) | OpenAPI 검증 라이브러리 (plan에서 확정) | 각 서비스 | 매 빌드 |
-| 아키텍처 | 계층 의존 규칙(controller → service → mapper·client·domain, domain은 Spring·MyBatis를 모름) | ArchUnit | 각 서비스 | 매 빌드 |
+| 아키텍처 | 계층 의존 규칙(controller → service → mapper·client·domain, domain은 Spring·MyBatis를 모름), 그리고 `coding-conventions.md` 3-8절의 기계 검사 | ArchUnit, 소스·XML 글자 검사, Gradle 의존성 검사 | 각 서비스 | 매 빌드 |
+| 정적 분석 | 일반 버그 패턴 | SpotBugs | 각 서비스 | 매 빌드 |
 | E2E·운영 | Gateway → 주문 → 재고 전체 흐름, TC-101~109 | kind, Keycloak 토큰, 부하 도구(plan에서 확정) | `tests/e2e/` | 수동 또는 별도 작업 |
 
 ## 3. 규칙
@@ -38,6 +39,7 @@
 - **인증**: 서비스 통합 테스트는 Keycloak 없이 Spring Security Test의 JWT 지원으로 사용자를 흉내 낸다. 실제 토큰 발급은 E2E에서만 확인한다.
 - **시간**: 재시도 대기와 제한 시간 테스트가 실제로 30초씩 걸리지 않도록, 대기 시간을 설정값으로 두고 테스트에서는 짧게 바꾼다. 단, 기본값(OQ-004)이 설정에 맞게 들어갔는지는 단위 테스트로 따로 확인한다.
 - **커버리지**: 수치 목표는 두지 않는다. 모든 TC와 BR이 어떤 테스트로 검증되는지 연결되어 있는지로 판단한다.
+- **검사를 끄는 표시**: `@Disabled`, `@SuppressWarnings` 같은 검사를 끄는 표시는 허용 목록에 있어야 한다. 허용 목록은 사용자가 PR에서 승인한다. 찾는 표시의 목록은 `coding-conventions.md` 3-8절에 있다.
 
 ## 4. 테스트 데이터
 

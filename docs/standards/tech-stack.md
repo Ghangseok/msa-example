@@ -1,6 +1,6 @@
 # 기술 스택
 
-- 상태: **확정 (2026-10-04)**
+- 상태: **확정 (2026-10-04, 2026-10-05 정적 분석 행 추가)**
 - 쓰는 곳: `/speckit-constitution`, `/speckit-plan`의 Technical Context
 
 | 항목 | 선택 | 근거 |
@@ -20,6 +20,7 @@
 | 이미지 빌드 | Gradle bootJar + 공용 Dockerfile, 로컬 레지스트리(`localhost:5001`) | design 11절 |
 | 로컬 클러스터 | kind, control-plane 1 + worker 2 | design 11절 |
 | 테스트 | JUnit 5, AssertJ, Testcontainers(Oracle XE), WireMock, Spring Security Test, ArchUnit, mybatis-spring-boot-starter-test | [testing.md](testing.md) |
+| 정적 분석 | SpotBugs (Gradle 플러그인) | 2026-10-05 사용자 결정. Error Prone은 2.43.0부터 실행에 JDK 21이 필요해서 이 저장소의 JDK 17에 맞지 않는다 `[문헌]`. 정확한 버전과 끌 규칙은 plan에서 정한다. 검사 목록은 [coding-conventions.md](coding-conventions.md) 3-8절 |
 | 로컬 실행 | Docker Desktop, kind, kubectl, Helm | ADR-0003, [references/docker-desktop.md](../references/docker-desktop.md) |
 | 형상 관리 | Git, GitHub Flow | [git-workflow.md](git-workflow.md) |
 
