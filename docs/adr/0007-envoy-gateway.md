@@ -42,3 +42,24 @@ ADR-0003에서 클러스터 입구를 Gateway API로 만들기로 했다. Gatewa
 ## 바꿀 때
 
 서비스 메시가 필요해지면(서비스 간 mTLS, 서비스 간 트래픽 정책) Istio를 다시 검토한다. 이때 입구는 Envoy Gateway를 그대로 두고 메시만 더할 수도 있다.
+
+## 용어
+
+- **Gateway API**: 쿠버네티스 클러스터 입구의 라우팅을 정하는 표준 규격이다. Ingress를 잇는 규격이고, Envoy Gateway가 이 규격을 구현한다.
+- **구현체 (implementation)**: 규격을 실제로 동작하게 만든 제품이다. Gateway API는 규격이고, Envoy Gateway가 그 구현체다.
+- **Envoy Gateway**: Envoy 프록시를 써서 Gateway API를 구현한 오픈소스 프로젝트다. 이 프로젝트의 클러스터 입구다.
+- **Envoy 프록시 (Envoy proxy)**: 요청을 받아 다른 서버로 넘기는 고성능 프록시 프로그램이다. Envoy Gateway가 이 프록시를 띄워 실제 요청을 처리한다.
+- **Helm**: 쿠버네티스 설정 파일 여러 개를 묶어 설치하고 버전을 관리하는 패키지 도구다. 이 프로젝트에서는 Envoy Gateway를 Helm으로 설치한다.
+- **GatewayClass, Gateway**: Gateway API의 객체다. GatewayClass는 어느 구현체를 쓸지 정하고, Gateway는 요청을 받을 입구 하나를 정한다.
+- **HTTPRoute**: 경로별로 요청을 어느 Service로 보낼지 정하는 Gateway API 객체다. `/orders`와 `/admin/orders`를 주문 Service로 보내고, 요청 제한 시간을 40초로 둔다.
+- **NodePort**: 쿠버네티스 Service를 모든 노드의 같은 포트 번호로 여는 방식이다. 이 프로젝트에서는 Envoy 프록시를 30080으로 열고 호스트 80번에 연결한다.
+- **extraPortMappings**: kind 노드 컨테이너의 포트를 호스트 포트에 연결하는 kind 설정이다. 클러스터를 만들 때만 정할 수 있어서, 바꾸려면 클러스터를 다시 만든다.
+- **EnvoyProxy (리소스)**: Envoy 프록시를 어떻게 띄울지 정하는 Envoy Gateway만의 설정 객체다. 프록시 Service를 NodePort로 바꿀 때 쓴다.
+- **LoadBalancer (Service 유형)**: 외부에서 닿는 IP를 붙여 주는 쿠버네티스 Service 유형이다. Windows의 Docker Desktop에서는 이 IP에 호스트가 바로 닿지 않을 수 있어서 NodePort를 쓴다.
+- **cloud-provider-kind**: kind 클러스터에서 LoadBalancer 유형 Service에 IP를 붙여 주는 도구다. NodePort 대신 쓸 수 있는 다른 방법으로 적어 두었다.
+- **SecurityPolicy, BackendTrafficPolicy**: Envoy Gateway만의 설정 객체다. SecurityPolicy는 입구에서 JWT 검증 같은 보안 규칙을, BackendTrafficPolicy는 재시도·서킷 브레이커·속도 제한을 정한다.
+- **속도 제한 (rate limiting)**: 정해진 시간에 받을 수 있는 요청 수를 넘으면 거절하는 장치다. 나중에 Gateway에서 실험할 수 있다.
+- **표준 적합성 시험 (conformance test)**: 구현체가 규격대로 동작하는지 확인하는 공식 시험이다. Envoy Gateway는 Gateway API의 이 시험을 모두 통과했다.
+- **서비스 메시 (service mesh)**: 서비스 사이 통신에 암호화, 재시도, 트래픽 정책을 앱 밖에서 더하는 인프라 층이다(예: Istio). 필요해지면 그때 따로 검토한다.
+- **CNI (Container Network Interface)**: 쿠버네티스 Pod의 네트워크를 만드는 플러그인 규격이다. Cilium을 쓰려면 kind의 CNI를 바꿔야 해서 고르지 않았다.
+- **mTLS (mutual TLS)**: 양쪽이 서로 인증서를 내보여 상대를 확인하는 암호화 연결이다. 서비스 간 인증 방법 후보 가운데 하나다.

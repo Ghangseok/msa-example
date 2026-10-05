@@ -52,3 +52,18 @@
 
 - 메모리가 부족하면 "인스턴스 하나 + 서비스별 스키마"로 내릴 수 있다. 서비스 코드는 그대로이고 접속 정보(ConfigMap, Secret)만 바뀐다.
 - 운영 대상이 19c로 정해지면 19c 환경에서 Flyway 마이그레이션을 한 번 돌려 호환성을 확인한다.
+
+## 용어
+
+- **XE (Express Edition)**: Oracle이 무료로 배포하는 작은 DB 판이다. CPU 2개, 메모리 2GB, 사용자 데이터 12GB까지 쓸 수 있다.
+- **논리 환경 (logical environment)**: 운영체제 하나가 도는 실행 단위로, VM, 컨테이너, 물리 서버가 각각 하나다. Oracle XE는 논리 환경 하나에 하나만 뜨므로 서비스마다 컨테이너를 따로 띄운다.
+- **PDB (pluggable database)**: Oracle 인스턴스 하나 안에 따로 꽂아 쓰는 DB다. 21c XE는 기본 PDB `XEPDB1`을 포함해 PDB를 3개까지 만들 수 있다.
+- **스키마 (schema)**: DB 안에서 한 계정이 소유한 테이블 같은 객체의 묶음이다. 서비스마다 자기 계정과 스키마(`ORDER_SVC`, `INVENTORY_SVC`)를 쓴다.
+- **docker compose**: 여러 컨테이너를 파일 하나에 정의하고 함께 띄우는 도구다. Oracle, Keycloak, 관측 도구를 클러스터 밖에서 띄울 때 쓴다.
+- **볼륨 (Docker volume)**: 컨테이너를 지워도 남는 Docker의 저장 공간이다. Oracle 데이터를 `order-db-data`, `inventory-db-data` 볼륨에 둔다.
+- **faststart 이미지 (faststart image)**: DB를 미리 만들어 넣어 둬서 처음 뜨는 시간을 줄인 Oracle XE 이미지다. 로컬 실행과 Testcontainers 모두 이 이미지를 쓴다.
+- **Testcontainers**: 테스트를 실행할 때 Docker 컨테이너를 띄우고 끝나면 지우는 라이브러리다. 실제 Oracle에서 테스트하려고 쓴다.
+- **StatefulSet**: 데이터를 가진 Pod를 고정된 이름과 디스크로 유지하는 쿠버네티스 객체다. DB를 클러스터 밖에 두기로 해서 쓰지 않는다.
+- **WSL 2 (Windows Subsystem for Linux 2)**: Windows 안에서 리눅스 커널을 돌리는 기능이다. Docker Desktop이 이 위에서 컨테이너를 실행하고, 메모리 한도는 `.wslconfig`로 정한다.
+- **kind (Kubernetes IN Docker)**: Docker 컨테이너를 노드로 써서 쿠버네티스 클러스터를 만드는 도구다. 이 프로젝트의 로컬 클러스터는 kind로 만든다.
+- **Flyway**: DB 스키마와 초기 데이터를 버전 번호가 붙은 SQL 파일로 관리하고 차례로 적용하는 도구다. 테이블과 재고 초기 데이터를 Flyway로 만든다.

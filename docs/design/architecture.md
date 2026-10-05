@@ -231,3 +231,57 @@ sequenceDiagram
 | 프로젝트 폴더 원칙 | **정함**: 로컬 환경은 모두 이 저장소 안에서 정의하고 실행한다. 설정은 `infra/`(kind, compose, docker, k8s, keycloak), 실행 스크립트는 `tools/`(PowerShell). 외부 서비스는 쓰지 않는다 |
 | 서킷 브레이커 | **정함**: 재고 호출에 둔다 (4절). 구현 라이브러리는 plan에서 Spring Boot 4.1 호환 여부를 확인해 정한다 |
 | 로컬 Docker 환경 | [references/docker-desktop.md](../references/docker-desktop.md) |
+
+## 용어
+
+- **kind (Kubernetes IN Docker)**: Docker 컨테이너를 노드로 써서 쿠버네티스 클러스터를 만드는 도구다. 이 프로젝트의 로컬 클러스터는 kind로 만든다.
+- **docker compose**: 여러 컨테이너를 파일 하나에 정의하고 함께 띄우는 도구다. Oracle, Keycloak, 관측 도구를 클러스터 밖에서 띄울 때 쓴다.
+- **Pod**: 쿠버네티스가 컨테이너를 실행하는 가장 작은 단위다. 언제든 지워지고 새로 만들어지므로, 남아야 하는 데이터를 Pod 안에 두지 않는다.
+- **쿠버네티스 Service (Kubernetes Service)**: 여러 Pod 앞에 고정된 이름과 주소를 붙여 주는 쿠버네티스 객체다. 주문 서비스는 `http://inventory:8080`으로 재고 서비스를 부른다.
+- **Deployment**: Pod를 정해진 개수만큼 유지하고 새 버전으로 바꿔 주는 쿠버네티스 객체다. 서비스마다 하나 두고 Pod 수를 2개로 둔다.
+- **replicas**: Deployment가 유지하는 Pod 수다. 서비스마다 2 이상으로 둬서 Pod 하나가 사라져도 서비스가 멈추지 않게 한다.
+- **라벨 (label)**: 쿠버네티스 객체에 붙이는 이름표다. Service는 `app=order` 같은 라벨로 요청을 보낼 Pod를 고른다.
+- **HTTPRoute**: 경로별로 요청을 어느 Service로 보낼지 정하는 Gateway API 객체다. `/orders`와 `/admin/orders`를 주문 Service로 보내고, 요청 제한 시간을 40초로 둔다.
+- **ConfigMap, Secret**: 쿠버네티스가 환경마다 다른 값을 Pod에 넣어 주는 객체다. 일반 설정값은 ConfigMap에, 비밀번호 같은 값은 Secret에 둔다.
+- **readiness 프로브 (readiness probe)**: 쿠버네티스가 Pod에 "요청을 받을 준비가 됐나"를 주기적으로 묻는 검사다. 실패하면 그 Pod에는 요청을 보내지 않는다.
+- **liveness 프로브 (liveness probe)**: 쿠버네티스가 Pod에 "살아 있나"를 주기적으로 묻는 검사다. 정해진 횟수만큼 실패하면 컨테이너를 재시작한다.
+- **NodePort**: 쿠버네티스 Service를 모든 노드의 같은 포트 번호로 여는 방식이다. 이 프로젝트에서는 Envoy 프록시를 30080으로 열고 호스트 80번에 연결한다.
+- **extraPortMappings**: kind 노드 컨테이너의 포트를 호스트 포트에 연결하는 kind 설정이다. 클러스터를 만들 때만 정할 수 있어서, 바꾸려면 클러스터를 다시 만든다.
+- **Helm**: 쿠버네티스 설정 파일 여러 개를 묶어 설치하고 버전을 관리하는 패키지 도구다. 이 프로젝트에서는 Envoy Gateway를 Helm으로 설치한다.
+- **매니페스트 (manifest)**: 쿠버네티스 객체를 YAML로 적은 설정 파일이다. 이 저장소에서는 `infra/k8s/`에 둔다.
+- **Envoy Gateway**: Envoy 프록시를 써서 Gateway API를 구현한 오픈소스 프로젝트다. 이 프로젝트의 클러스터 입구다.
+- **JWT (JSON Web Token)**: 로그인한 사용자 정보를 담고 서명한 토큰이다. 이 프로젝트에서는 Keycloak이 발급하고 주문 서비스가 검증한다.
+- **트랜잭션 (transaction)**: 여러 DB 변경을 한 묶음으로 처리해서, 모두 반영하거나 모두 되돌리는 단위다. 이 프로젝트는 원격 호출을 트랜잭션 밖에서 하고, 호출 앞뒤의 저장을 각각 따로 커밋한다.
+- **재시도 (retry)**: 실패한 호출을 잠시 기다렸다가 다시 보내는 것이다. 이 프로젝트에서는 일시 오류에만, 최대 5번까지, 전체 30초 안에서 한다.
+- **지수 백오프 (exponential backoff)**: 재시도할 때마다 대기 시간을 두 배씩 늘리는 방식이다. 재고 호출은 즉시, 1초, 2초, 4초, 8초 뒤에 다시 시도한다.
+- **제한 시간 (timeout)**: 응답을 기다리는 최대 시간이다. 재고 호출은 시도당 2.5초, 재시도를 포함한 전체 30초를 넘기지 않는다.
+- **서킷 브레이커 (circuit breaker)**: 상대 서비스 호출이 계속 실패하면 한동안 호출을 멈추고 바로 실패를 돌려주는 장치다. 재고 서비스가 멈췄을 때 주문 서비스까지 멈추지 않게 막는다.
+- **반쯤 열린 상태 (half-open)**: 열린 서킷이 정해진 시간이 지난 뒤 시험 호출 몇 번만 보내 보는 상태다. 시험 호출의 실패가 기준보다 적으면 서킷을 닫고, 아니면 다시 연다.
+- **비동기 (asynchronous)**: 일을 맡긴 쪽이 결과를 기다리지 않고 다음 일을 하는 방식이다. 실패한 주문의 예약 해제는 고객에게 응답한 뒤 비동기로 한다.
+- **멱등성 (idempotency)**: 같은 요청을 여러 번 받아도 결과가 한 번 받은 것과 같은 성질이다. 재고 예약은 주문 번호로, 주문 생성은 주문 요청 키로 같은 요청인지 알아본다.
+- **Problem Details (RFC 9457)**: HTTP API의 오류 응답을 JSON으로 적는 표준 형식이다. 이 프로젝트는 모든 오류 응답을 이 형식(Spring `ProblemDetail`)으로 통일한다.
+- **OpenAPI**: HTTP API의 경로, 요청, 응답 형식을 적는 표준 명세 형식이다. 서비스 사이 API의 계약을 `contracts/`에 OpenAPI 파일로 둔다.
+- **시퀀스 (sequence)**: Oracle이 겹치지 않는 번호를 차례로 만들어 주는 DB 객체다. 주문 번호를 이것으로 만든다.
+- **행 잠금 (row lock)**: 한 트랜잭션이 바꾸려는 행을 다른 트랜잭션이 동시에 바꾸지 못하게 막는 것이다. 재고 행은 `SELECT ... FOR UPDATE`로 잠근 뒤 수량을 바꾼다.
+- **교착 (deadlock)**: 두 작업이 서로 상대가 잡은 잠금을 기다리며 둘 다 멈추는 상태다. 이 프로젝트는 재고 행을 언제나 상품 ID 순서로 잠가서 교착을 막는다.
+- **고유 제약 (unique constraint)**: 정해진 열에 같은 값이 두 번 들어가지 못하게 DB가 막는 규칙이다. 예약 기록의 주문 번호에 걸어, 같은 예약이 두 번 반영되지 않게 한다.
+- **Flyway**: DB 스키마와 초기 데이터를 버전 번호가 붙은 SQL 파일로 관리하고 차례로 적용하는 도구다. 테이블과 재고 초기 데이터를 Flyway로 만든다.
+- **MyBatis**: SQL을 XML 파일에 직접 쓰고, 그 결과를 Java 객체에 담아 주는 영속성 프레임워크다. 이 프로젝트는 JPA 대신 MyBatis를 쓴다.
+- **Mapper XML**: MyBatis에서 SQL을 적어 두는 XML 파일이다. `resources/mapper/` 아래에 두고 같은 이름의 Mapper 인터페이스와 짝지어 쓴다.
+- **Keycloak**: 사용자 계정, 로그인, 토큰 발급을 맡는 오픈소스 인증 서버다. 이 프로젝트는 Keycloak을 직접 만들지 않고 가져다 쓰며, 계정은 초기 데이터로 넣는다.
+- **realm**: Keycloak 안에서 사용자, 역할, 클라이언트를 한 묶음으로 관리하는 단위다. 이 프로젝트에는 `msa` realm 하나가 있다.
+- **발급자 (`iss`, issuer)**: JWT를 누가 발급했는지 적은 값이다. 주문 서비스는 이 값이 `http://localhost:8180/realms/msa`인 토큰만 받는다.
+- **OAuth2 리소스 서버 (OAuth2 Resource Server)**: 요청에 담긴 토큰을 검증하고 보호된 API를 내주는 서버의 역할이다. 주문 서비스가 Spring Security로 이 역할을 한다.
+- **Actuator**: Spring Boot가 health 같은 운영용 엔드포인트를 만들어 주는 모듈이다. readiness 프로브와 liveness 프로브가 이 엔드포인트를 부른다.
+- **그레이스풀 셧다운 (graceful shutdown)**: 종료 신호를 받으면 새 요청은 받지 않고, 처리 중인 요청을 끝낸 뒤 종료하는 방식이다. 배포나 확장으로 Pod가 내려갈 때 요청이 끊기지 않게 한다.
+- **terminationGracePeriodSeconds**: 쿠버네티스가 Pod에 종료 신호를 보낸 뒤 강제로 끝내기까지 기다리는 시간이다. 앱의 종료 대기 시간(35초)보다 긴 45초로 둔다.
+- **preStop**: 쿠버네티스가 컨테이너에 종료 신호를 보내기 직전에 실행하는 단계다. 짧은 대기를 넣으면 종료 중인 Pod로 요청이 가는 것을 줄일 수 있다.
+- **OpenTelemetry**: 추적, 로그, 메트릭을 모으고 보내는 방법을 정한 오픈소스 표준과 도구 모음이다. 두 서비스가 이것으로 관측 데이터를 보낸다.
+- **OTLP (OpenTelemetry Protocol)**: OpenTelemetry가 관측 데이터를 저장소로 보낼 때 쓰는 전송 형식이다. 앱은 `lgtm:4318`로 OTLP를 보낸다.
+- **W3C Trace Context (`traceparent`)**: 서비스 사이 HTTP 호출에 추적 정보를 실어 보내는 표준 헤더 형식이다. 주문 서비스가 재고 서비스를 부를 때 이 헤더를 넘긴다.
+- **추적 ID (trace ID)**: 요청 하나에 붙여 여러 서비스를 따라다니게 하는 번호다. 이 번호로 여러 서비스의 로그를 한곳에서 함께 찾는다.
+- **`grafana/otel-lgtm`**: 로그(Loki), 추적(Tempo), 메트릭(Prometheus), 화면(Grafana)을 컨테이너 하나에 담은 개발용 관측 도구다. compose로 클러스터 밖에 띄워, Pod가 사라져도 기록이 남게 한다.
+- **Logback appender**: 로그를 어디로 내보낼지 정하는 Logback의 출력 장치다. 로그를 OTLP로도 보내려고 OpenTelemetry appender를 `logback-spring.xml`에 따로 설정한다.
+- **로컬 레지스트리 (local registry)**: 이 PC 안에서 컨테이너 이미지를 올리고 내려받는 저장소다. `localhost:5001`에 두고, kind 노드가 여기서 이미지를 받는다.
+- **bootJar**: Spring Boot 앱과 필요한 라이브러리를 실행할 수 있는 jar 파일 하나로 묶는 Gradle 작업이다. 이 jar로 서비스 이미지를 만든다.
+- **exec 형식 ENTRYPOINT (exec form ENTRYPOINT)**: Dockerfile에서 셸을 거치지 않고 프로그램을 바로 실행하게 적는 방식이다. 종료 신호가 Java 프로세스에 바로 닿게 하려고 쓴다.

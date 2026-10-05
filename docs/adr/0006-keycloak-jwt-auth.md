@@ -35,3 +35,21 @@ OQ-007에서 기본 인증을 넣기로 했다. 주문을 고객과 연결하고
 ## 바꿀 때
 
 - 결제 서비스가 들어와 서비스 간 호출이 늘면, 서비스 간 인증(토큰 전달 또는 클라이언트 자격 증명, mTLS)을 새 ADR로 정한다.
+
+## 용어
+
+- **OIDC (OpenID Connect)**: OAuth 2.0 위에 로그인과 사용자 정보를 더한 표준 인증 규격이다. Keycloak이 이 규격으로 토큰을 발급한다.
+- **Keycloak**: 사용자 계정, 로그인, 토큰 발급을 맡는 오픈소스 인증 서버다. 이 프로젝트는 Keycloak을 직접 만들지 않고 가져다 쓰며, 계정은 초기 데이터로 넣는다.
+- **realm**: Keycloak 안에서 사용자, 역할, 클라이언트를 한 묶음으로 관리하는 단위다. 이 프로젝트에는 `msa` realm 하나가 있다.
+- **역할 (role)**: 사용자에게 붙여 할 수 있는 일을 나누는 이름이다. 이 프로젝트에는 고객(`CUSTOMER`)과 관리자(`ADMIN`) 두 역할이 있다.
+- **JWT (JSON Web Token)**: 로그인한 사용자 정보를 담고 서명한 토큰이다. 이 프로젝트에서는 Keycloak이 발급하고 주문 서비스가 검증한다.
+- **`sub` (subject)**: JWT 안에서 사용자를 구별하는 값이다. 이 프로젝트에서는 이 값을 고객 ID로 쓴다.
+- **발급자 (`iss`, issuer)**: JWT를 누가 발급했는지 적은 값이다. 주문 서비스는 이 값이 `http://localhost:8180/realms/msa`인 토큰만 받는다.
+- **OAuth2 리소스 서버 (OAuth2 Resource Server)**: 요청에 담긴 토큰을 검증하고 보호된 API를 내주는 서버의 역할이다. 주문 서비스가 Spring Security로 이 역할을 한다.
+- **Spring Security Test**: 테스트에서 로그인한 사용자나 JWT를 흉내 내게 해 주는 Spring 모듈이다. 서비스 통합 테스트에서 Keycloak 없이 고객과 관리자를 흉내 낸다.
+- **사용자 이름·비밀번호 방식 (Resource Owner Password Credentials)**: 앱이 사용자 이름과 비밀번호를 받아 토큰을 직접 발급받는 OAuth 2.0 방식이다. 테스트에서 토큰을 쉽게 얻으려고 테스트 전용 클라이언트 `e2e-test`에만 켠다.
+- **HTTP Basic 인증 (HTTP Basic authentication)**: 요청마다 사용자 이름과 비밀번호를 헤더에 담아 보내는 가장 단순한 인증 방식이다. 서비스가 비밀번호를 직접 다뤄야 해서 고르지 않았다.
+- **Spring Authorization Server**: 토큰을 발급하는 인증 서버를 직접 만들 수 있게 해 주는 Spring 프로젝트다. 만들고 관리할 서비스가 늘어서 고르지 않았다.
+- **SecurityPolicy, BackendTrafficPolicy**: Envoy Gateway만의 설정 객체다. SecurityPolicy는 입구에서 JWT 검증 같은 보안 규칙을, BackendTrafficPolicy는 재시도·서킷 브레이커·속도 제한을 정한다.
+- **클라이언트 자격 증명 (client credentials)**: 사용자 없이 서비스 자신이 ID와 비밀값으로 토큰을 받는 OAuth 2.0 방식이다. 서비스 간 인증 방법 후보 가운데 하나다.
+- **mTLS (mutual TLS)**: 양쪽이 서로 인증서를 내보여 상대를 확인하는 암호화 연결이다. 서비스 간 인증 방법 후보 가운데 하나다.

@@ -43,3 +43,12 @@ docs/
 ## 바꿀 때
 
 문서 종류가 늘어 이 분류에 맞지 않는 문서가 생기면 폴더를 더하고 이 ADR을 갱신한다.
+
+## 용어
+
+- **기준 문서 (baseline document)**: spec이 따라야 하는 문서다. `docs/`의 requirements, analysis, design, test-cases, standards, adr 폴더에 있다.
+- **참고 자료 (reference)**: 이해를 돕지만 spec이 따를 의무는 없는 자료다. `docs/references/`에 둔다.
+- **spec-kit**: 기능을 spec, plan, tasks, 구현 순서로 만들게 돕는 도구다. 이 저장소에서는 `/speckit-specify` 같은 명령으로 쓴다.
+- **`@` 참조 (`@` file reference)**: Claude Code에 보내는 글에서 `@` 뒤에 파일 경로를 적어 그 파일을 함께 읽히는 방법이다. 받은 원본 대신 md 변환본을 이렇게 가리킨다.
+- **항목 ID (item ID)**: 기준 문서의 항목마다 붙인 번호다. spec과 plan은 이 번호로 출처를 남긴다.
+- **ADR (Architecture Decision Record)**: 아키텍처 결정과 그 이유를 남기는 문서다. `docs/adr/`에 둔다.
