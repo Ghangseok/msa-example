@@ -39,3 +39,20 @@
 ## 바꿀 때
 
 클라우드의 관리형 쿠버네티스로 옮기더라도 Service, Deployment, Gateway API는 그대로 쓸 수 있다. 바뀌는 것은 클러스터 생성과 Gateway 구현체다.
+
+## 용어
+
+- **kind (Kubernetes IN Docker)**: Docker 컨테이너를 노드로 써서 쿠버네티스 클러스터를 만드는 도구다. 이 프로젝트의 로컬 클러스터는 kind로 만든다.
+- **노드 (node)**: 쿠버네티스에서 Pod가 실제로 실행되는 컴퓨터 한 대다. kind에서는 Docker 컨테이너 하나가 노드 하나다.
+- **Pod**: 쿠버네티스가 컨테이너를 실행하는 가장 작은 단위다. 언제든 지워지고 새로 만들어지므로, 남아야 하는 데이터를 Pod 안에 두지 않는다.
+- **쿠버네티스 Service (Kubernetes Service)**: 여러 Pod 앞에 고정된 이름과 주소를 붙여 주는 쿠버네티스 객체다. 주문 서비스는 `http://inventory:8080`으로 재고 서비스를 부른다.
+- **Deployment**: Pod를 정해진 개수만큼 유지하고 새 버전으로 바꿔 주는 쿠버네티스 객체다. 서비스마다 하나 두고 Pod 수를 2개로 둔다.
+- **롤링 업데이트 (rolling update)**: Pod를 하나씩 새 버전으로 바꿔, 서비스를 멈추지 않고 배포하는 방식이다. 바꾸는 동안 옛 버전과 새 버전이 함께 요청을 처리한다.
+- **replicas**: Deployment가 유지하는 Pod 수다. 서비스마다 2 이상으로 둬서 Pod 하나가 사라져도 서비스가 멈추지 않게 한다.
+- **서비스 디스커버리 (service discovery)**: 호출할 서비스의 주소를 찾아내는 방법이다. 이 프로젝트는 별도 서버 없이 쿠버네티스 Service 이름으로 찾는다.
+- **Eureka**: Spring Cloud가 제공하는 서비스 디스커버리 서버다. 쿠버네티스 Service로 충분해서 이 프로젝트에서는 쓰지 않는다.
+- **Gateway API**: 쿠버네티스 클러스터 입구의 라우팅을 정하는 표준 규격이다. Ingress를 잇는 규격이고, Envoy Gateway가 이 규격을 구현한다.
+- **Ingress**: Gateway API보다 먼저 나온 쿠버네티스의 입구 규격이다. 쿠버네티스 문서가 더는 바꾸지 않는다고 해서 Gateway API를 쓴다.
+- **ConfigMap, Secret**: 쿠버네티스가 환경마다 다른 값을 Pod에 넣어 주는 객체다. 일반 설정값은 ConfigMap에, 비밀번호 같은 값은 Secret에 둔다.
+- **Spring Cloud Config**: 여러 서비스의 설정을 한 서버에서 나눠 주는 Spring Cloud 서버다. ConfigMap과 Secret으로 충분해서 쓰지 않는다.
+- **minikube, k3d**: kind처럼 로컬에서 쿠버네티스 클러스터를 만드는 도구다. 원문이 kind를 기준으로 쓰여 kind를 골랐다.

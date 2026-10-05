@@ -57,3 +57,13 @@ msa-example/
 특정 서비스가 커져 독립이 필요해지면 그 서비스에만 `.specify/`를 추가한다. 다른 곳은 고칠 필요가 없다.
 
 spec-kit은 명령을 실행하는 **현재 폴더**에서 위로 올라가며 가장 가까운 `.specify/`를 찾는다(`.specify/scripts/python/common.py`의 `find_specify_root`). 루트에서 Claude Code를 띄우면 루트의 것이 쓰이므로, 서비스 전용 spec-kit을 쓰려면 그 서비스 폴더에서 세션을 열거나 환경변수 `SPECIFY_INIT_DIR`로 지정한다.
+
+## 용어
+
+- **spec-kit**: 기능을 spec, plan, tasks, 구현 순서로 만들게 돕는 도구다. 이 저장소에서는 `/speckit-specify` 같은 명령으로 쓴다.
+- **헌법 (constitution)**: spec-kit의 모든 명령이 읽는 프로젝트 원칙 문서다. `.specify/memory/constitution.md` 파일이 헌법이다.
+- **서비스 횡단 (cross-service)**: 기능 하나가 여러 서비스에 걸쳐 있는 것이다. 주문 생성은 주문 서비스와 재고 서비스를 함께 건드린다.
+- **계약 (contract)**: 서비스 사이 API와 이벤트의 형식을 적은 명세다. 이 저장소에서는 `contracts/`의 OpenAPI, AsyncAPI 파일이 계약이다.
+- **계약 현재본 (current contracts)**: 지금 main에 있는 서비스 사이 계약 전체다. `contracts/`에 두고, `specs/NNN/contracts/`에는 그 기능에서 바뀐 부분만 둔다.
+- **공통 라이브러리 (`libs/`)**: 여러 서비스가 함께 쓰는 코드를 두는 폴더다. 추적 설정 같은 기술 코드만 두고 업무 코드는 두지 않는다.
+- **CODEOWNERS**: 폴더마다 검토 책임자를 정하는 GitHub 파일이다. 협업자가 생기면 `services/`에 둔다.

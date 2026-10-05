@@ -125,8 +125,24 @@ squash 기본 메시지를 "제목과 본문"으로 두는 이유: PR 본문의 
 
 ## 용어
 
-이 절에는 2026-10-05 개정에서 처음 나온 용어만 적었다. 이 문서의 다른 용어는 나중에 채운다.
-
 - **기능 폴더 (feature directory)**: spec-kit이 기능 하나의 산출물(spec.md, plan.md, tasks.md)을 두는 폴더. 예: `specs/001-place-order/`.
 - **`SPECIFY_FEATURE_DIRECTORY`**: spec-kit 스크립트가 지금 작업할 기능 폴더를 알아내는 환경변수. 값을 주면 스크립트가 그 값을 `.specify/feature.json`에도 적어 둔다.
 - **spec-kit git 확장 (git extension)**: `/speckit-specify`를 돌릴 때 git 브랜치를 자동으로 만들어 주는 spec-kit 추가 기능. 이 저장소에서는 꺼져 있다.
+- **GitHub Flow**: main 브랜치 하나에 짧은 기능 브랜치를 PR로 병합하는 브랜치 전략이다. 이 저장소는 spec마다 브랜치 하나를 쓴다.
+- **트렁크 기반 개발 (trunk-based development)**: main에 직접 올리거나 하루 안에 끝나는 브랜치만 쓰는 방식이다. 검토할 지점이 없어서 고르지 않았다.
+- **Git Flow**: develop, release, hotfix 같은 브랜치를 따로 두는 브랜치 전략이다. 실습 규모에는 과해서 고르지 않았다.
+- **PR (pull request)**: 브랜치의 변경을 main에 병합해 달라고 요청하고 검토받는 GitHub 기능이다. PR 하나에는 한 가지 일만 담는다.
+- **draft PR**: 아직 병합할 준비가 안 됐다고 표시한 PR이다. spec, plan, tasks를 먼저 draft PR로 열어 구현 전에 검토한다.
+- **squash merge**: PR의 커밋 여러 개를 커밋 하나로 합쳐 main에 넣는 병합 방식이다. 이 저장소는 이 방식만 쓴다.
+- **Conventional Commits**: 커밋 메시지를 `종류(범위): 설명` 형식으로 쓰는 규칙이다. 커밋 종류와 브랜치 이름 앞부분을 같게 쓴다.
+- **커밋 범위 (scope)**: 커밋 메시지의 괄호 안에 적는, 변경이 닿은 영역의 이름이다. `order`, `docs`, `infra` 같은 값을 쓴다.
+- **깨는 변경 (breaking change)**: 옛 버전의 호출하는 쪽이나 받는 쪽이 더는 동작하지 않게 만드는 변경이다. 필드 삭제, 필드 이름 변경, 새 상태 값 추가가 여기에 든다.
+- **ADR (Architecture Decision Record)**: 아키텍처 결정과 그 이유를 남기는 문서다. `docs/adr/`에 둔다.
+- **spec-kit**: 기능을 spec, plan, tasks, 구현 순서로 만들게 돕는 도구다. 이 저장소에서는 `/speckit-specify` 같은 명령으로 쓴다.
+- **CODEOWNERS**: 폴더마다 검토 책임자를 정하는 GitHub 파일이다. 협업자가 생기면 `services/`에 둔다.
+- **CI (Continuous Integration)**: PR마다 빌드와 테스트를 자동으로 돌리는 설정이다. 첫 서비스 코드가 생길 때 `.github/workflows/`에 만든다.
+- **필수 검사 (required status check)**: 통과해야 PR을 병합할 수 있게 정한 자동 검사다. CI를 만든 뒤 main 규칙에 넣는다.
+- **선형 이력 (linear history)**: 병합 커밋 없이 커밋이 한 줄로 이어진 이력이다. main 규칙으로 강제한다.
+- **force push**: 원격 브랜치의 이력을 로컬 이력으로 덮어쓰는 push다. main에서는 막아 둔다.
+- **규칙 (ruleset)**: GitHub에서 브랜치마다 병합 조건과 금지 동작을 정하는 설정이다. main은 PR로만 바꾸게 막아 둔다.
+- **`gh`**: GitHub를 명령줄에서 다루는 공식 도구다. PR 목록과 GitHub 설정을 확인할 때 쓴다.
