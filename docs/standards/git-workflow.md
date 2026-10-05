@@ -1,6 +1,6 @@
 # 브랜치와 PR 규칙
 
-- 상태: **확정 (2026-10-04)** — GitHub Flow + spec 단위 브랜치
+- 상태: **확정 (2026-10-04, 2026-10-05 브랜치 이름 규칙 개정)** — GitHub Flow + spec 단위 브랜치
 - 쓰는 곳: `/speckit-constitution`(개발 절차), 모든 커밋과 PR
 
 ## 1. 고른 안과 비교한 안
@@ -13,15 +13,39 @@
 
 ## 2. 브랜치
 
-| 브랜치 | 규칙 |
-|---|---|
-| `main` | 언제나 빌드와 테스트가 통과한다. 직접 push하지 않고 PR로만 바꾼다 |
-| spec 작업 | `NNN-short-name`. `specs/` 폴더 이름과 같게 둔다. 예: `001-place-order` |
-| spec이 클 때 | tasks.md의 단계(Phase)마다 PR을 나눈다. 브랜치 이름 끝에 단계를 붙인다. 예: `001-place-order-p2` `[제안]` |
-| spec 없는 작업 | `<종류>/<짧은 설명>`. 종류는 `fix`, `chore`, `docs`, `infra`, `ci`. 예: `infra/kind-cluster` |
+`main`은 언제나 빌드와 테스트가 통과한다. 직접 push하지 않고 PR로만 바꾼다.
 
-- 기능 브랜치는 짧게 산다. 병합하면 지운다.
-- `/speckit-specify`를 돌리기 전에 브랜치를 만든다. spec-kit의 git 확장을 켜면 `/speckit-specify`가 브랜치를 대신 만든다. 지금은 꺼져 있다(`.specify/extensions.yml` 없음).
+그 밖의 브랜치 이름은 `<종류>/<설명>` 한 가지 형식만 쓴다.
+
+| 항목 | 규칙 |
+|---|---|
+| 종류 | PR 제목에 쓸 커밋 종류(3절)와 같은 값을 쓴다: `feat`, `fix`, `docs`, `refactor`, `test`, `chore`, `build`, `ci`, `perf` |
+| 설명 | 영어 소문자, 숫자, 하이픈(`-`)만 쓴다. 2~4단어로 쓴다. 브랜치 이름 전체는 40자 이하로 한다 |
+| spec 작업 | 설명 자리에 `specs/` 폴더 이름을 그대로 쓴다. 예: `feat/001-place-order` |
+| spec이 커서 단계별로 PR을 나눌 때 | 폴더 이름 뒤에 `-p`와 tasks.md의 단계(Phase) 번호를 붙인다. 예: `feat/001-place-order-p2` |
+| 번호 | spec 번호(`001`) 말고는 일련번호를 붙이지 않는다 |
+
+| 작업 | 브랜치 | PR 제목 |
+|---|---|---|
+| 주문 생성 기능 | `feat/001-place-order` | `feat(order): 주문 생성 API 추가` |
+| 주문 생성 기능의 2단계 | `feat/001-place-order-p2` | `feat(order): 주문 생성 재시도와 서킷 브레이커 추가` |
+| kind 클러스터 설정 | `chore/kind-cluster` | `chore(infra): kind 클러스터 설정 추가` |
+| 이 문서 고치기 | `docs/branch-naming` | `docs(docs): 브랜치 이름 규칙을 커밋 종류와 맞춤` |
+
+이렇게 정한 이유:
+
+- 브랜치 앞부분과 PR 제목 앞부분이 같다. 외울 목록이 하나뿐이다.
+- spec 번호는 spec-kit이 `specs/` 폴더에 붙이는 번호다. 따로 관리하지 않아도 된다.
+- 일련번호를 붙이지 않는 이유는 세 가지다. GitHub가 PR마다 번호(`#1`, `#2` …)를 이미 붙인다. 여러 창에서 동시에 작업하면 같은 번호를 쓸 수 있다. 브랜치는 병합하면 지워지므로 번호가 남지 않는다.
+- 설명을 영어로 쓰는 이유: 한글 브랜치 이름은 URL에서 `%ED%95%9C`처럼 바뀌어 읽기 어렵고, 터미널에서 입력하기도 불편하다.
+
+운영 규칙:
+
+- 브랜치 하나에 PR 하나를 만든다. PR 하나에는 한 가지 일만 담는다. 다른 일이 생기면 main에서 새 브랜치를 만든다.
+- 브랜치는 짧게 산다. 병합하면 GitHub가 자동으로 지운다(6-1절 "Automatically delete head branches").
+- 병합된 PR의 브랜치에는 다시 push하지 않는다. 병합 뒤에 더할 것이 생기면 최신 main에서 새 브랜치를 만든다. 지워진 브랜치에 push하면 같은 이름의 브랜치가 원격에 다시 생기고, 그 커밋은 main에 들어가지 않는다. `[제안]`
+- `/speckit-specify`를 돌리기 전에 브랜치를 만든다. spec-kit의 git 확장을 켜면 `/speckit-specify`가 브랜치를 대신 만든다. 지금은 꺼져 있다(`.specify/extensions.yml` 없음). 켤 때는 확장이 만드는 브랜치 이름이 이 규칙과 맞는지 먼저 확인한다.
+- spec-kit은 브랜치 이름으로 기능 폴더를 찾지 않는다. 환경변수 `SPECIFY_FEATURE_DIRECTORY`나 `.specify/feature.json` 파일로 찾는다(`.specify/scripts/python/common.py`의 `get_feature_paths` 함수). `.specify/feature.json`은 저장소에 올라가지 않는 파일이라(`.specify/.gitignore`) 브랜치를 바꿔도 따라 바뀌지 않는다. 다른 spec 브랜치로 옮기면 `SPECIFY_FEATURE_DIRECTORY`로 기능 폴더를 다시 지정한다.
 
 ## 3. 커밋 메시지
 
@@ -38,7 +62,7 @@ Refs: 001-place-order, TC-003, STD-005
 | 항목 | 값 |
 |---|---|
 | 종류 | `feat`, `fix`, `refactor`, `test`, `docs`, `chore`, `build`, `ci`, `perf` |
-| 범위 | `order`, `inventory`, `contracts`, `infra`, `e2e`, `libs`, `docs`, `specs` |
+| 범위 | `order`, `inventory`, `contracts`, `infra`, `e2e`, `libs`, `docs`, `specs`, `repo`(저장소 루트의 설정 파일: `CLAUDE.md`, `.gitignore`, `.github/`), `speckit`(`.specify/` 아래의 헌법과 템플릿) |
 | 설명 | 한국어로 쓴다. 한 줄로, 무엇을 했는지 쓴다. 예: `feat(order): 주문 생성 API 추가` |
 | 깨는 변경 | 종류 뒤에 `!`를 붙이고 본문에 `BREAKING CHANGE:`를 쓴다. 서비스 사이 API를 깨는 변경은 ADR이 먼저 있어야 한다 (STD-010) |
 | 출처 | 본문 끝 `Refs:`에 spec 폴더와 관련 ID(UC, BR, TC, STD, ADR)를 적는다 |
@@ -98,3 +122,11 @@ squash 기본 메시지를 "제목과 본문"으로 두는 이유: PR 본문의 
 | Block force pushes | 켬 |
 | Require status checks to pass | CI를 만든 뒤 켠다 |
 | 나머지(Restrict creations/updates, signed commits, deployments, code scanning, code quality, coverage, Copilot review) | 끔 |
+
+## 용어
+
+이 절에는 2026-10-05 개정에서 처음 나온 용어만 적었다. 이 문서의 다른 용어는 나중에 채운다.
+
+- **기능 폴더 (feature directory)**: spec-kit이 기능 하나의 산출물(spec.md, plan.md, tasks.md)을 두는 폴더. 예: `specs/001-place-order/`.
+- **`SPECIFY_FEATURE_DIRECTORY`**: spec-kit 스크립트가 지금 작업할 기능 폴더를 알아내는 환경변수. 값을 주면 스크립트가 그 값을 `.specify/feature.json`에도 적어 둔다.
+- **spec-kit git 확장 (git extension)**: `/speckit-specify`를 돌릴 때 git 브랜치를 자동으로 만들어 주는 spec-kit 추가 기능. 이 저장소에서는 꺼져 있다.
