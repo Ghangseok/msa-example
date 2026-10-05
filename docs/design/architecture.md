@@ -4,7 +4,7 @@
 - 출처: P = [마이크로서비스와 쿠버네티스 기초](../references/msa-k8s-primer.md)
 - 관련: [ADR-0003](../adr/0003-local-k8s-runtime.md), [ADR-0004](../adr/0004-sync-reservation-call.md), [ADR-0005](../adr/0005-oracle-xe-instance-per-service.md), [ADR-0006](../adr/0006-keycloak-jwt-auth.md), [ADR-0007](../adr/0007-envoy-gateway.md), [도메인 분석](../analysis/domain-analysis.md), [STD](../standards/architecture-rules.md), [기술 스택](../standards/tech-stack.md)
 
-서비스 사이 API의 정식 명세는 `contracts/`에 OpenAPI로 둔다. 이 문서의 경로와 필드는 `[제안]`이며, `/speckit-plan`이 `specs/NNN/contracts/` 초안을 만들 때 입력으로 쓴다.
+서비스 사이 API의 정식 명세는 `contracts/`에 OpenAPI로 둔다. 이 문서 5절과 6절의 경로, 필드, 열 이름은 제안이고, `/speckit-plan`이 `specs/NNN/contracts/` 초안을 만들 때 입력으로 쓴다. `[제안]` 단, 테스트 케이스가 기대값으로 쓰는 HTTP 상태 코드는 `docs/test-cases/`에서 확정했다.
 
 ## 1. 런타임 구성
 
@@ -60,8 +60,8 @@ flowchart LR
 | 프로브 | readiness, liveness | readiness, liveness | P§6-⑤ |
 
 - **HTTPRoute의 제한 시간을 40초로 둔다.** 주문 처리는 최대 30초 걸린다(4절). Envoy의 기본 요청 제한 시간은 15초라서, 그대로 두면 주문 서비스가 아직 처리하는 중에 Gateway가 요청을 끊는다. 고객 앱의 제한 시간도 같은 이유로 40초 이상으로 둔다. (ADR-0007)
-- Envoy 프록시는 NodePort로 열고 kind의 extraPortMappings로 호스트 80번에 연결한다. (ADR-0007 `[제안]`)
-- 매니페스트는 `infra/k8s/`(또는 Helm 차트), compose 파일은 `infra/compose/`, kind 설정은 `infra/kind/`에 둔다. `[제안]`
+- Envoy 프록시는 NodePort로 열고 kind의 extraPortMappings로 호스트 80번에 연결한다. (ADR-0007, 2026-10-05 결정)
+- 매니페스트는 `infra/k8s/`, compose 파일은 `infra/compose/`, kind 설정은 `infra/kind/`에 둔다. 서비스 배포를 매니페스트 파일로 할지 Helm 차트로 할지는 plan에서 정한다.
 
 ## 3. 요청 흐름
 
@@ -110,9 +110,9 @@ sequenceDiagram
 | 전체 한도 | 30초. 넘으면 남은 재시도를 하지 않고 "실패"로 처리한다 |
 | 시도 횟수 | 최초 1번 + 재시도 최대 5번 |
 | 재시도 전 대기 | 즉시, 1초, 2초, 4초, 8초 |
-| 시도당 제한 시간 | 2.5초 (연결 포함) `[제안]` |
+| 시도당 제한 시간 | 2.5초 (연결 포함) |
 | 재시도하는 경우 | 연결 실패, 시도 제한 시간 초과, 502·503·504 |
-| 재시도하지 않는 경우 | RESERVED·REJECTED·RELEASED 응답, 400·401·403·409 |
+| 재시도하지 않는 경우 | RESERVED·REJECTED·RELEASED 응답, 400·401·403·409·500 |
 
 모든 시도가 시간 초과일 때의 최악 시간표다. 시도당 2.5초는 이 표가 정확히 30초에 끝나도록 정한 값이다.
 
@@ -127,7 +127,7 @@ sequenceDiagram
 
 ### 서킷 브레이커 (OQ-009)
 
-재고 서비스가 오래 멈추면 주문마다 요청 스레드를 최대 30초 잡게 된다. 이를 막으려고 재고 호출에 서킷 브레이커를 둔다. 값은 `[제안]`이며 TC-013과 TC-105로 조정한다.
+재고 서비스가 오래 멈추면 주문마다 요청 스레드를 최대 30초 잡게 된다. 이를 막으려고 재고 호출에 서킷 브레이커를 둔다. 값은 2026-10-05에 정했다. 값을 바꿔야 하면 근거를 들어 사용자에게 묻는다.
 
 | 항목 | 값 |
 |---|---|
@@ -147,11 +147,11 @@ sequenceDiagram
 
 | 구분 | 메서드와 경로 | 호출 | 입력 | 출력 | 특성 |
 |---|---|---|---|---|---|
-| 외부 | `POST /orders` | 고객 → 주문 | 헤더: JWT, `Idempotency-Key`(필수, OQ-008). 본문: 주문 항목 목록(상품, 수량) | 주문 번호, 상태, 사유(재고 부족이면 부족한 상품 목록) | 거절·실패여도 주문 번호를 돌려준다 |
+| 외부 | `POST /orders` | 고객 → 주문 | 헤더: JWT, `Idempotency-Key`(필수, OQ-008). 본문: 주문 항목 목록(상품, 수량) | 주문 번호, 상태, 사유(재고 부족이면 부족한 상품 목록, 상품 없음이면 없는 상품 목록) | 거절·실패여도 주문 번호를 돌려준다 |
 | 외부 | `GET /orders` | 고객 → 주문 | JWT | 자기 주문 목록 | UC-002 |
 | 외부 | `GET /orders/{orderNo}` | 고객 → 주문 | JWT | 자기 주문 하나. 남의 주문이면 404 | BR-101 |
 | 외부 | `GET /admin/orders?status=&releaseStatus=` | 관리자 → 주문 | JWT(`ADMIN`) | 조건에 맞는 모든 주문 | UC-002 |
-| 내부 | `PUT /reservations/{orderNo}` | 주문 → 재고 | 주문 항목 목록(상품, 수량) | 상태(RESERVED/REJECTED/RELEASED), 사유, 부족한 상품 목록 | 멱등. 전부 예약되거나 전부 안 된다. 같은 번호에 다른 항목이면 409 |
+| 내부 | `PUT /reservations/{orderNo}` | 주문 → 재고 | 주문 항목 목록(상품, 수량) | 상태(RESERVED/REJECTED/RELEASED), 사유, 부족한 상품 목록, 없는 상품 목록 | 멱등. 전부 예약되거나 전부 안 된다. 같은 번호에 다른 항목이면 409 |
 | 내부 | `DELETE /reservations/{orderNo}` | 주문 → 재고 | — | 상태 | 멱등. 예약이 없으면 해제 표식을 남긴다 |
 
 - 예약을 `PUT /reservations/{주문 번호}`로 둔 것은 "이 번호의 예약을 이 내용으로 만든다"는 뜻이 HTTP에서도 멱등이기 때문이다.
@@ -168,14 +168,14 @@ sequenceDiagram
 | inventory-db (INVENTORY_SVC) | RESERVATION_ITEMS | ORDER_NO, PRODUCT_ID, QUANTITY | PK(ORDER_NO, PRODUCT_ID), FK(ORDER_NO) |
 
 - RELEASE_STATUS: 비어 있음(해제 요청 전) / 해제 불필요 / 해제 완료 / 해제 실패
-- REQUEST_HASH: 상품 ID 순으로 정렬한 항목 목록의 해시. 같은 주문 번호의 재요청이 같은 내용인지 비교할 때 쓴다. `[제안]`
+- REQUEST_HASH: 상품 ID 순으로 정렬한 항목 목록의 해시. 같은 주문 번호의 재요청이 같은 내용인지 비교할 때 쓴다. plan에서 다른 비교 방법(예: RESERVATION_ITEMS를 직접 비교)으로 바꿀 수 있다.
 - PK(ORDER_NO, PRODUCT_ID)가 "같은 상품은 한 줄"(BR-009)을 DB에서도 보장한다.
 
 **예약 처리 (재고 DB, 한 트랜잭션)**
 
 1. RESERVATIONS에서 주문 번호를 찾는다. 있으면 REQUEST_HASH를 비교해 다르면 409, 같으면 저장된 결과를 돌려준다.
-2. 없으면 항목의 재고 행을 **상품 ID 순서로 하나씩** `SELECT QUANTITY FROM STOCK WHERE PRODUCT_ID = :상품 FOR UPDATE`로 잠그고 읽는다. 행이 없거나 수량이 모자란 상품은 부족한 상품 목록에 모은다.
-3. 부족한 상품이 하나라도 있으면 아무 수량도 바꾸지 않고 결과를 REJECTED로 정한다. 없으면 항목마다 수량을 줄이고 결과를 RESERVED로 정한다.
+2. 없으면 항목의 재고 행을 **상품 ID 순서로 하나씩** `SELECT QUANTITY FROM STOCK WHERE PRODUCT_ID = :상품 FOR UPDATE`로 잠그고 읽는다. 행이 없는 상품은 없는 상품 목록에, 수량이 모자란 상품은 부족한 상품 목록에 모은다.
+3. 없는 상품이나 부족한 상품이 하나라도 있으면 아무 수량도 바꾸지 않고 결과를 REJECTED로 정한다. 없으면 항목마다 수량을 줄이고 결과를 RESERVED로 정한다.
 4. RESERVATIONS와 RESERVATION_ITEMS에 결과를 넣고 커밋한다. 같은 주문 번호가 동시에 들어와 고유 제약에 걸리면 전체를 롤백하고 1번부터 다시 한다.
 
 **해제 처리 (재고 DB, 한 트랜잭션)**
@@ -201,7 +201,8 @@ sequenceDiagram
 
 - 두 서비스 모두 Spring Boot Actuator의 health 엔드포인트로 readiness와 liveness에 답한다. (P§6-⑤)
 - readiness에는 DB 연결 같은 준비 상태를 넣는다. liveness에는 재고 서비스, DB, Keycloak 같은 외부 상태를 넣지 않는다. 외부 장애로 모든 Pod가 함께 재시작되는 것을 막기 위해서다. (STD-007)
-- 종료 신호를 받으면 새 요청을 받지 않고 처리 중인 요청을 끝낸 뒤 종료한다. 주문 요청은 최대 30초 걸리므로, 앱의 종료 대기 시간과 Pod의 `terminationGracePeriodSeconds`를 그보다 길게 잡는다(예: 35초, 45초). (STD-008) `[제안]`
+- 종료 신호를 받으면 새 요청을 받지 않고 처리 중인 요청을 끝낸 뒤 종료한다. (STD-008)
+- 주문 요청은 최대 30초 걸리므로, 앱의 종료 대기 시간은 35초, Pod의 `terminationGracePeriodSeconds`는 45초로 둔다. `preStop` 대기를 더하면 그 시간만큼 Pod 쪽 값을 늘린다.
 
 ## 9. 설정
 
@@ -210,7 +211,7 @@ sequenceDiagram
 
 ## 10. 관측성
 
-- 서비스 사이 호출에 추적 정보를 HTTP 헤더로 넘긴다. 형식은 OpenTelemetry 기본인 W3C Trace Context(`traceparent`)다. (P§7) `[제안]`
+- 서비스 사이 호출에 추적 정보를 HTTP 헤더로 넘긴다. 형식은 OpenTelemetry 기본인 W3C Trace Context(`traceparent`)다. (P§7)
 - 로그 한 줄마다 trace ID를 남긴다. 재시도도 몇 번째 시도인지 로그에 남긴다. (P§7)
 - **저장소와 화면**: `grafana/otel-lgtm` 컨테이너 하나를 compose에 둔다. 안에 OpenTelemetry Collector, Tempo(추적), Loki(로그), Prometheus(메트릭), Grafana(화면)가 들어 있는 개발용 이미지다. `[문헌]` 클러스터 밖에 있으므로 Pod나 클러스터를 지워도 로그와 추적이 남는다. (TC-108)
 - **보내는 방법**: 앱은 Spring Boot 4의 OpenTelemetry 지원으로 추적, 로그, 메트릭을 OTLP로 `lgtm:4318`에 보낸다. 로그를 OTLP로 보내려면 OpenTelemetry Logback appender를 `logback-spring.xml`에 따로 설정해야 한다(Spring Boot에 들어 있지 않다). `[문헌]` 로그는 표준 출력에도 계속 쓴다(`kubectl logs`용).

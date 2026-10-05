@@ -43,7 +43,7 @@
 
 - 브랜치 하나에 PR 하나를 만든다. PR 하나에는 한 가지 일만 담는다. 다른 일이 생기면 main에서 새 브랜치를 만든다.
 - 브랜치는 짧게 산다. 병합하면 GitHub가 자동으로 지운다(6-1절 "Automatically delete head branches").
-- 병합된 PR의 브랜치에는 다시 push하지 않는다. 병합 뒤에 더할 것이 생기면 최신 main에서 새 브랜치를 만든다. 지워진 브랜치에 push하면 같은 이름의 브랜치가 원격에 다시 생기고, 그 커밋은 main에 들어가지 않는다. `[제안]`
+- 병합된 PR의 브랜치에는 다시 push하지 않는다. 병합 뒤에 더할 것이 생기면 최신 main에서 새 브랜치를 만든다. 지워진 브랜치에 push하면 같은 이름의 브랜치가 원격에 다시 생기고, 그 커밋은 main에 들어가지 않는다. push하기 전에는 그 브랜치의 PR이 병합되지 않았는지 `gh pr list --state all`로 확인한다.
 - `/speckit-specify`를 돌리기 전에 브랜치를 만든다. spec-kit의 git 확장을 켜면 `/speckit-specify`가 브랜치를 대신 만든다. 지금은 꺼져 있다(`.specify/extensions.yml` 없음). 켤 때는 확장이 만드는 브랜치 이름이 이 규칙과 맞는지 먼저 확인한다.
 - spec-kit은 브랜치 이름으로 기능 폴더를 찾지 않는다. 환경변수 `SPECIFY_FEATURE_DIRECTORY`나 `.specify/feature.json` 파일로 찾는다(`.specify/scripts/python/common.py`의 `get_feature_paths` 함수). `.specify/feature.json`은 저장소에 올라가지 않는 파일이라(`.specify/.gitignore`) 브랜치를 바꿔도 따라 바뀌지 않는다. 다른 spec 브랜치로 옮기면 `SPECIFY_FEATURE_DIRECTORY`로 기능 폴더를 다시 지정한다.
 
