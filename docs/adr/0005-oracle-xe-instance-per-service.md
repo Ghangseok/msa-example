@@ -24,7 +24,7 @@
 
 3. **위치**: 클러스터 밖에서 docker compose로 띄운다(`infra/compose/`). Keycloak도 같은 compose에 둔다. 컨테이너는 `kind` Docker 네트워크에 붙여, Pod가 `order-db:1521`처럼 이름으로 찾게 한다.
 4. **데이터**: 컨테이너마다 이름 붙은 볼륨(`order-db-data`, `inventory-db-data`)에 둔다. kind 클러스터를 다시 만들어도 남는다.
-5. **이미지**: 로컬 실행과 Testcontainers에서 같은 이미지(gvenzl/oracle-xe 21 계열, faststart)를 쓴다. `[제안]`
+5. **이미지**: 로컬 실행과 Testcontainers에서 같은 이미지(gvenzl/oracle-xe 21 계열, faststart)를 쓴다. 정확한 태그는 plan에서 정한다.
 6. **메모리**: WSL 메모리를 14GB로 둔다. (references/docker-desktop.md 3-3절)
 
 ## 고려한 대안

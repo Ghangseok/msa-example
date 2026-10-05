@@ -19,7 +19,7 @@ ADR-0003에서 클러스터 입구를 Gateway API로 만들기로 했다. Gatewa
 - **Envoy Gateway**를 Helm으로 설치한다. 버전은 plan에서 최신 안정판을 확인해 정한다.
 - GatewayClass와 Gateway를 하나씩 두고, HTTPRoute로 `/orders`, `/admin/orders`를 `order` Service로 보낸다. 재고 서비스에는 경로를 두지 않는다. (OQ-001)
 - **HTTPRoute의 `timeouts.request`를 40초로 둔다.** Envoy의 기본 요청 제한 시간은 15초라서 그대로 두면 30초 걸리는 주문을 중간에 끊는다. `[문헌]`
-- **kind에서 밖으로 여는 방법**: Envoy 프록시의 Service를 NodePort로 바꾸고(EnvoyProxy 리소스), kind의 extraPortMappings로 호스트 80번 포트에 연결한다. Windows의 Docker Desktop에서는 LoadBalancer IP에 호스트가 바로 닿지 않을 수 있어서다. 다른 방법으로는 kind가 안내하는 cloud-provider-kind가 있다. `[제안]` plan에서 확인한다.
+- **kind에서 밖으로 여는 방법**: Envoy 프록시의 Service를 NodePort로 바꾸고(EnvoyProxy 리소스), kind의 extraPortMappings로 호스트 80번 포트에 연결한다. Windows의 Docker Desktop에서는 LoadBalancer IP에 호스트가 바로 닿지 않을 수 있어서다. 다른 방법으로는 kind가 안내하는 cloud-provider-kind가 있다. (2026-10-05 결정)
 - **표준 리소스를 먼저 쓴다.** Gateway, HTTPRoute 같은 Gateway API 표준 리소스로 할 수 있는 일은 표준으로 한다. Envoy Gateway만의 리소스(EnvoyProxy, SecurityPolicy, BackendTrafficPolicy 등)는 표준으로 안 될 때만 쓰고, 쓴 곳을 `infra/` 안에 모아 둔다. 다른 구현체로 옮길 때 고칠 곳을 줄이기 위해서다.
 
 ## 고려한 대안

@@ -79,7 +79,7 @@
 | 구성 요소 | 대략 | 근거 |
 |---|---|---|
 | kind 노드 3개 (control-plane 1 + worker 2) | 1.5~2GB | `[추론]` |
-| 주문·재고 Pod 4개 (Spring Boot) | 약 2GB (Pod당 0.5GB 한도) | `[제안]` |
+| 주문·재고 Pod 4개 (Spring Boot) | 약 2GB (Pod당 0.5GB로 가정) | 가정이다. 실제 한도는 plan에서 정한다 |
 | Oracle 21c XE 2개 (`order-db`, `inventory-db`) | 약 4GB | XE 하나당 상한 2GB `[문헌]` |
 | Keycloak (개발 모드) | 0.5~1GB | `[현장]` |
 | Gateway 컨트롤러, 로컬 레지스트리 | 약 0.5GB | `[추론]` |
@@ -95,7 +95,7 @@
 |---|---|---|
 | kind 클러스터 | `msa` (노드 컨테이너 `msa-control-plane`, `msa-worker`, `msa-worker2`) | `infra/kind/` |
 | Docker 네트워크 | `kind` (kind가 만든다) | — |
-| 로컬 이미지 레지스트리 | `kind-registry` (`localhost:5001`). `kind load` 대신 쓴다 `[제안]` | `infra/kind/` |
+| 로컬 이미지 레지스트리 | `kind-registry` (`localhost:5001`). `kind load` 대신 쓴다 | `infra/kind/` |
 | Oracle XE 컨테이너 + 데이터 볼륨 (서비스마다) | `order-db` + `order-db-data`, `inventory-db` + `inventory-db-data`, 나중에 `payment-db` | `infra/compose/` |
 | Keycloak 컨테이너 | `keycloak` | `infra/compose/` |
 | 관측 도구 컨테이너 | `lgtm` (`grafana/otel-lgtm`) | `infra/compose/` |
@@ -108,7 +108,7 @@
 
 | 포트 | 용도 |
 |---|---|
-| 80 | Gateway (kind의 extraPortMappings). `http://localhost/orders` `[제안]` |
+| 80 | Gateway (kind의 extraPortMappings). `http://localhost/orders` |
 | 1521 | `order-db` (주문 DB) |
 | 1522 | `inventory-db` (재고 DB). 컨테이너 안은 1521 |
 | 1523 | `payment-db` (결제 DB, 후속) |

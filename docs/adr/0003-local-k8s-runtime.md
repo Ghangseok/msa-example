@@ -14,7 +14,7 @@
 - **클러스터**: kind(Kubernetes IN Docker)로 로컬 쿠버네티스 클러스터를 만든다. (P§4-1)
 - **서비스 디스커버리**: 쿠버네티스 Service를 쓴다. Eureka 같은 별도 서버를 두지 않는다. (P§4-3)
 - **클러스터 입구**: Gateway API로 만든다. (P§5-1)
-- **설정**: ConfigMap과 Secret을 쓴다. 별도 설정 서버(Spring Cloud Config 등)를 두지 않는다. (P§6-⑥) `[제안]`
+- **설정**: ConfigMap과 Secret을 쓴다. 별도 설정 서버(Spring Cloud Config 등)를 두지 않는다. (P§6-⑥)
 
 ## 고려한 대안
 
@@ -33,7 +33,7 @@
 ## 아직 정할 것
 
 - ~~Gateway API 구현체~~ → Envoy Gateway ([ADR-0007](0007-envoy-gateway.md))
-- kind 노드 구성: 원문 예처럼 작업 노드 2개로 할지 (P§4-1)
+- ~~kind 노드 구성~~ → control-plane 1 + worker 2 (`docs/design/architecture.md` 11절, 2026-10-04)
 - ~~DB를 클러스터 안에 둘지 밖에 둘지~~ → 클러스터 밖 docker compose, 서비스마다 컨테이너 하나 ([ADR-0005](0005-oracle-xe-instance-per-service.md))
 
 ## 바꿀 때
