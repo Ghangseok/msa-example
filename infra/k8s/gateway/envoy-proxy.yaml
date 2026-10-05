@@ -1,0 +1,25 @@
+# Envoy Gateway만의 리소스(EnvoyProxy). 표준 Gateway API로는 프록시 Service의 종류와 포트를 정할 수 없어서 쓴다.
+#
+# - type NodePort: kind에서는 LoadBalancer IP에 호스트가 바로 닿지 않을 수 있다.
+#   그래서 NodePort 30080을 열고 kind의 extraPortMappings(infra/kind/cluster.yaml)로 호스트 80번에 연결한다.
+# - externalTrafficPolicy Cluster: Envoy Gateway의 기본값은 Local이다. Local이면 Envoy Pod가 없는 노드
+#   (호스트 80번이 연결된 control-plane)로 들어온 요청을 버린다. Cluster면 다른 노드의 Envoy Pod로 넘긴다.
+apiVersion: gateway.envoyproxy.io/v1alpha1
+kind: EnvoyProxy
+metadata:
+  name: nodeport-proxy
+  namespace: envoy-gateway-system
+spec:
+  provider:
+    type: Kubernetes
+    kubernetes:
+      envoyService:
+        type: NodePort
+        externalTrafficPolicy: Cluster
+        patch:
+          type: StrategicMerge
+          value:
+            spec:
+              ports:
+                - port: 80
+                  nodePort: 30080

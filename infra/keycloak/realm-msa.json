@@ -1,0 +1,68 @@
+{
+  "realm": "msa",
+  "enabled": true,
+  "roles": {
+    "realm": [
+      { "name": "CUSTOMER", "description": "고객" },
+      { "name": "ADMIN", "description": "관리자" }
+    ]
+  },
+  "clients": [
+    {
+      "clientId": "e2e-test",
+      "name": "E2E 테스트 전용",
+      "description": "사용자 이름과 비밀번호로 토큰을 받는 테스트 전용 클라이언트. 이 realm에서 이 방식은 이 클라이언트에만 켠다.",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "directAccessGrantsEnabled": true,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "serviceAccountsEnabled": false
+    },
+    {
+      "clientId": "admin-cli",
+      "name": "admin-cli",
+      "description": "Keycloak이 realm마다 만드는 기본 클라이언트. 기본값은 사용자 이름과 비밀번호 방식이 켜져 있어서 끈다.",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "directAccessGrantsEnabled": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "serviceAccountsEnabled": false
+    }
+  ],
+  "users": [
+    {
+      "username": "c1",
+      "enabled": true,
+      "email": "c1@example.com",
+      "emailVerified": true,
+      "firstName": "C1",
+      "lastName": "Customer",
+      "credentials": [{ "type": "password", "value": "${C1_PASSWORD}", "temporary": false }],
+      "realmRoles": ["CUSTOMER"]
+    },
+    {
+      "username": "c2",
+      "enabled": true,
+      "email": "c2@example.com",
+      "emailVerified": true,
+      "firstName": "C2",
+      "lastName": "Customer",
+      "credentials": [{ "type": "password", "value": "${C2_PASSWORD}", "temporary": false }],
+      "realmRoles": ["CUSTOMER"]
+    },
+    {
+      "username": "m1",
+      "enabled": true,
+      "email": "m1@example.com",
+      "emailVerified": true,
+      "firstName": "M1",
+      "lastName": "Admin",
+      "credentials": [{ "type": "password", "value": "${M1_PASSWORD}", "temporary": false }],
+      "realmRoles": ["ADMIN"]
+    }
+  ]
+}
