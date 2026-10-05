@@ -1,0 +1,25 @@
+# 클러스터 입구. GatewayClass와 Gateway를 하나씩 둔다.
+# 서비스로 가는 경로(HTTPRoute)는 서비스를 배포할 때 만든다. 경로가 없으면 Envoy는 모든 요청에 404로 답한다.
+apiVersion: gateway.networking.k8s.io/v1
+kind: GatewayClass
+metadata:
+  name: envoy-gateway
+spec:
+  controllerName: gateway.envoyproxy.io/gatewayclass-controller
+  parametersRef:
+    group: gateway.envoyproxy.io
+    kind: EnvoyProxy
+    name: nodeport-proxy
+    namespace: envoy-gateway-system
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: msa-gateway
+  namespace: default
+spec:
+  gatewayClassName: envoy-gateway
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80

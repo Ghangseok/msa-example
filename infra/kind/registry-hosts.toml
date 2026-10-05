@@ -1,0 +1,4 @@
+# 노드의 containerd가 localhost:5001 이미지를 kind-registry 컨테이너에서 받게 한다.
+# 노드 안에서 localhost는 노드 자신이라 호스트의 5001번에 닿지 않기 때문이다.
+# tools/infra-up.ps1이 노드마다 /etc/containerd/certs.d/localhost:5001/hosts.toml로 복사한다.
+[host."http://kind-registry:5000"]

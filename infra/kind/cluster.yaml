@@ -1,0 +1,22 @@
+# kind 클러스터 msa 설정. tools/infra-up.ps1이 이 파일로 클러스터를 만든다.
+#
+# 노드 이미지는 kind v0.33.0 릴리스 노트에 실린 v1.36.4로 고정한다.
+# kind v0.33.0의 기본 이미지(v1.37.0)는 Envoy Gateway v1.9가 지원하는 쿠버네티스(v1.33~v1.36) 밖이다.
+# 바꿀 때는 kind 릴리스 노트의 이미지와 digest를 그대로 옮긴다.
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: msa
+nodes:
+  - role: control-plane
+    image: kindest/node:v1.36.4@sha256:099e049362a1526b2db71494e1947aae99bd16290d7c895f2b7ea312e3cbfaed
+    extraPortMappings:
+      # Envoy 프록시 Service의 NodePort(infra/k8s/gateway/envoy-proxy.yaml)를 호스트 80번에 연결한다.
+      # 이 PC(127.0.0.1)에서만 받는다.
+      - containerPort: 30080
+        hostPort: 80
+        listenAddress: "127.0.0.1"
+        protocol: TCP
+  - role: worker
+    image: kindest/node:v1.36.4@sha256:099e049362a1526b2db71494e1947aae99bd16290d7c895f2b7ea312e3cbfaed
+  - role: worker
+    image: kindest/node:v1.36.4@sha256:099e049362a1526b2db71494e1947aae99bd16290d7c895f2b7ea312e3cbfaed
