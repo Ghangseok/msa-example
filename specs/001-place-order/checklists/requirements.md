@@ -3,6 +3,7 @@
 **Purpose**: plan으로 넘어가기 전에 spec이 완전하고 품질 기준을 지키는지 확인한다
 **Created**: 2026-10-05
 **Feature**: [spec.md](../spec.md)
+**기준일**: 2026-10-05. spec을 처음 만들 때의 점검이다. 그 뒤의 변화(테스트 케이스 24개, 아래 Notes 두 항목의 해결)는 반영하지 않았다.
 
 ## Content Quality
 
