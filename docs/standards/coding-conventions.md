@@ -1,6 +1,6 @@
 # 코딩 규약
 
-- 상태: **확정 (2026-10-04, 2026-10-05 기계 검사 절 추가)** — A안(전통 계층형 + MyBatis)
+- 상태: **확정 (2026-10-04, 2026-10-05 기계 검사 절 추가, 2026-10-07 기계 검사 두 행을 001 plan에 맞춤)** — A안(전통 계층형 + MyBatis)
 - 쓰는 곳: `/speckit-constitution`, 각 서비스의 `services/<svc>/CLAUDE.md`
 
 ## 1. 고른 안과 비교한 안
@@ -122,11 +122,11 @@ dto는 어디서나 쓸 수 있다
 |---|---|---|
 | Lombok을 쓰지 않는다 (3-5절) | Gradle 빌드: 어떤 configuration에든 `org.projectlombok` 그룹이 들어오면 빌드를 실패시킨다. 보조로 소스에서 `import lombok.`을 찾는다. ArchUnit으로는 잡지 못한다. Lombok 애너테이션은 컴파일하면 사라지는 `SOURCE` 보존이기 때문이다 | — |
 | 애너테이션 SQL을 쓰지 않는다 (3-2절) | ArchUnit: `@Select`, `@Insert`, `@Update`, `@Delete`, `@SelectProvider`, `@InsertProvider`, `@UpdateProvider`, `@DeleteProvider`를 쓰지 못하게 한다 | — |
-| `${}`와 `SELECT *`를 쓰지 않는다 (3-2절) | 테스트가 Mapper XML을 XML 파서로 읽고, 문장 요소(`select`, `insert`, `update`, `delete`, `sql`)의 글자를 검사한다. XML 주석은 빼고 본다. `${`는 허용 목록에 있는 것만 통과시킨다. `COUNT(*)`는 잡지 않는다 | — |
+| `${}`와 `SELECT *`를 쓰지 않는다 (3-2절) | Gradle 빌드 작업이 Mapper XML을 XML 파서로 읽고, 문장 요소(`select`, `insert`, `update`, `delete`, `sql`)의 글자를 검사한다. XML 주석은 빼고 본다. `${`는 허용 목록에 있는 것만 통과시킨다. `COUNT(*)`는 잡지 않는다 | — |
 | 19c 이후 SQL 기능을 쓰지 않는다 (3-3절) | Mapper XML과 Flyway SQL에서 금지 키워드를 찾는다: `IF NOT EXISTS`, `IF EXISTS`, `BOOLEAN`(열 타입), `JSON`(열 타입. `IS JSON` 조건은 제외), `SQL_MACRO`, `VECTOR`, `DOMAIN`, `ANNOTATIONS` | 흔한 단어로 쓰는 23ai 문법: `FROM` 없는 `SELECT`, `GROUP BY`의 별칭, `VALUES`로 여러 행 넣기, `UPDATE`의 조인. PR 리뷰로 본다 |
 | 원격 호출을 DB 트랜잭션 안에서 하지 않는다 (3-1절) | ArchUnit: `@Transactional`이 붙은 메서드와 클래스는 `client` 패키지의 클래스를 직접 부르지 않는다 | 다른 빈을 거쳐 부르는 경우 |
 | 검사를 끄는 표시를 사용자 승인 없이 넣지 않는다 (저장소 루트 `CLAUDE.md` 7절) | 소스 글자 검사: `src/**/*.java`와 `build.gradle`에서 `@Disabled`, `@DisabledIf`, `@EnabledIf`, `Assumptions.assume`, `@SuppressWarnings`, `@SuppressFBWarnings`, `NOPMD`, `spotless:off`, `@formatter:off`, `FreezingArchRule`, 테스트 작업의 `exclude`를 찾는다. 허용 목록(파일 경로, 표시, 이유, 승인한 PR 번호)에 없으면 실패한다. 허용 목록이 바뀌면 PR에서 사용자가 승인한다 | 명령줄에서 테스트를 건너뛰는 것(`-x test`). CI 필수 검사가 생기면 막는다 |
-| 인수 시나리오 테스트에 테스트 케이스 ID를 남긴다 (`docs/standards/testing.md` 3절) | `docs/test-cases/*.md`의 테스트 케이스 제목마다, `@DisplayName`이 그 ID로 시작하는 테스트가 하나 이상 있는지 검사한다. 운영 테스트(`TC-1NN`)는 E2E 목록으로 따로 낸다 | — |
+| 인수 시나리오 테스트에 테스트 케이스 ID를 남긴다 (`docs/standards/testing.md` 3절) | Gradle 빌드 작업이 두 가지를 본다. 첫째, `docs/test-cases/order-placement.md`의 모든 테스트 케이스 ID가 테스트 케이스 단계 표(`config/quality/test-case-stages.csv`)에 있는가. 둘째, 단계가 지금 단계(`gradle.properties`의 `msa.stage`) 이하인 줄마다 그 서비스의 테스트 소스에 `@DisplayName`이 그 ID로 시작하는 테스트가 하나 이상 있는가. 티켓 002로 넘긴 부분은 단계를 `T002`로 적어 검사하지 않는다. 운영 테스트(`docs/test-cases/operations.md`)는 대상에서 뺀다 | — |
 | 일반 버그 패턴 | SpotBugs(Gradle 플러그인). 오탐을 끄는 `@SuppressFBWarnings`는 위 허용 목록 대상이다 | — |
 
 ## 용어

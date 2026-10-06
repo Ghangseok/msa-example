@@ -1,6 +1,6 @@
 # 테스트 전략
 
-- 상태: **확정 (2026-10-04)** — B안(서비스 통합 중심 + 계약 + kind E2E)
+- 상태: **확정 (2026-10-04, 2026-10-07 단위·계약 행의 도구를 001 plan에 맞춤)** — B안(서비스 통합 중심 + 계약 + kind E2E)
 - 쓰는 곳: `/speckit-constitution`(테스트 원칙), `/speckit-tasks`(테스트 작업 순서)
 
 ## 1. 세 가지 안
@@ -21,10 +21,10 @@
 
 | 층 | 대상 | 도구 | 위치 | 실행 시점 |
 |---|---|---|---|---|
-| 단위 | `domain` 패키지의 업무 규칙(주문 상태 전이, 항목 검사, 멱등 판단), 재시도 일정 계산 | JUnit 5, AssertJ (Spring 없이) | `services/<svc>/src/test` | 매 빌드 |
+| 단위 | `domain` 패키지의 업무 규칙(주문 상태 전이, 항목 검사, 멱등 판단), 재시도 일정 계산 | JUnit Jupiter 6, AssertJ (Spring 없이) | `services/<svc>/src/test` | 매 빌드 |
 | Mapper | MyBatis SQL이 실제 Oracle에서 맞게 도는지. 잠금, 조건부 갱신, 1:N 매핑, 19c 호환 SQL | `@MybatisTest` + Testcontainers(Oracle 21c XE) | `services/<svc>/src/test` | 매 빌드 |
 | 서비스 통합 | API → service → DB 전 구간. 멱등, 동시 예약, 교착, 재시도, 제한 시간, 서킷 브레이커, 인증 | `@SpringBootTest`, Testcontainers(Oracle 21c XE), WireMock, Spring Security Test | `services/<svc>/src/test` | 매 빌드 |
-| 계약 | 재고 API가 `contracts/`의 OpenAPI를 지키는지(제공자), 주문이 쓰는 WireMock 응답이 같은 OpenAPI를 따르는지(소비자) | OpenAPI 검증 라이브러리 (plan에서 확정) | 각 서비스 | 매 빌드 |
+| 계약 | 재고 API가 `contracts/`의 OpenAPI를 지키는지(제공자), 주문이 쓰는 WireMock 응답이 같은 OpenAPI를 따르는지(소비자) | swagger-request-validator-core 2.46.1. 요청과 응답을 검증기 형식으로 옮기는 작은 도우미를 서비스마다 둔다 (001 plan, `specs/001-place-order/research.md` 결정 12) | 각 서비스 | 매 빌드 |
 | 아키텍처 | 계층 의존 규칙(controller → service → mapper·client·domain, domain은 Spring·MyBatis를 모름), 그리고 `coding-conventions.md` 3-8절의 기계 검사 | ArchUnit, 소스·XML 글자 검사, Gradle 의존성 검사 | 각 서비스 | 매 빌드 |
 | 정적 분석 | 일반 버그 패턴 | SpotBugs | 각 서비스 | 매 빌드 |
 | E2E·운영 | Gateway → 주문 → 재고 전체 흐름, TC-101~109 | kind, Keycloak 토큰, 부하 도구(plan에서 확정) | `tests/e2e/` | 수동 또는 별도 작업 |
@@ -68,7 +68,7 @@
 - **ArchUnit**: 패키지와 클래스 사이의 의존 규칙을 테스트 코드로 검사하는 라이브러리다. 계층 규칙과 일부 기계 검사를 이것으로 한다.
 - **SpotBugs**: 컴파일된 클래스 파일을 읽어 흔한 버그 패턴을 찾는 정적 분석 도구다. 매 빌드에서 Gradle 플러그인으로 돌린다.
 - **TDD (test-driven development)**: 실패하는 테스트를 먼저 쓰고, 그 테스트를 통과시키는 코드를 나중에 쓰는 개발 방식이다. 도메인 단위 테스트에 권장한다.
-- **`@DisplayName`**: JUnit 5에서 테스트에 사람이 읽을 이름을 붙이는 애너테이션이다. 인수 시나리오 테스트는 이 이름을 테스트 케이스 번호로 시작한다.
+- **`@DisplayName`**: JUnit Jupiter에서 테스트에 사람이 읽을 이름을 붙이는 애너테이션이다. 인수 시나리오 테스트는 이 이름을 테스트 케이스 번호로 시작한다.
 - **커버리지 (coverage)**: 테스트가 실행한 코드의 비율이다. 이 프로젝트는 수치 목표를 두지 않고, 모든 테스트 케이스와 업무 규칙이 테스트와 연결됐는지로 판단한다.
 - **허용 목록 (allowlist)**: 규칙의 예외로 승인한 것만 적어 둔 파일이다. 이 저장소에서는 검사를 끄는 표시와 `${}` 예외를 적고, 사용자가 PR에서 승인한다.
 - **응답 유실 (lost response)**: 상대 서비스는 요청을 처리했는데 응답이 돌아오지 못하고 사라지는 일이다. 이때 다시 보낸 요청이 두 번 처리되지 않게 멱등성으로 막는다.

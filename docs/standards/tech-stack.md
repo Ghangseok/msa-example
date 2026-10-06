@@ -1,6 +1,6 @@
 # 기술 스택
 
-- 상태: **확정 (2026-10-04, 2026-10-05 정적 분석 행 추가, 2026-10-05 로컬 실행 인프라 버전 절 추가)**
+- 상태: **확정 (2026-10-04, 2026-10-05 정적 분석 행 추가, 2026-10-05 로컬 실행 인프라 버전 절 추가, 2026-10-07 001 plan의 결정 반영)**
 - 쓰는 곳: `/speckit-constitution`, `/speckit-plan`의 Technical Context
 
 | 항목 | 선택 | 근거 |
@@ -10,17 +10,17 @@
 | 빌드 | Gradle wrapper, Groovy DSL, 루트 `settings.gradle`로 묶은 멀티 프로젝트 | ADR-0001 |
 | DB | Oracle Database **21c XE**, 서비스마다 컨테이너 하나 | 사용자는 19 버전을 원했지만 19c에는 XE가 없다 `[문헌]`. 가장 가까운 XE인 21c를 쓰고, SQL은 19c에서도 돌아가는 것만 쓴다. 배치는 [ADR-0005](../adr/0005-oracle-xe-instance-per-service.md) |
 | DB 형상 관리 | Flyway (Oracle용 모듈 포함) | 스키마와 초기 데이터를 코드로 관리한다 |
-| 영속성 | **MyBatis** (mybatis-spring-boot-starter 4.0.x, Spring Boot 4용) | [coding-conventions.md](coding-conventions.md) A안. 4.0 계열이 Spring Boot 4와 Java 17 이상을 지원한다 `[문헌]`. 정확한 패치 버전은 plan에서 정한다 |
+| 영속성 | **MyBatis** (mybatis-spring-boot-starter **4.1.0**, Spring Boot 4.1용. MyBatis 3.5.19, MyBatis-Spring 4.1.0) | [coding-conventions.md](coding-conventions.md) A안. 4.1.0은 Spring Boot 4.1을 대상으로 나왔고, 4.0.x는 Spring Boot 4.0 대상이다. 2026-10-05 001 plan에서 정했다(`specs/001-place-order/research.md` 결정 9) |
 | 인증 | Keycloak(OIDC) + Spring Security OAuth2 Resource Server(JWT) | [ADR-0006](../adr/0006-keycloak-jwt-auth.md) |
 | Gateway | Envoy Gateway (Gateway API 구현체) | [ADR-0007](../adr/0007-envoy-gateway.md) |
-| 서비스 간 HTTP | Spring `RestClient` 또는 HTTP Interface(`@HttpExchange`) | plan에서 하나로 정한다 |
-| 재시도 | Spring Framework 7 내장 재시도(`@Retryable` / `RetryTemplate`) | 별도 라이브러리 없이 지수 백오프를 쓸 수 있다 `[문헌]`. 서킷 브레이커와 순서를 맞추기 쉽도록 같은 라이브러리(Resilience4j)의 재시도를 쓰는 안과 plan에서 비교한다 |
-| 서킷 브레이커 | Resilience4j (Spring Cloud Circuit Breaker 경유 또는 직접) | Spring Framework 7에는 서킷 브레이커가 없다. Spring Boot 4.1과 호환되는 버전은 plan에서 확인한다 (OQ-009, STD-019) |
+| 서비스 간 HTTP | Spring `RestClient` | 2026-10-05 001 plan에서 정했다(`specs/001-place-order/research.md` 결정 6). 호출이 예약과 해제 두 개뿐이라 HTTP Interface의 인터페이스와 등록 설정을 더 두지 않는다 |
+| 재시도 | Resilience4j Retry **2.4.0** (`resilience4j-retry`) | 서킷 브레이커와 같은 라이브러리라 "재시도(서킷 브레이커(재고 호출))" 순서를 한곳에 적을 수 있다. 재시도를 포함한 전체 30초 한도는 Resilience4j에 없어서 직접 만든다. 2026-10-05 001 plan에서 Spring Framework 7 내장 재시도와 비교해 정했다(`specs/001-place-order/research.md` 결정 7) |
+| 서킷 브레이커 | Resilience4j **2.4.0** 핵심 모듈을 직접 쓴다(`resilience4j-circuitbreaker`). Spring Boot 자동 설정 모듈과 Spring Cloud Circuit Breaker는 쓰지 않는다 | Spring Framework 7에는 서킷 브레이커가 없다. 핵심 모듈은 Spring에 의존하지 않아 Spring Boot 버전과 묶이지 않는다. 2026-10-05 001 plan에서 정했다(`specs/001-place-order/research.md` 결정 8) (OQ-009, STD-019) |
 | 추적·로그·메트릭 | OpenTelemetry (Spring Boot 4의 OpenTelemetry 지원 + OpenTelemetry Logback appender), 저장소와 화면은 `grafana/otel-lgtm` | STD-012, STD-013, design 10절 |
 | 이미지 빌드 | Gradle bootJar + 공용 Dockerfile, 로컬 레지스트리(`localhost:5001`) | design 11절 |
 | 로컬 클러스터 | kind, control-plane 1 + worker 2 | design 11절 |
-| 테스트 | JUnit 5, AssertJ, Testcontainers(Oracle XE), WireMock, Spring Security Test, ArchUnit, mybatis-spring-boot-starter-test | [testing.md](testing.md) |
-| 정적 분석 | SpotBugs (Gradle 플러그인) | 2026-10-05 사용자 결정. Error Prone은 2.43.0부터 실행에 JDK 21이 필요해서 이 저장소의 JDK 17에 맞지 않는다 `[문헌]`. 정확한 버전과 끌 규칙은 plan에서 정한다. 검사 목록은 [coding-conventions.md](coding-conventions.md) 3-8절 |
+| 테스트 | JUnit Jupiter 6 (Spring Boot 4.1.1이 관리하는 6.0.3), AssertJ, Testcontainers(Oracle XE), WireMock, Spring Security Test, ArchUnit, mybatis-spring-boot-starter-test | [testing.md](testing.md). JUnit 버전은 Spring Boot가 관리하는 값을 쓴다(`specs/001-place-order/research.md` 0절) |
+| 정적 분석 | SpotBugs (Gradle 플러그인 **6.5.12**, SpotBugs **4.10.4**) | 2026-10-05 사용자 결정. Error Prone은 2.43.0부터 실행에 JDK 21이 필요해서 이 저장소의 JDK 17에 맞지 않는다 `[문헌]`. 버전과 끌 규칙은 2026-10-05 001 plan에서 정했다(`specs/001-place-order/research.md` 결정 10). 끄는 규칙은 `EI_EXPOSE_REP`, `EI_EXPOSE_REP2` 두 개이고, 이 목록을 바꾸려면 PR에서 사용자가 승인한다. 검사 목록은 [coding-conventions.md](coding-conventions.md) 3-8절 |
 | 로컬 실행 | Docker Desktop, kind, kubectl, Helm | ADR-0003, [references/docker-desktop.md](../references/docker-desktop.md) |
 | 형상 관리 | Git, GitHub Flow | [git-workflow.md](git-workflow.md) |
 

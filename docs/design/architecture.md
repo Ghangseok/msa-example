@@ -1,10 +1,10 @@
 # 아키텍처 설계 — 주문·재고 (현재 단계)
 
-- 상태: **확정 (2026-10-05)** (2026-10-04 초안, OQ-001~009, ADR-0005~0007 반영). 5절과 6절의 경로, 필드, 열 이름은 `/speckit-plan`이 확정할 때까지 제안으로 둔다
+- 상태: **확정 (2026-10-05)** (2026-10-04 초안, OQ-001~009, ADR-0005~0007 반영). 5절과 6절의 경로, 필드, 열 이름은 2026-10-07에 001 plan(`specs/001-place-order/`)에서 정한 이름으로 바꿨다
 - 출처: P = [마이크로서비스와 쿠버네티스 기초](../references/msa-k8s-primer.md)
 - 관련: [ADR-0003](../adr/0003-local-k8s-runtime.md), [ADR-0004](../adr/0004-sync-reservation-call.md), [ADR-0005](../adr/0005-oracle-xe-instance-per-service.md), [ADR-0006](../adr/0006-keycloak-jwt-auth.md), [ADR-0007](../adr/0007-envoy-gateway.md), [도메인 분석](../analysis/domain-analysis.md), [STD](../standards/architecture-rules.md), [기술 스택](../standards/tech-stack.md)
 
-서비스 사이 API의 정식 명세는 `contracts/`에 OpenAPI로 둔다. 이 문서 5절과 6절의 경로, 필드, 열 이름은 제안이고, `/speckit-plan`이 `specs/NNN/contracts/` 초안을 만들 때 입력으로 쓴다. `[제안]` 단, 테스트 케이스가 기대값으로 쓰는 HTTP 상태 코드는 `docs/test-cases/`에서 확정했다.
+서비스 사이 API의 정식 명세는 `contracts/`에 OpenAPI로 둔다. 재고 API는 001의 P1 단계 PR에서 `contracts/inventory-api.yaml`로 만든다. 이 문서 5절과 6절은 개념 수준의 요약이고, 필드와 열의 자세한 정의는 `contracts/`와 `specs/001-place-order/data-model.md`에 있다. 테스트 케이스가 기대값으로 쓰는 HTTP 상태 코드는 `docs/test-cases/`에서 확정했다.
 
 ## 1. 런타임 구성
 
@@ -147,36 +147,37 @@ sequenceDiagram
 
 | 구분 | 메서드와 경로 | 호출 | 입력 | 출력 | 특성 |
 |---|---|---|---|---|---|
-| 외부 | `POST /orders` | 고객 → 주문 | 헤더: JWT, `Idempotency-Key`(필수, OQ-008). 본문: 주문 항목 목록(상품, 수량) | 주문 번호, 상태, 사유(재고 부족이면 부족한 상품 목록, 상품 없음이면 없는 상품 목록) | 거절·실패여도 주문 번호를 돌려준다 |
+| 외부 | `POST /orders` | 고객 → 주문 | 헤더: JWT, `Idempotency-Key`(필수, OQ-008). 본문: 주문 항목 목록 `items`(상품 `productId`, 수량 `quantity`) | 주문 번호 `orderNo`, 상태 `status`, 사유 `reason`, 부족한 상품 목록 `shortageProductIds`, 없는 상품 목록 `missingProductIds` | 거절·실패여도 주문 번호를 돌려준다 |
 | 외부 | `GET /orders` | 고객 → 주문 | JWT | 자기 주문 목록 | UC-002 |
 | 외부 | `GET /orders/{orderNo}` | 고객 → 주문 | JWT | 자기 주문 하나. 남의 주문이면 404 | BR-101 |
 | 외부 | `GET /admin/orders?status=&releaseStatus=` | 관리자 → 주문 | JWT(`ADMIN`) | 조건에 맞는 모든 주문 | UC-002 |
-| 내부 | `PUT /reservations/{orderNo}` | 주문 → 재고 | 주문 항목 목록(상품, 수량) | 상태(RESERVED/REJECTED/RELEASED), 사유, 부족한 상품 목록, 없는 상품 목록 | 멱등. 전부 예약되거나 전부 안 된다. 같은 번호에 다른 항목이면 409 |
-| 내부 | `DELETE /reservations/{orderNo}` | 주문 → 재고 | — | 상태 | 멱등. 예약이 없으면 해제 표식을 남긴다 |
+| 내부 | `PUT /reservations/{orderNo}` | 주문 → 재고 | 주문 항목 목록 `items`(상품 `productId`, 수량 `quantity`) | `orderNo`, 상태 `status`(RESERVED/REJECTED/RELEASED), 사유 `reason`(OUT_OF_STOCK/PRODUCT_NOT_FOUND), `shortageProductIds`, `missingProductIds` | 멱등. 전부 예약되거나 전부 안 된다. 같은 번호에 다른 항목이면 409 |
+| 내부 | `DELETE /reservations/{orderNo}` | 주문 → 재고 | — | `orderNo`, 상태 `status`(RELEASED. 거절된 예약이면 REJECTED 그대로) | 멱등. 예약이 없으면 해제 표식을 남긴다 |
 
 - 예약을 `PUT /reservations/{주문 번호}`로 둔 것은 "이 번호의 예약을 이 내용으로 만든다"는 뜻이 HTTP에서도 멱등이기 때문이다.
-- HTTP 상태 코드와 오류 형식(RFC 9457 Problem Details)은 `/speckit-plan`에서 정해 `contracts/`에 적는다.
+- HTTP 상태 코드와 오류 형식은 2026-10-05 001 plan에서 정했다(`specs/001-place-order/research.md` 결정 13). 주문 생성은 새 주문이면 201, 같은 고객이 같은 키로 다시 보내면 200이다. 재고 API는 업무 결과면 처음이든 재요청이든 200, 같은 주문 번호에 다른 내용이면 409, 형식 오류면 400, 예상하지 못한 오류면 500이다. 오류 응답은 RFC 9457 Problem Details(`application/problem+json`)이고, `type`은 `urn:msa-example:problem:<코드>`, 확장 필드는 `code`와 `errors`다.
 
 ## 6. 데이터
 
 | DB (계정) | 테이블 | 열 | 제약 |
 |---|---|---|---|
 | order-db (ORDER_SVC) | ORDERS | ORDER_NO(시퀀스), CUSTOMER_ID(토큰 sub), REQUEST_KEY, STATUS, REASON, RELEASE_STATUS, CREATED_AT, UPDATED_AT | PK(ORDER_NO), UNIQUE(CUSTOMER_ID, REQUEST_KEY) |
-| order-db (ORDER_SVC) | ORDER_ITEMS | ORDER_NO, PRODUCT_ID, QUANTITY | PK(ORDER_NO, PRODUCT_ID), FK(ORDER_NO), CHECK(QUANTITY >= 1) |
+| order-db (ORDER_SVC) | ORDER_ITEMS | ORDER_NO, PRODUCT_ID, QUANTITY, REJECT_REASON | PK(ORDER_NO, PRODUCT_ID), FK(ORDER_NO), CHECK(QUANTITY BETWEEN 1 AND 99) |
 | inventory-db (INVENTORY_SVC) | STOCK | PRODUCT_ID, QUANTITY | PK(PRODUCT_ID), CHECK(QUANTITY >= 0) |
-| inventory-db (INVENTORY_SVC) | RESERVATIONS | ORDER_NO, REQUEST_HASH, STATUS, REASON, CREATED_AT, UPDATED_AT | PK(ORDER_NO) |
-| inventory-db (INVENTORY_SVC) | RESERVATION_ITEMS | ORDER_NO, PRODUCT_ID, QUANTITY | PK(ORDER_NO, PRODUCT_ID), FK(ORDER_NO) |
+| inventory-db (INVENTORY_SVC) | RESERVATIONS | ORDER_NO, STATUS, REASON, CREATED_AT, UPDATED_AT | PK(ORDER_NO) |
+| inventory-db (INVENTORY_SVC) | RESERVATION_ITEMS | ORDER_NO, PRODUCT_ID, QUANTITY, RESULT | PK(ORDER_NO, PRODUCT_ID), FK(ORDER_NO) |
 
-- RELEASE_STATUS: 비어 있음(해제 요청 전) / 해제 불필요 / 해제 완료 / 해제 실패
-- REQUEST_HASH: 상품 ID 순으로 정렬한 항목 목록의 해시. 같은 주문 번호의 재요청이 같은 내용인지 비교할 때 쓴다. plan에서 다른 비교 방법(예: RESERVATION_ITEMS를 직접 비교)으로 바꿀 수 있다.
+- RELEASE_STATUS: 비어 있음(해제 요청 전) / 해제 불필요(`NOT_REQUIRED`) / 해제 완료(`RELEASED`) / 해제 실패(`RELEASE_FAILED`)
+- 같은 주문 번호의 재요청이 같은 내용인지는 RESERVATION_ITEMS를 상품 ID 순으로 읽어, 들어온 항목을 같은 순서로 정렬한 것과 직접 비교한다. 해시 열은 두지 않는다(2026-10-05 001 plan, `specs/001-place-order/research.md` 결정 14).
+- REJECT_REASON(ORDER_ITEMS)과 RESULT(RESERVATION_ITEMS): 거절된 주문·예약에서 그 상품이 부족했으면 `OUT_OF_STOCK`, 없었으면 `PRODUCT_NOT_FOUND`이고, 그 밖에는 비어 있다. 같은 요청이 다시 와도 처음과 같은 부족한 상품 목록과 없는 상품 목록을 돌려주려고 둔다(001 plan, `specs/001-place-order/research.md` 4절).
 - PK(ORDER_NO, PRODUCT_ID)가 "같은 상품은 한 줄"(BR-009)을 DB에서도 보장한다.
 
 **예약 처리 (재고 DB, 한 트랜잭션)**
 
-1. RESERVATIONS에서 주문 번호를 찾는다. 있으면 REQUEST_HASH를 비교해 다르면 409, 같으면 저장된 결과를 돌려준다.
+1. RESERVATIONS에서 주문 번호를 찾는다. 있으면, 해제 표식(항목 없음)이면 RELEASED를 돌려준다. 항목이 있으면 RESERVATION_ITEMS를 상품 ID 순으로 읽어 들어온 항목과 비교해, 다르면 409, 같으면 저장된 결과를 돌려준다.
 2. 없으면 항목의 재고 행을 **상품 ID 순서로 하나씩** `SELECT QUANTITY FROM STOCK WHERE PRODUCT_ID = :상품 FOR UPDATE`로 잠그고 읽는다. 행이 없는 상품은 없는 상품 목록에, 수량이 모자란 상품은 부족한 상품 목록에 모은다.
 3. 없는 상품이나 부족한 상품이 하나라도 있으면 아무 수량도 바꾸지 않고 결과를 REJECTED로 정한다. 사유는 없는 상품이 하나라도 있으면 "상품 없음", 아니면 "재고 부족"이고, 두 목록은 모두 돌려준다(UC-001 A2, 2026-10-05 결정). 없으면 항목마다 수량을 줄이고 결과를 RESERVED로 정한다.
-4. RESERVATIONS와 RESERVATION_ITEMS에 결과를 넣고 커밋한다. 같은 주문 번호가 동시에 들어와 고유 제약에 걸리면 전체를 롤백하고 1번부터 다시 한다.
+4. RESERVATIONS와 RESERVATION_ITEMS(항목별 RESULT 포함)에 결과를 넣고 커밋한다. 같은 주문 번호가 동시에 들어와 고유 제약에 걸리면 전체를 롤백하고 1번부터 다시 한다.
 
 **해제 처리 (재고 DB, 한 트랜잭션)**
 
@@ -229,7 +230,7 @@ sequenceDiagram
 | 이미지 빌드 방식 | **정함**: 호스트에서 Gradle로 bootJar → 공용 Dockerfile(`infra/docker/spring-boot.Dockerfile`)로 이미지 → 로컬 레지스트리 `localhost:5001`에 push. Dockerfile은 JRE 17, root가 아닌 사용자, exec 형식 ENTRYPOINT(종료 신호가 Java에 바로 닿게, STD-008), 컨테이너 메모리에 맞춘 JVM 설정, Spring Boot 계층 추출을 쓴다 |
 | 로그·추적 저장소 | **정함**: `grafana/otel-lgtm` (10절) |
 | 프로젝트 폴더 원칙 | **정함**: 로컬 환경은 모두 이 저장소 안에서 정의하고 실행한다. 설정은 `infra/`(kind, compose, docker, k8s, keycloak), 실행 스크립트는 `tools/`(PowerShell). 외부 서비스는 쓰지 않는다 |
-| 서킷 브레이커 | **정함**: 재고 호출에 둔다 (4절). 구현 라이브러리는 plan에서 Spring Boot 4.1 호환 여부를 확인해 정한다 |
+| 서킷 브레이커 | **정함**: 재고 호출에 둔다 (4절). 구현은 Resilience4j 2.4.0 핵심 모듈을 직접 쓴다(2026-10-05 001 plan, `specs/001-place-order/research.md` 결정 8) |
 | 로컬 Docker 환경 | [references/docker-desktop.md](../references/docker-desktop.md) |
 
 ## 용어
