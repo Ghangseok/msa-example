@@ -84,7 +84,7 @@ description: "주문 생성(티켓 001)의 작업 목록. 단계(Phase)마다 PR
 - `@DisplayName`에 넣을 테스트 케이스 ID는 그 절 끝의 "이 절의 시나리오 원문"에서 가져온다. 그 블록의 인용 첫 줄에 ID와 spec 시나리오 번호가 함께 있다.
 - 항목 ID를 꼭 적어야 하는 곳은 테스트 케이스 단계 표의 내용(CSV)뿐이다. 그 표는 바로 아래 "이 표에 나온 항목"에서 펼친다. 형식은 저장소 루트 `CLAUDE.md` 2절을 따른다.
 - 아키텍처 규칙은 ID 대신 규칙 이름과 `docs/standards/architecture-rules.md`의 절로 가리킨다.
-- research.md 결정 2의 추가 테스트 케이스 아홉 개는 아직 번호가 없다. research.md와 plan.md처럼 ㉠, ㉡, ㉢, ㉣, ㉥, ㉦, ㉧, ㉨, ㉩로 부른다. ㉥부터 ㉨까지는 2026-10-06, ㉩는 2026-10-07 사용자 결정으로 더했다. ㉤는 research.md에서 테스트 케이스가 아닌 "P2 단계의 임시 동작"을 가리키므로 건너뛴다. 번호는 Phase 0의 docs PR에서 붙는다.
+- research.md 결정 2의 추가 테스트 케이스 아홉 개(㉠, ㉡, ㉢, ㉣, ㉥, ㉦, ㉧, ㉨, ㉩)는 PR #17로 테스트 케이스 문서에 들어갔고, spec에 시나리오로 들어갔다. 기호와 spec 시나리오 번호의 짝은 ㉠ 1.6, ㉡ 1.7, ㉥ 1.8, ㉩ 2.2, ㉦ 4.2, ㉧ 5.2, ㉨ 6.2, ㉢ 8.2, ㉣ 9.2다. 이 문서는 두 가지를 함께 쓴다. ㉤는 research.md에서 테스트 케이스가 아닌 "P2 단계의 임시 동작"을 가리키므로 건너뛴다.
 - `[제안]`은 사용자가 정하지 않았는데 Claude가 고른 것이다. 모두 맨 끝 "자동으로 고른 것" 절에 모았다. 사용자가 정해야 해서 하지 않은 일은 "사용자 확인 필요" 절에 모았다.
 
 ---
@@ -216,7 +216,7 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
   - `./gradlew build` 전에 `chmod +x ./gradlew` 단계를 둔다 `[제안]`. Windows에서 만든 파일은 Git에 실행 권한 없이 올라갈 수 있기 때문이다.
   - main 규칙에 필수 검사를 켜는 일은 사용자가 한다(research.md 결정 5).
 
-- [ ] T023 [P] 테스트 케이스 단계 표를 만든다. plan.md "인수 시나리오와 테스트 층" 표와 추가 케이스 표의 "테스트 케이스", "서비스", "단계" 칸을 줄마다 옮긴다. Phase 0의 0-A PR이 병합된 뒤에 한다. ㉠·㉡·㉢·㉣·㉥·㉦·㉧·㉨·㉩의 ID는 병합된 문서에서 가져온다 (config/quality/test-case-stages.csv)
+- [ ] T023 [P] 테스트 케이스 단계 표를 만든다. plan.md "인수 시나리오와 테스트 층" 표의 "테스트 케이스", "서비스", "단계" 칸을 줄마다 옮긴다. 추가 케이스 아홉 개의 번호는 PR #17로 테스트 케이스 문서에 들어간 번호다 (config/quality/test-case-stages.csv)
   - 서비스 칸의 값은 `inventory`(재고), `order`(주문)로 쓴다 `[제안]`. 서비스 프로젝트 이름(`inventory-service`)에서 `-service`를 뺀 값이다.
   - 티켓 002로 넘긴 부분은 research.md 결정 11(사용자 결정)대로 단계를 `T002`로 적은 줄로 넣는다. 해당하는 곳은 시나리오 3.1의 "C1이 조회할 수 있다"와 시나리오 4.1의 조회 부분이다. 테스트 케이스 ID 검사(T029)는 `T002` 줄을 검사하지 않는다.
   - 재고 쪽 줄은 모두 P1이다. 재고 쪽 인수 시나리오 테스트를 모두 Phase 1에서 구현보다 먼저 쓰기 때문이다(이 문서 머리의 "테스트는 필수다").
@@ -249,15 +249,15 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
     TC-004,order,P3
     TC-002,order,T002
     TC-010,order,T002
-    <㉠의 ID>,inventory,P1
-    <㉡의 ID>,inventory,P1
-    <㉥의 ID>,inventory,P1
-    <㉦의 ID>,order,P2
-    <㉧의 ID>,order,P2
-    <㉨의 ID>,order,P2
-    <㉩의 ID>,order,P2
-    <㉢의 ID>,order,P3
-    <㉣의 ID>,order,P3
+    TC-016,inventory,P1
+    TC-017,inventory,P1
+    TC-020,inventory,P1
+    TC-021,order,P2
+    TC-022,order,P2
+    TC-023,order,P2
+    TC-024,order,P2
+    TC-018,order,P3
+    TC-019,order,P3
     ```
 
 **이 표에 나온 항목** (위 T023의 단계 표)
@@ -402,6 +402,69 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 > - **Then** 시험 호출이 성공해 서킷이 닫히고, 새 주문이 "확정"된다
 > - 비고: 서비스 통합 테스트에서 WireMock으로 검증한다. 열림 시간 같은 값은 테스트에서 짧게 바꾼다.
 
+> **TC-016** · `docs/test-cases/order-placement.md` 절 "TC-016 거절된 예약에 해제 요청이 와도 재고는 그대로다"
+> - **Given** 상품 A의 재고가 2개다
+> - **And** 주문 번호 2001로 상품 A 3개 예약을 요청해 REJECTED를 받았다
+> - **When** 주문 번호 2001의 해제 요청이 온다
+> - **Then** 해제 요청은 REJECTED를 돌려준다
+> - **And** 상품 A의 재고는 2개다
+
+> **TC-017** · `docs/test-cases/order-placement.md` 절 "TC-017 해제한 예약의 기록은 남아 있어서, 같은 예약 요청이 다시 와도 재고가 줄지 않는다"
+> - **Given** 상품 A의 재고가 10개다
+> - **And** 주문 번호 2002로 상품 A 3개 예약이 처리됐고, 그 뒤 해제됐다
+> - **When** 주문 번호 2002, 상품 A, 3개로 예약을 다시 요청한다
+> - **Then** 재고 서비스는 RELEASED를 돌려준다
+> - **And** 상품 A의 재고는 10개다
+
+> **TC-020** · `docs/test-cases/order-placement.md` 절 "TC-020 예약된 재고에 해제가 두 번 와도 수량은 한 번만 돌아온다"
+> - **Given** 상품 A의 재고가 10개다
+> - **And** 주문 번호 2003으로 상품 A 3개 예약이 처리됐다
+> - **When** 주문 번호 2003의 해제 요청이 온다
+> - **Then** 해제 요청은 RELEASED를 돌려준다
+> - **And** 상품 A의 재고는 10개다
+> - **When** 같은 해제 요청이 한 번 더 온다
+> - **Then** 해제 요청은 RELEASED를 돌려준다
+> - **And** 상품 A의 재고는 여전히 10개다 (13개가 아니다)
+
+> **TC-021** · `docs/test-cases/order-placement.md` 절 "TC-021 서명이 틀리거나 만료된 토큰으로는 주문할 수 없다"
+> - **When** 서명이 틀린 토큰으로 주문한다
+> - **Then** 401을 받고 주문은 기록되지 않는다
+> - **When** 만료된 토큰으로 주문한다
+> - **Then** 401을 받고 주문은 기록되지 않는다
+
+> **TC-022** · `docs/test-cases/order-placement.md` 절 "TC-022 형식이 틀린 주문 항목은 기록되지 않는다"
+> - **When** 상품 ID가 빈 항목이 있는 주문, 수량이 정수가 아닌(1.5) 항목이 있는 주문을 각각 요청한다
+> - **Then** 두 경우 모두 400을 받는다
+> - **And** 주문은 기록되지 않고 재고 서비스에 요청이 가지 않는다
+
+> **TC-023** · `docs/test-cases/order-placement.md` 절 "TC-023 거부된 요청의 키는 남지 않고, 같은 키의 내용 비교는 항목 순서를 보지 않는다"
+> - **When** 고객이 요청 키 K4로 수량이 0인 항목이 있는 주문을 보내 400을 받고, 같은 키 K4로 상품 A 1개를 주문한다
+> - **Then** 주문 번호를 받고 그 주문이 기록된다
+> - **When** 고객이 요청 키 K5로 상품 A 1개와 상품 B 1개를 "A, B" 순서로 주문하고, 같은 키 K5로 "B, A" 순서로 같은 요청을 한 번 더 보낸다
+> - **Then** 두 응답의 주문 번호가 같다 (422가 아니다)
+> - **And** 주문은 하나만 기록된다
+
+> **TC-024** · `docs/test-cases/order-placement.md` 절 "TC-024 주문 서비스는 재고 서비스 호출에 추적 정보를 넘긴다"
+> - **Given** 재고 서비스가 예약 요청에 RESERVED를 돌려준다
+> - **When** 고객이 상품 A 1개를 주문한다
+> - **Then** 재고 서비스가 받은 예약 요청에 W3C `traceparent` 헤더가 있다
+
+> **TC-018** · `docs/test-cases/order-placement.md` 절 "TC-018 재시도하던 중에 서킷이 열리면 남은 재시도를 하지 않는다"
+> - **Given** 재고 서비스가 모든 예약 요청과 해제 요청에 503을 돌려준다
+> - **And** 고객 C1의 첫 주문이 예약 요청 6번을 모두 실패하고 "실패"로 끝났다
+> - **When** 고객 C1이 둘째 주문을 요청한다
+> - **Then** 둘째 주문의 예약 요청은 6번보다 적게 간다. 서킷이 열린 뒤에는 남은 재시도를 하지 않는다
+> - **And** 둘째 주문은 "실패"로 기록되고 고객은 "잠시 후 다시 시도"를 받는다
+> - 비고: 첫 주문의 해제 요청도 같은 서킷을 지나가므로, 둘째 주문의 요청이 정확히 몇 번인지는 해제가 언제 끼어드는지에 따라 달라진다. 그래서 "6번보다 적다"로 판정한다.
+
+> **TC-019** · `docs/test-cases/order-placement.md` 절 "TC-019 해제 요청도 일시 오류면 같은 정책으로 재시도한다"
+> - **Given** 재고 서비스가 예약 요청에 409를 돌려준다
+> - **And** 재고 서비스가 해제 요청의 처음 두 번에 503을 돌려주고, 세 번째부터 정상으로 처리한다
+> - **When** 고객이 상품 A를 3개 주문한다
+> - **Then** 고객은 주문 번호와 "잠시 후 다시 시도"를 받는다
+> - **And** 해제 요청은 정확히 3번 갔다. 두 번째는 첫 번째 응답을 받은 뒤 0.5초 안에, 세 번째는 두 번째 응답을 받은 뒤 0.8초 이상 1.5초 이하에 갔다
+> - **And** 주문에 "해제 완료"가 기록된다
+
 ### 기반 (기계 검사, 재고 서비스 뼈대, 스키마, 테스트 도우미)
 
 **⚠️ 이 절이 끝나기 전에는 User Story 1을 시작하지 않는다.**
@@ -527,9 +590,9 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 - [ ] T044 [P] [US1] 시나리오 1.3의 서비스 통합 테스트를 쓴다. 해제 먼저, 예약 나중, 같은 해제 두 번째를 차례로 보낸다. `@DisplayName`은 시나리오 1.3의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReleaseBeforeReserveIntegrationTest.java)
 - [ ] T045 [P] [US1] 시나리오 1.4의 서비스 통합 테스트를 쓴다. spec 시나리오 1.4가 "이 스토리에서 검증하는 줄"로 고른 네 줄(Given, When, Then 409, 재고는 변하지 않는다)만 검증한다. 주문 서비스 쪽 두 줄은 Phase 2의 T139가 검증한다. `@DisplayName`은 시나리오 1.4의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReservationConflictIntegrationTest.java)
 - [ ] T046 [P] [US1] 시나리오 1.5의 서비스 통합 테스트를 쓴다. 50건은 항목을 "B 1개, A 1개" 순서로, 50건은 "A 1개, B 1개" 순서로 적어 서로 다른 주문 번호 100개로 동시에 보낸다. `@DisplayName`은 시나리오 1.5의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReservationDeadlockIntegrationTest.java)
-- [ ] T047 [P] [US1] ㉠(거절된 예약에 해제 요청이 와도 재고는 그대로다)의 서비스 통합 테스트를 쓴다. Phase 0의 docs PR이 병합된 뒤에 한다. 기대값은 병합된 문서에서 가져온다. `@DisplayName`은 병합된 문서에서 ㉠에 붙은 ID로 시작한다. 스토리 라벨은 해제 동작이 User Story 1의 범위라서 `[US1]`로 붙였다 `[제안]` (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReleaseRejectedReservationIntegrationTest.java)
-- [ ] T048 [P] [US1] ㉡(해제한 예약의 기록은 남아, 같은 예약 요청이 다시 와도 재고가 줄지 않는다)의 서비스 통합 테스트를 쓴다. Phase 0의 docs PR이 병합된 뒤에 한다. 기대값은 병합된 문서에서 가져온다. `@DisplayName`은 병합된 문서에서 ㉡에 붙은 ID로 시작한다. 스토리 라벨은 `[US1]`이다 `[제안]` (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReserveAfterReleaseIntegrationTest.java)
-- [ ] T049 [P] [US1] ㉥(예약된 재고에 해제가 두 번 와도 수량은 한 번만 돌아온다)의 서비스 통합 테스트를 쓴다. Phase 0의 docs PR이 병합된 뒤에 한다. 기대값은 병합된 문서에서 가져온다. `@DisplayName`은 병합된 문서에서 ㉥에 붙은 ID로 시작한다. 스토리 라벨은 해제 동작이 User Story 1의 범위라서 `[US1]`이다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReleaseTwiceIntegrationTest.java `[제안]`)
+- [ ] T047 [P] [US1] 시나리오 1.6(㉠ 거절된 예약에 해제 요청이 와도 재고는 그대로다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. `@DisplayName`은 시나리오 1.6의 테스트 케이스 ID로 시작한다. 스토리 라벨은 해제 동작이 User Story 1의 범위라서 `[US1]`로 붙였다 `[제안]` (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReleaseRejectedReservationIntegrationTest.java)
+- [ ] T048 [P] [US1] 시나리오 1.7(㉡ 해제한 예약의 기록은 남아, 같은 예약 요청이 다시 와도 재고가 줄지 않는다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. `@DisplayName`은 시나리오 1.7의 테스트 케이스 ID로 시작한다. 스토리 라벨은 `[US1]`이다 `[제안]` (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReserveAfterReleaseIntegrationTest.java)
+- [ ] T049 [P] [US1] 시나리오 1.8(㉥ 예약된 재고에 해제가 두 번 와도 수량은 한 번만 돌아온다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. `@DisplayName`은 시나리오 1.8의 테스트 케이스 ID로 시작한다. 스토리 라벨은 해제 동작이 User Story 1의 범위라서 `[US1]`이다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReleaseTwiceIntegrationTest.java `[제안]`)
   - 근거: FR-009의 "해제 요청이 여러 번 와도 수량은 한 번만 되돌린다". 이 동작을 예약된 상태에서 보는 테스트 케이스가 없어 0-A에서 더한다(2026-10-06 사용자 결정).
 - [ ] T050 [P] [US9] 시나리오 9.1의 재고 쪽 서비스 통합 테스트를 쓴다. 상품 A 10개에서 주문 번호 하나로 A 3개를 예약하고, 같은 주문 번호로 해제한 뒤 재고를 읽는다. 기대값은 테스트 케이스의 "상품 A의 재고는 10개다"이고 `docs/test-cases/order-placement.md`에서 그대로 가져온다. `@DisplayName`은 시나리오 9.1의 테스트 케이스 ID로 시작한다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReleaseRestoresStockIntegrationTest.java)
   - 근거: research.md 결정 3, 테스트 케이스의 비고("재고 쪽(해제하면 수량이 복구된다)은 재고 서비스 테스트로 검증한다").
@@ -541,8 +604,8 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
   - 근거: plan.md 표의 "6.1의 재고 쪽" 줄("서로 다른 주문 번호의 예약 두 번 → 7개, 4개").
 - [ ] T055 [P] [US8] 시나리오 8.1의 재고 쪽 서비스 통합 테스트를 쓴다. 상품 A 10개에서 같은 주문 번호와 같은 내용(A 3개)의 예약 요청을 세 번 보내고 재고가 7개인지 검사한다. 세 번 보내는 이유는 주문 쪽(Phase 3)이 같은 요청을 세 번 보내기 때문이다 `[제안]`. `@DisplayName`은 시나리오 8.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/RetriedReservationStockIntegrationTest.java)
   - 근거: plan.md 표의 "8.1의 재고 쪽" 줄("같은 예약 요청 → 7개").
-- [ ] T056 [P] [US1] 제공자 계약 테스트를 쓴다. 예약 `PUT` 200(시나리오 1.1의 요청), 해제 `DELETE` 200(시나리오 1.3의 요청), 409 Problem Details(시나리오 1.4의 요청), `PRODUCT_NOT_FOUND` 거절 응답(시나리오 3.3의 재고 쪽 요청), ㉠의 해제 `DELETE` 200(REJECTED)을 보내고, 요청과 응답을 T040의 도우미로 `contracts/inventory-api.yaml`에 맞춰 검증한다. ㉠ 부분은 Phase 0의 docs PR이 병합된 뒤에 한다. 계약 테스트에는 테스트 케이스 ID를 붙이지 않는다 (services/inventory-service/src/test/java/com/example/msa/inventory/contract/ReservationProviderContractTest.java)
-  - 근거: plan.md "인수 시나리오와 테스트 층" 표의 "계약" 칸(제공자: 200 응답, `DELETE` 200, 409 Problem Details, 3.3의 재고 쪽 "제공자")과 추가 케이스 표(㉠: 서비스 통합, 제공자 계약), research.md 결정 12.
+- [ ] T056 [P] [US1] 제공자 계약 테스트를 쓴다. 예약 `PUT` 200(시나리오 1.1의 요청), 해제 `DELETE` 200(시나리오 1.3의 요청), 409 Problem Details(시나리오 1.4의 요청), `PRODUCT_NOT_FOUND` 거절 응답(시나리오 3.3의 재고 쪽 요청), 시나리오 1.6(㉠)의 해제 `DELETE` 200(REJECTED)을 보내고, 요청과 응답을 T040의 도우미로 `contracts/inventory-api.yaml`에 맞춰 검증한다. 계약 테스트에는 테스트 케이스 ID를 붙이지 않는다 (services/inventory-service/src/test/java/com/example/msa/inventory/contract/ReservationProviderContractTest.java)
+  - 근거: plan.md "인수 시나리오와 테스트 층" 표의 "계약" 칸(제공자: 200 응답, `DELETE` 200, 409 Problem Details, 3.3의 재고 쪽 "제공자")과 시나리오 1.6 줄(서비스 통합, 제공자 계약), research.md 결정 12.
 - [ ] T057 [US1] 위 테스트가 실패하는 것을 확인한다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReservationIdempotencyIntegrationTest.java)
   - 명령: `.\gradlew.bat :services:inventory-service:test --tests "com.example.msa.inventory.integration.*" --tests "com.example.msa.inventory.contract.*"`
   - 기대 결과: 종료 코드가 0이 아니다. 테스트 보고서(`services/inventory-service/build/reports/tests/test/index.html`)에서 위 "인수 시나리오 테스트" 묶음의 테스트가 모두 실패로 나오고, 실패 이유가 엔드포인트가 없어서 생긴 단언 실패(예: 기대 200, 실제 404)다. 하나라도 통과하면 멈추고 사용자에게 묻는다.
@@ -654,6 +717,30 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 > - **Then** 고객은 "확정"을 받는다
 > - **And** 예약 요청은 정확히 3번 갔다. 두 번째는 첫 번째 응답을 받은 뒤 0.5초 안에, 세 번째는 두 번째 응답을 받은 뒤 0.8초 이상 1.5초 이하에 갔다
 > - **And** 상품 A의 재고는 7개다
+
+> **TC-016** (spec 시나리오 1.6) · `docs/test-cases/order-placement.md` 절 "TC-016 거절된 예약에 해제 요청이 와도 재고는 그대로다"
+> - **Given** 상품 A의 재고가 2개다
+> - **And** 주문 번호 2001로 상품 A 3개 예약을 요청해 REJECTED를 받았다
+> - **When** 주문 번호 2001의 해제 요청이 온다
+> - **Then** 해제 요청은 REJECTED를 돌려준다
+> - **And** 상품 A의 재고는 2개다
+
+> **TC-017** (spec 시나리오 1.7) · `docs/test-cases/order-placement.md` 절 "TC-017 해제한 예약의 기록은 남아 있어서, 같은 예약 요청이 다시 와도 재고가 줄지 않는다"
+> - **Given** 상품 A의 재고가 10개다
+> - **And** 주문 번호 2002로 상품 A 3개 예약이 처리됐고, 그 뒤 해제됐다
+> - **When** 주문 번호 2002, 상품 A, 3개로 예약을 다시 요청한다
+> - **Then** 재고 서비스는 RELEASED를 돌려준다
+> - **And** 상품 A의 재고는 10개다
+
+> **TC-020** (spec 시나리오 1.8) · `docs/test-cases/order-placement.md` 절 "TC-020 예약된 재고에 해제가 두 번 와도 수량은 한 번만 돌아온다"
+> - **Given** 상품 A의 재고가 10개다
+> - **And** 주문 번호 2003으로 상품 A 3개 예약이 처리됐다
+> - **When** 주문 번호 2003의 해제 요청이 온다
+> - **Then** 해제 요청은 RELEASED를 돌려준다
+> - **And** 상품 A의 재고는 10개다
+> - **When** 같은 해제 요청이 한 번 더 온다
+> - **Then** 해제 요청은 RELEASED를 돌려준다
+> - **And** 상품 A의 재고는 여전히 10개다 (13개가 아니다)
 
 #### 구현 (받치는 테스트 → 구현 순서)
 
@@ -859,15 +946,15 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 #### 인수 시나리오 테스트 (구현보다 먼저)
 
 - [ ] T099 [P] [US2] 시나리오 2.1의 주문 쪽 서비스 통합 테스트를 쓴다. WireMock 예약 스텁이 RESERVED를 돌려줄 때, C1이 상품 A 3개와 상품 B 2개를 주문한다. 응답(주문 번호, `CONFIRMED`), 저장된 주문(C1의 `sub`, 두 항목, `CONFIRMED`), WireMock이 받은 예약 요청(1번, 같은 주문 번호, A 3개와 B 2개)을 검사한다. 변형(상품 하나만 담은 주문)은 메서드를 따로 둔다. `@DisplayName`은 시나리오 2.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/PlaceOrderConfirmedIntegrationTest.java)
-  - 응답 코드 201은 Phase 0의 T001이 테스트 케이스 문서의 공통 전제에 더한 뒤에만 단언한다. 문서에 없으면 단언하지 않는다. 헌법 "실제 조건에서 테스트 먼저" 원칙이 인수 테스트의 기대값을 확정된 `docs/test-cases/`에서만 가져오라고 하기 때문이다(2026-10-06 사용자 승인).
+  - 응답 코드 201은 테스트 케이스 문서의 공통 전제에 있다(PR #17). 헌법 "실제 조건에서 테스트 먼저" 원칙대로 그 문서에서 가져와 단언한다.
 - [ ] T100 [P] [US2] 소비자 계약 테스트에 RESERVED 스텁을 검사하는 메서드를 쓴다. 시나리오 2.1의 주문을 한 번 보내고, T094의 도우미로 스텁 응답과 받은 예약 요청을 검증한다. ID를 붙이지 않는다 (services/order-service/src/test/java/com/example/msa/order/contract/InventoryConsumerContractTest.java)
   - 근거: plan.md 표의 시나리오 2.1 "계약" 칸 "소비자: 요청과 스텁 응답".
 - [ ] T101 [P] [US4] 주문의 주인이 토큰의 고객인지 보는 서비스 통합 테스트를 쓴다. C1의 토큰으로 올바른 주문을 보내면서, 요청 본문에 계약에 없는 필드 `customerId`와 헤더 `X-Customer-Id`를 넣고 두 값을 C2의 `sub`로 채운다 `[제안]`. 저장된 주문의 고객이 C1의 `sub`인지 검사한다. 인수 시나리오 테스트가 아니므로 테스트 케이스 ID를 붙이지 않는다 (services/order-service/src/test/java/com/example/msa/order/integration/CustomerIdentityIntegrationTest.java `[제안]`)
   - 기대값은 유스케이스 6절 업무 규칙 "주문은 로그인한 고객 본인의 이름으로만 만든다"(`docs/requirements/uc-001-place-order.md`)다. research.md 결정 2(사용자 결정)의 표가 FR-014의 기대값을 이 규칙에서 가져온다고 적었다(2026-10-06 사용자 승인).
   - 이 동작은 User Story 2의 컨트롤러(T110)가 만든다. 그래서 테스트를 User Story 4 절이 아니라 이 절에 두어 구현보다 먼저 쓴다.
-- [ ] T102 [P] [US2] ㉩(주문 서비스는 재고 서비스 호출에 추적 정보를 넘긴다)의 서비스 통합 테스트를 쓴다. Phase 0의 docs PR이 병합된 뒤에 한다. 기대값은 병합된 문서에서 가져온다. WireMock이 받은 예약 요청에 W3C `traceparent` 헤더가 있는지 검사한다. `@DisplayName`은 병합된 문서에서 ㉩에 붙은 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/TracePropagationIntegrationTest.java `[제안]`)
+- [ ] T102 [P] [US2] 시나리오 2.2(㉩ 주문 서비스는 재고 서비스 호출에 추적 정보를 넘긴다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. WireMock이 받은 예약 요청에 W3C `traceparent` 헤더가 있는지 검사한다. `@DisplayName`은 시나리오 2.2의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/TracePropagationIntegrationTest.java `[제안]`)
   - 테스트 설정은 OTLP 내보내기만 끄고 추적 자체는 끄지 않는다(T089). 추적을 끄면 헤더도 붙지 않는다.
-  - 근거: 헌법 "관측 가능성" 원칙의 "서비스 사이 호출에 추적 정보를 넘긴다". 0-A에서 테스트 케이스로 더한다(2026-10-07 사용자 결정).
+  - 근거: spec FR-038, 헌법 "관측 가능성" 원칙의 "서비스 사이 호출에 추적 정보를 넘긴다". 0-A(PR #17)에서 테스트 케이스로 더했다(2026-10-07 사용자 결정).
 - [ ] T103 [US2] 위 테스트가 실패하는 것을 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/PlaceOrderConfirmedIntegrationTest.java)
   - 명령: `.\gradlew.bat :services:order-service:test --tests "com.example.msa.order.integration.PlaceOrderConfirmedIntegrationTest" --tests "com.example.msa.order.integration.CustomerIdentityIntegrationTest" --tests "com.example.msa.order.integration.TracePropagationIntegrationTest" --tests "com.example.msa.order.contract.*"`
   - 기대 결과: 종료 코드가 0이 아니고, 실패 이유가 주문 API가 없어서 생긴 단언 실패(예: 주문 API가 없어 404)다. 하나라도 통과하면 멈추고 사용자에게 묻는다.
@@ -881,6 +968,11 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 > - **And** 그 주문이 C1의 주문으로 두 항목과 함께 "확정" 상태로 기록되어 있다
 > - **And** 상품 A의 재고는 7개, 상품 B의 재고는 3개다
 > - 변형: 상품 하나만 담은 주문도 같은 방식으로 확정된다.
+
+> **TC-024** (spec 시나리오 2.2) · `docs/test-cases/order-placement.md` 절 "TC-024 주문 서비스는 재고 서비스 호출에 추적 정보를 넘긴다"
+> - **Given** 재고 서비스가 예약 요청에 RESERVED를 돌려준다
+> - **When** 고객이 상품 A 1개를 주문한다
+> - **Then** 재고 서비스가 받은 예약 요청에 W3C `traceparent` 헤더가 있다
 
 #### 구현
 
@@ -970,14 +1062,14 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 #### 인수 시나리오 테스트 (구현보다 먼저)
 
 - [ ] T121 [US4] 시나리오 4.1의 서비스 통합 테스트를 쓴다. spec 시나리오 4.1이 "이 스토리에서 검증하는 줄"로 고른 첫 When/Then만 검증한다. 토큰 없이 올바른 주문을 보내고 401, 주문 기록이 없음, WireMock이 요청을 받지 않았음을 검사한다. 조회 부분은 티켓 002에서 검증한다. `@DisplayName`은 시나리오 4.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/UnauthenticatedOrderIntegrationTest.java)
-  - 응답 본문이 Problem Details이고 `code`가 `UNAUTHORIZED`라는 단언은 Phase 0의 T001이 테스트 케이스 문서의 공통 전제에 이 줄을 더한 뒤에만 넣는다. 문서에 없으면 넣지 않는다. 헌법 "실제 조건에서 테스트 먼저" 원칙이 인수 테스트의 기대값을 확정된 `docs/test-cases/`에서만 가져오라고 하기 때문이다(2026-10-06 사용자 승인).
-- [ ] T122 [P] [US4] ㉦(서명이 틀리거나 만료된 토큰으로는 주문할 수 없다)의 서비스 통합 테스트를 쓴다. Phase 0의 docs PR이 병합된 뒤에 한다. 기대값은 병합된 문서에서 가져온다. `@DisplayName`은 병합된 문서에서 ㉦에 붙은 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/InvalidTokenIntegrationTest.java `[제안]`)
+  - 응답 본문이 Problem Details이고 `code`가 `UNAUTHORIZED`인지도 단언한다. 이 기대값은 테스트 케이스 문서의 공통 전제에 있다(PR #17).
+- [ ] T122 [P] [US4] 시나리오 4.2(㉦ 서명이 틀리거나 만료된 토큰으로는 주문할 수 없다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. `@DisplayName`은 시나리오 4.2의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/InvalidTokenIntegrationTest.java `[제안]`)
   - Spring Security Test의 `jwt()`는 토큰 검증을 건너뛰므로 이 테스트에는 쓰지 않는다. 테스트용 RSA 키 쌍으로 서명이 틀린 토큰과 만료된 토큰을 만들고, 이 테스트에서만 주문 서비스가 테스트용 공개 키로 토큰을 검증하게 설정한다 `[제안]`.
   - Spring Boot의 리소스 서버 자동 설정(T085의 의존성, T087의 설정)이 보안 설정(T124) 전에도 401을 돌려줄 수 있다. T123에서 이 테스트가 통과하면 멈추고 사용자에게 묻는다(이 문서 머리의 "테스트는 필수다").
   - 근거: spec Edge Cases의 받아들인 제안 9번. 0-A에서 테스트 케이스로 더한다(2026-10-06 사용자 결정).
 - [ ] T123 [US4] 위 테스트가 실패하는 것을 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/UnauthenticatedOrderIntegrationTest.java)
   - 명령: `.\gradlew.bat :services:order-service:test --tests "com.example.msa.order.integration.UnauthenticatedOrderIntegrationTest" --tests "com.example.msa.order.integration.InvalidTokenIntegrationTest"`
-  - 기대 결과: 종료 코드가 0이 아니다. Spring Boot 기본 보안 설정이 401을 돌려줄 수 있으므로, 실패 이유는 응답 본문이 Problem Details가 아니라는 단언 실패여야 한다. 테스트가 통과하면(예: 공통 전제에 Problem Details 줄이 들어가지 않아 그 단언이 없을 때) 다음 작업으로 넘어가지 않고 멈춰 사용자에게 묻는다.
+  - 기대 결과: 종료 코드가 0이 아니다. Spring Boot 기본 보안 설정이 401을 돌려줄 수 있으므로, 실패 이유는 응답 본문이 Problem Details가 아니라는 단언 실패여야 한다. 테스트가 통과하면 다음 작업으로 넘어가지 않고 멈춰 사용자에게 묻는다.
 
 **이 절의 시나리오 원문**
 
@@ -994,6 +1086,12 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 > - **Given** C1과 C2에게 각각 "실패" 주문이 있다
 > - **When** M1이 상태 "실패"로 관리자 조회를 한다
 > - **Then** C1과 C2의 실패 주문이 모두 재고 해제 결과와 함께 나온다
+
+> **TC-021** (spec 시나리오 4.2) · `docs/test-cases/order-placement.md` 절 "TC-021 서명이 틀리거나 만료된 토큰으로는 주문할 수 없다"
+> - **When** 서명이 틀린 토큰으로 주문한다
+> - **Then** 401을 받고 주문은 기록되지 않는다
+> - **When** 만료된 토큰으로 주문한다
+> - **Then** 401을 받고 주문은 기록되지 않는다
 
 #### 구현
 
@@ -1016,7 +1114,7 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 - [ ] T126 [P] [US5] 시나리오 5.1의 서비스 통합 테스트를 쓴다. 다섯 경우를 매개변수 테스트 하나로 돌린다 `[제안]`. 경우마다 400, 주문 기록 없음, WireMock이 요청을 받지 않았음을 검사한다. `@DisplayName`은 시나리오 5.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/InvalidOrderItemsIntegrationTest.java)
 - [ ] T127 [P] [US5] 주문 항목 검사의 단위 테스트를 쓴다. plan.md 표의 시나리오 5.1 "단위" 칸 "주문 항목 검사 다섯 경우"다. 테스트 케이스의 다섯 경우가 모두 검사 실패이고, 올바른 항목(A 3개, B 2개)은 통과하는지 검사한다. 이 테스트는 아직 없는 `OrderItems`를 참조하므로 컴파일 오류로 실패한다 (services/order-service/src/test/java/com/example/msa/order/domain/OrderItemsTest.java)
-- [ ] T128 [P] [US5] ㉧(형식이 틀린 주문 항목은 기록되지 않는다)의 서비스 통합 테스트를 쓴다. Phase 0의 docs PR이 병합된 뒤에 한다. 기대값은 병합된 문서에서 가져온다. 경우마다 400, 주문 기록 없음, WireMock이 요청을 받지 않았음을 검사한다. `@DisplayName`은 병합된 문서에서 ㉧에 붙은 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/MalformedOrderItemsIntegrationTest.java `[제안]`)
+- [ ] T128 [P] [US5] 시나리오 5.2(㉧ 형식이 틀린 주문 항목은 기록되지 않는다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. 경우마다 400, 주문 기록 없음, WireMock이 요청을 받지 않았음을 검사한다. `@DisplayName`은 시나리오 5.2의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/MalformedOrderItemsIntegrationTest.java `[제안]`)
   - 근거: spec Edge Cases의 받아들인 제안 11번. 0-A에서 테스트 케이스로 더한다(2026-10-06 사용자 결정).
 - [ ] T129 [US5] 위 테스트가 실패하는 것을 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/InvalidOrderItemsIntegrationTest.java)
   - T126과 T128을 먼저 확인한다. 두 테스트 모두 항목 검사가 없어 주문이 기록되므로 실패해야 한다. T127을 아직 쓰지 않은 상태에서 `.\gradlew.bat :services:order-service:test --tests "com.example.msa.order.integration.InvalidOrderItemsIntegrationTest"`를 돌리면 종료 코드가 0이 아니고, 검사가 없어 201이 나오거나 주문이 기록된 단언 실패가 보인다. 그다음 T127을 쓰고 `compileTestJava`가 실패하는 것을 본다.
@@ -1026,6 +1124,11 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 > **TC-014** (spec 시나리오 5.1) · `docs/test-cases/order-placement.md` 절 "TC-014 잘못된 주문 항목은 기록되지 않는다"
 > - **When** 항목이 하나도 없는 주문, 수량이 0인 항목이 있는 주문, 같은 상품이 두 줄에 나오는 주문, 항목이 21개인 주문, 수량이 100인 항목이 있는 주문을 각각 요청한다
 > - **Then** 다섯 경우 모두 400을 받는다
+> - **And** 주문은 기록되지 않고 재고 서비스에 요청이 가지 않는다
+
+> **TC-022** (spec 시나리오 5.2) · `docs/test-cases/order-placement.md` 절 "TC-022 형식이 틀린 주문 항목은 기록되지 않는다"
+> - **When** 상품 ID가 빈 항목이 있는 주문, 수량이 정수가 아닌(1.5) 항목이 있는 주문을 각각 요청한다
+> - **Then** 두 경우 모두 400을 받는다
 > - **And** 주문은 기록되지 않고 재고 서비스에 요청이 가지 않는다
 
 #### 구현
@@ -1055,9 +1158,9 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 #### 인수 시나리오 테스트 (구현보다 먼저)
 
 - [ ] T132 [P] [US6] 시나리오 6.1의 주문 쪽 서비스 통합 테스트를 쓴다. 테스트 케이스의 When 일곱 개를 모두 검증한다(plan.md 표). K1·K2·K3은 테스트에서 만든 UUID다. 재고 수량 기대값(7개, 4개)은 주문 쪽에서는 WireMock이 받은 예약 요청의 횟수와 주문 번호로 본다. 첫 요청이 처리 중인 경우(K3)는 WireMock 예약 스텁에 지연을 넣고 둘째 요청을 다른 스레드에서 보낸다. `@DisplayName`은 시나리오 6.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/IdempotencyKeyIntegrationTest.java)
-  - 응답 코드(같은 키의 재요청 200, 새 주문 201)는 Phase 0의 T001이 테스트 케이스 문서의 공통 전제에 더한 뒤에만 단언한다. 문서에 없으면 단언하지 않는다(T099와 같은 이유, 2026-10-06 사용자 승인).
+  - 응답 코드(같은 키의 재요청 200, 새 주문 201)도 단언한다. 이 기대값은 테스트 케이스 문서의 공통 전제에 있다(PR #17).
   - K3 스텁의 지연은 시도당 제한 시간(테스트 설정 500ms)보다 짧게 둔다 `[제안]`. 길면 첫 요청이 시간 초과로 "실패"가 되어, 이 테스트가 보려는 "처리중"과 관계없는 동작이 섞인다.
-- [ ] T133 [P] [US6] ㉨(거부된 요청의 키는 남지 않고, 같은 키의 내용 비교는 항목 순서를 보지 않는다)의 서비스 통합 테스트를 쓴다. Phase 0의 docs PR이 병합된 뒤에 한다. 기대값은 병합된 문서에서 가져온다. 두 경우를 메서드 두 개로 나눈다 `[제안]`. `@DisplayName`은 병합된 문서에서 ㉨에 붙은 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/IdempotencyKeyReuseIntegrationTest.java `[제안]`)
+- [ ] T133 [P] [US6] 시나리오 6.2(㉨ 거부된 요청의 키는 남지 않고, 같은 키의 내용 비교는 항목 순서를 보지 않는다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. 두 경우를 메서드 두 개로 나눈다 `[제안]`. `@DisplayName`은 시나리오 6.2의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/IdempotencyKeyReuseIntegrationTest.java `[제안]`)
   - 첫째 경우(400으로 거부된 요청의 키를 다시 쓴다)는 User Story 5의 항목 검사(T130)가 주문을 저장하기 전에 거부하므로, 이 절에 오기 전에 이미 통과할 수 있다. T134에서 통과하면 멈추고 사용자에게 묻는다.
   - 근거: spec Edge Cases의 받아들인 제안 7번과 8번. 0-A에서 테스트 케이스로 더한다(2026-10-06 사용자 결정).
 - [ ] T134 [US6] 위 테스트가 실패하는 것을 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/IdempotencyKeyIntegrationTest.java)
@@ -1083,6 +1186,13 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 > - **Then** 400을 받고 주문은 기록되지 않는다
 > - **When** 고객이 요청 키 K3로 상품 A 1개를 주문하고, 재고 서비스의 응답이 늦어 그 요청이 아직 처리 중일 때 같은 키 K3로 같은 요청을 한 번 더 보낸다
 > - **Then** 둘째 응답은 첫 요청과 같은 주문 번호와 "처리중"을 받는다
+> - **And** 주문은 하나만 기록된다
+
+> **TC-023** (spec 시나리오 6.2) · `docs/test-cases/order-placement.md` 절 "TC-023 거부된 요청의 키는 남지 않고, 같은 키의 내용 비교는 항목 순서를 보지 않는다"
+> - **When** 고객이 요청 키 K4로 수량이 0인 항목이 있는 주문을 보내 400을 받고, 같은 키 K4로 상품 A 1개를 주문한다
+> - **Then** 주문 번호를 받고 그 주문이 기록된다
+> - **When** 고객이 요청 키 K5로 상품 A 1개와 상품 B 1개를 "A, B" 순서로 주문하고, 같은 키 K5로 "B, A" 순서로 같은 요청을 한 번 더 보낸다
+> - **Then** 두 응답의 주문 번호가 같다 (422가 아니다)
 > - **And** 주문은 하나만 기록된다
 
 #### 구현
@@ -1176,7 +1286,7 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
   - 끝나면 `git diff`로 위반이 모두 되돌려졌는지 본다.
 - [ ] T152 추적 정보 전달과 설정을 확인한다 (services/order-service/src/main/java/com/example/msa/order/config/InventoryClientConfig.java)
   - 명령: `Get-ChildItem services/order-service/src/main/java -Recurse -Filter *.java | Select-String 'RestClient\.builder\('` → 0줄. `RestClient`를 Spring Boot가 주는 `RestClient.Builder`로만 만든다는 뜻이다(research.md 결정 6).
-  - 실제로 `traceparent` 헤더가 넘어가는지는 T102(㉩)이 검증한다. 여러 서비스의 로그를 추적 번호 하나로 찾는 요청 추적은 티켓 003의 운영 테스트에서 확인한다.
+  - 실제로 `traceparent` 헤더가 넘어가는지는 T102(㉩)가 검증한다. 여러 서비스의 로그를 추적 번호 하나로 찾는 요청 추적은 티켓 003의 운영 테스트에서 확인한다.
   - `Select-String -Path services/order-service/src/main/resources/application.yml -Pattern 'shutdown: graceful','timeout-per-shutdown-phase: 35s','probes','structured'` → 네 가지가 모두 나온다.
 - [ ] T153 이 단계의 기준을 확인한다. 이 단계 머리의 "끝났다고 보는 기준" 표에서 GitHub Actions를 뺀 네 줄을 차례로 실행한다 (gradle.properties)
   - 기대 결과: `msa.stage=P2` 한 줄, `.\gradlew.bat build` 종료 코드 0, 두 서비스의 테스트 종료 코드 0, 재고 서비스 파일이 바뀌지 않음. 실행한 명령과 종료 코드, 테스트 통과·실패 수를 보고에 적는다.
@@ -1233,8 +1343,8 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 #### 인수 시나리오 테스트 (구현보다 먼저)
 
 - [ ] T160 [P] [US8] 시나리오 8.1의 주문 쪽 서비스 통합 테스트를 쓴다. WireMock 시나리오 기능으로 예약 요청 첫 두 번에 503, 셋째부터 RESERVED를 돌려준다. 응답이 `CONFIRMED`인지, 예약 요청이 정확히 3번 갔는지, 세 요청의 주문 번호와 본문이 같은지, 간격이 맞는지 검사한다. 간격은 1/5 규칙으로 줄인 값이다 `[제안]`: 둘째는 첫째 응답 뒤 0.1초 안, 셋째는 둘째 응답 뒤 0.16초 이상 0.3초 이하. 응답을 받은 시각은 WireMock이 요청을 받은 시각으로 대신 잰다 `[제안]`. 503 스텁에는 지연이 없어 두 시각의 차이가 작기 때문이다. 재고 수량 기대값(7개)은 T055가 재고 쪽에서 본다. `@DisplayName`은 시나리오 8.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/TransientErrorRetryIntegrationTest.java)
-- [ ] T161 [P] [US8] ㉢(재시도하던 중에 서킷이 열리면 남은 재시도를 하지 않는다)의 서비스 통합 테스트를 쓴다. Phase 0의 docs PR이 병합된 뒤에 한다. 기대값은 병합된 문서에서 가져온다. 시간 값은 1/5 규칙을 따른다 `[제안]`. `@DisplayName`은 병합된 문서에서 ㉢에 붙은 ID로 시작한다. 스토리 라벨은 재시도 동작이라 `[US8]`로 붙였다 `[제안]` (services/order-service/src/test/java/com/example/msa/order/integration/CircuitOpensDuringRetryIntegrationTest.java)
-  - 근거: plan.md 추가 케이스 표(㉢: 주문, P3, 서비스 통합), FR-035.
+- [ ] T161 [P] [US8] 시나리오 8.2(㉢ 재시도하던 중에 서킷이 열리면 남은 재시도를 하지 않는다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. 시간 값은 1/5 규칙을 따른다 `[제안]`. `@DisplayName`은 시나리오 8.2의 테스트 케이스 ID로 시작한다. 스토리 라벨은 재시도 동작이라 `[US8]`로 붙였다 `[제안]` (services/order-service/src/test/java/com/example/msa/order/integration/CircuitOpensDuringRetryIntegrationTest.java)
+  - 근거: plan.md "인수 시나리오와 테스트 층" 표의 시나리오 8.2 줄, FR-035.
 - [ ] T162 [US8] 소비자 계약 테스트에 시나리오 8.1의 RESERVED 스텁과 받은 예약 요청 세 개를 검증하는 메서드를 더한다. 503 스텁의 응답은 검증하지 않는다(T094) (services/order-service/src/test/java/com/example/msa/order/contract/InventoryConsumerContractTest.java)
   - 근거: plan.md 표의 시나리오 8.1 "계약" 칸 "소비자".
 - [ ] T163 [P] [US8] 대기 일정의 단위 테스트를 쓴다. plan.md 표의 시나리오 8.1 "단위" 칸 "대기 일정(0·1·2·4·8초)"이다. 기본 설정으로 첫째부터 다섯째 재시도 전 대기가 0, 1000, 2000, 4000, 8000밀리초인지 검사한다. 기대값은 비기능 요구사항 문서(`docs/requirements/non-functional.md`)의 "장애 전파 차단" 목표값의 "재시도 최대 5회(즉시, 1, 2, 4, 8초 뒤)"다 (services/order-service/src/test/java/com/example/msa/order/client/RetryScheduleTest.java `[제안]`)
@@ -1252,6 +1362,14 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 > - **Then** 고객은 "확정"을 받는다
 > - **And** 예약 요청은 정확히 3번 갔다. 두 번째는 첫 번째 응답을 받은 뒤 0.5초 안에, 세 번째는 두 번째 응답을 받은 뒤 0.8초 이상 1.5초 이하에 갔다
 > - **And** 상품 A의 재고는 7개다
+
+> **TC-018** (spec 시나리오 8.2) · `docs/test-cases/order-placement.md` 절 "TC-018 재시도하던 중에 서킷이 열리면 남은 재시도를 하지 않는다"
+> - **Given** 재고 서비스가 모든 예약 요청과 해제 요청에 503을 돌려준다
+> - **And** 고객 C1의 첫 주문이 예약 요청 6번을 모두 실패하고 "실패"로 끝났다
+> - **When** 고객 C1이 둘째 주문을 요청한다
+> - **Then** 둘째 주문의 예약 요청은 6번보다 적게 간다. 서킷이 열린 뒤에는 남은 재시도를 하지 않는다
+> - **And** 둘째 주문은 "실패"로 기록되고 고객은 "잠시 후 다시 시도"를 받는다
+> - 비고: 첫 주문의 해제 요청도 같은 서킷을 지나가므로, 둘째 주문의 요청이 정확히 몇 번인지는 해제가 언제 끼어드는지에 따라 달라진다. 그래서 "6번보다 적다"로 판정한다.
 
 #### 구현
 
@@ -1284,8 +1402,8 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 - [ ] T169 [P] [US9] 시나리오 9.1의 주문 쪽 서비스 통합 테스트를 쓴다. WireMock 예약 스텁은 RESERVED를 600ms(3초를 1/5로 `[제안]`) 뒤에 돌려주고, 해제 스텁은 RELEASED를 바로 돌려준다. 응답이 6.2초 안에 오고 주문 번호와 `FAILED`·`RETRY_LATER`인지, 예약 요청이 정확히 6번 갔는지, 주문이 `FAILED`로 기록되는지, 고객 응답 뒤 5초 안에 해제 요청이 가고 `RELEASE_STATUS`가 `RELEASED`인지, 그동안 다른 스레드에서 부른 health 확인이 1초 안에 200인지 검사한다. "상품 A의 재고는 10개다"는 T050이 재고 쪽에서 검증했다. `@DisplayName`은 시나리오 9.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/OverallTimeLimitIntegrationTest.java)
   - 1/5로 줄이면 여섯째 시도가 5.5초에 시작해 6초에 끝나고, 응답 기한(6.2초)까지 여유가 0.2초다. CI에서 이 여유가 모자라 흔들리면 기대값이나 비율을 바꾸지 말고 멈춰 사용자에게 묻는다.
-- [ ] T170 [P] [US9] ㉣(해제 요청도 일시 오류면 같은 정책으로 재시도한다)의 서비스 통합 테스트를 쓴다. Phase 0의 docs PR이 병합된 뒤에 한다. 기대값은 병합된 문서에서 가져온다. 시간 값은 1/5 규칙을 따른다 `[제안]`. `@DisplayName`은 병합된 문서에서 ㉣에 붙은 ID로 시작한다. 스토리 라벨은 실패 주문의 해제라서 `[US9]`로 붙였다 `[제안]` (services/order-service/src/test/java/com/example/msa/order/integration/ReleaseRetryIntegrationTest.java)
-  - 근거: plan.md 추가 케이스 표(㉣: 주문, P3, 서비스 통합), FR-036.
+- [ ] T170 [P] [US9] 시나리오 9.2(㉣ 해제 요청도 일시 오류면 같은 정책으로 재시도한다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. 시간 값은 1/5 규칙을 따른다 `[제안]`. `@DisplayName`은 시나리오 9.2의 테스트 케이스 ID로 시작한다. 스토리 라벨은 실패 주문의 해제라서 `[US9]`로 붙였다 `[제안]` (services/order-service/src/test/java/com/example/msa/order/integration/ReleaseRetryIntegrationTest.java)
+  - 근거: plan.md "인수 시나리오와 테스트 층" 표의 시나리오 9.2 줄, FR-036.
 - [ ] T171 [US9] 소비자 계약 테스트에 시나리오 9.1의 지연된 RESERVED 스텁, 해제 스텁, 받은 예약·해제 요청을 검증하는 메서드를 더한다 (services/order-service/src/test/java/com/example/msa/order/contract/InventoryConsumerContractTest.java)
   - 근거: plan.md 표의 "9.1의 주문 쪽" 줄 "계약" 칸 "소비자".
 - [ ] T172 [P] [US9] 30초 한도 판단의 단위 테스트를 쓴다. plan.md 표의 "9.1의 주문 쪽" 줄 "단위" 칸 "30초 한도 판단"이다. 시작 시각과 지금 시각, 다음 대기를 넣어, 다음 시도가 30초가 되기 전에 시작하면 재시도를 허락하고 그렇지 않으면 막는지 검사한다. 또 남은 시간이 시도당 제한 시간보다 짧을 때 그 시도에 주는 제한 시간이 남은 시간인지 검사한다. 이 기대값의 근거는 같은 공통 전제의 "시도는 30초에 끊는다"다(2026-10-06 사용자 승인). 기대값의 근거는 테스트 케이스 문서 공통 전제 "30초가 되기 전이면, 남은 시간이 시도당 제한 시간(2.5초)보다 짧아도 시도를 시작한다"와 비기능 요구사항 문서(`docs/requirements/non-functional.md`)의 "장애 전파 차단" 목표값의 "재시도 포함 전체 30초"다. 시각은 주입한 시계로 정한다 `[제안]` (services/order-service/src/test/java/com/example/msa/order/client/InventoryCallContextTest.java `[제안]`)
@@ -1308,6 +1426,14 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 > - **And** 상품 A의 재고는 10개다
 > - **And** 그동안 주문 서비스의 health 확인은 1초 안에 200으로 응답한다
 > - 비고: 한 테스트로 두 서비스를 다 확인하기 어렵다. 주문 쪽(시도 횟수, 실패 기록, 해제 요청)은 WireMock으로 지연을 넣어 검증하고, 재고 쪽(해제하면 수량이 복구된다)은 재고 서비스 테스트로 검증한다.
+
+> **TC-019** (spec 시나리오 9.2) · `docs/test-cases/order-placement.md` 절 "TC-019 해제 요청도 일시 오류면 같은 정책으로 재시도한다"
+> - **Given** 재고 서비스가 예약 요청에 409를 돌려준다
+> - **And** 재고 서비스가 해제 요청의 처음 두 번에 503을 돌려주고, 세 번째부터 정상으로 처리한다
+> - **When** 고객이 상품 A를 3개 주문한다
+> - **Then** 고객은 주문 번호와 "잠시 후 다시 시도"를 받는다
+> - **And** 해제 요청은 정확히 3번 갔다. 두 번째는 첫 번째 응답을 받은 뒤 0.5초 안에, 세 번째는 두 번째 응답을 받은 뒤 0.8초 이상 1.5초 이하에 갔다
+> - **And** 주문에 "해제 완료"가 기록된다
 
 #### 구현
 
@@ -1376,19 +1502,19 @@ plan.md 표에 줄이 없지만 판정 기준 문서에서 기대값을 가져�
 | FR-027의 500 쪽 (500이면 재시도하지 않는다) | 테스트 케이스 문서 공통 전제 일곱째 줄 | Phase 2 | T140 |
 | 주문 상태 전이 (단위 테스트) | 도메인 분석 4절 "주문 상태"의 그림 | Phase 2 | T095 |
 
-추가 케이스 표(research.md 결정 2의 아홉 케이스):
+추가 케이스 표(research.md 결정 2의 아홉 케이스. 첫 칸 앞의 번호는 spec 시나리오 번호다):
 
 | 추가할 케이스 | 서비스 | 단계 | 서비스 통합 | 계약 |
 |---|---|---|---|---|
-| ㉠ 거절된 예약에 해제 요청이 와도 재고는 그대로다 | 재고 | Phase 1 | T047 | T056 |
-| ㉡ 해제한 예약의 기록은 남아, 같은 예약 요청이 다시 와도 재고가 줄지 않는다 | 재고 | Phase 1 | T048 | — |
-| ㉥ 예약된 재고에 해제가 두 번 와도 수량은 한 번만 돌아온다 | 재고 | Phase 1 | T049 | — |
-| ㉦ 서명이 틀리거나 만료된 토큰으로는 주문할 수 없다 | 주문 | Phase 2 | T122 | — |
-| ㉧ 형식이 틀린 주문 항목은 기록되지 않는다 | 주문 | Phase 2 | T128 | — |
-| ㉨ 거부된 요청의 키는 남지 않고, 같은 키의 내용 비교는 항목 순서를 보지 않는다 | 주문 | Phase 2 | T133 | — |
-| ㉩ 주문 서비스는 재고 서비스 호출에 추적 정보를 넘긴다 | 주문 | Phase 2 | T102 | — |
-| ㉢ 재시도하던 중에 서킷이 열리면 남은 재시도를 하지 않는다 | 주문 | Phase 3 | T161 | — |
-| ㉣ 해제 요청도 일시 오류면 같은 정책으로 재시도한다 | 주문 | Phase 3 | T170 | — |
+| 1.6 ㉠ 거절된 예약에 해제 요청이 와도 재고는 그대로다 | 재고 | Phase 1 | T047 | T056 |
+| 1.7 ㉡ 해제한 예약의 기록은 남아, 같은 예약 요청이 다시 와도 재고가 줄지 않는다 | 재고 | Phase 1 | T048 | — |
+| 1.8 ㉥ 예약된 재고에 해제가 두 번 와도 수량은 한 번만 돌아온다 | 재고 | Phase 1 | T049 | — |
+| 4.2 ㉦ 서명이 틀리거나 만료된 토큰으로는 주문할 수 없다 | 주문 | Phase 2 | T122 | — |
+| 5.2 ㉧ 형식이 틀린 주문 항목은 기록되지 않는다 | 주문 | Phase 2 | T128 | — |
+| 6.2 ㉨ 거부된 요청의 키는 남지 않고, 같은 키의 내용 비교는 항목 순서를 보지 않는다 | 주문 | Phase 2 | T133 | — |
+| 2.2 ㉩ 주문 서비스는 재고 서비스 호출에 추적 정보를 넘긴다 | 주문 | Phase 2 | T102 | — |
+| 8.2 ㉢ 재시도하던 중에 서킷이 열리면 남은 재시도를 하지 않는다 | 주문 | Phase 3 | T161 | — |
+| 9.2 ㉣ 해제 요청도 일시 오류면 같은 정책으로 재시도한다 | 주문 | Phase 3 | T170 | — |
 
 research.md 6절 "확인하지 못한 것"과 확인 작업:
 
