@@ -22,7 +22,7 @@ description: "주문 생성(티켓 001)의 작업 목록. 단계(Phase)마다 PR
 | 단계 | 브랜치 | 담는 것 | 사용자 스토리 |
 |---|---|---|---|
 | Phase 0 | main에서 만든 docs 브랜치 두 개 `[제안]` | 테스트 케이스 아홉 개 추가, 기준 문서를 plan 결정에 맞추기 | 없음 |
-| Phase 1 | `feat/001-place-order` | 빌드 골격, 기계 검사, CI, 재고 서비스 전체, 재고 쪽 인수 시나리오 테스트 전부, 루트 `contracts/inventory-api.yaml`, spec·plan·tasks 문서 | User Story 1, 그리고 User Story 2·3·6·8·9의 재고 쪽 |
+| Phase 1 | `feat/001-place-order-p1` | 빌드 골격, 기계 검사, CI, 재고 서비스 전체, 재고 쪽 인수 시나리오 테스트 전부, 루트 `contracts/inventory-api.yaml` | User Story 1, 그리고 User Story 2·3·6·8·9의 재고 쪽 |
 | Phase 2 | `feat/001-place-order-p2` | 주문 서비스 전체(시도당 제한 시간과 서킷 브레이커 포함) | User Story 2, 3, 4, 5, 6, 7 |
 | Phase 3 | `feat/001-place-order-p3` | 재시도와 재시도 포함 전체 30초 한도, 해제의 같은 재시도 정책 | User Story 8, 9 |
 
@@ -91,6 +91,8 @@ description: "주문 생성(티켓 001)의 작업 목록. 단계(Phase)마다 PR
 
 ## Phase 0: 선행 문서 작업
 
+**상태**: 2026-10-07에 끝났다. 0-A는 PR #17, 0-B는 PR #18로 main에 병합했다. spec·plan·tasks 문서는 그보다 먼저 PR #16(브랜치 `feat/001-place-order`)으로 병합했다.
+
 **목적**: 001의 PR보다 먼저 판정 기준 문서와 기준 문서를 plan의 결정에 맞춘다. 001의 PR 밖에서, main에서 만든 별도 docs 브랜치로 한다.
 
 **문서를 고치는 작업(T001, T002, T005, T006, T007, T008, T009, T010)에는 사용자 승인이 필요하다.** `docs/` 아래 기준 문서를 고치는 일이라서, 저장소 루트 `CLAUDE.md` 1절 "기준 문서를 고치기 전에 묻는다"에 따라 무엇을 왜 고칠지 먼저 보여 주고 답을 받은 뒤 고친다. 확인 작업(T003, T011)과 보고 작업(T004, T012)은 읽기만 한다.
@@ -110,11 +112,11 @@ description: "주문 생성(티켓 001)의 작업 목록. 단계(Phase)마다 PR
 | 0-B가 main에 병합됐다 | `gh pr list --state merged --head docs/align-001-decisions` | PR 한 줄 |
 | main의 테스트 케이스 문서에 아홉 케이스가 있다 | `git fetch origin; git show origin/main:docs/test-cases/order-placement.md \| Select-String '^## TC-'` | 지금 있는 15줄에 아홉 줄이 더해져 24줄 |
 
-**시작 조건**: 지금 브랜치(`feat/001-place-order`)에는 아직 추적하지 않는 `specs/` 폴더가 있다. docs 브랜치로 옮겨도 이 폴더는 작업 트리에 그대로 남는다. Phase 0의 PR에는 `specs/`를 넣지 않는다.
+**시작 조건**: 없다. Phase 0의 PR에는 `specs/`를 넣지 않는다.
 
 ### 0-A. 테스트 케이스 아홉 개 추가 (브랜치 `docs/order-test-cases` `[제안]`)
 
-- [ ] T001 research.md 1절 결정 2의 "테스트 케이스 문서에 더할 케이스 초안" 아홉 개(㉠, ㉡, ㉢, ㉣, ㉥, ㉦, ㉧, ㉨, ㉩)를 테스트 케이스 문서 형식으로 옮긴 글을 사용자에게 보여 주고 승인을 받는다. 사용자 승인 필요 (docs/test-cases/order-placement.md)
+- [x] T001 research.md 1절 결정 2의 "테스트 케이스 문서에 더할 케이스 초안" 아홉 개(㉠, ㉡, ㉢, ㉣, ㉥, ㉦, ㉧, ㉨, ㉩)를 테스트 케이스 문서 형식으로 옮긴 글을 사용자에게 보여 주고 승인을 받는다. 사용자 승인 필요 (docs/test-cases/order-placement.md)
   - 형식은 문서의 기존 케이스와 같다: `## <ID> <제목>`, `- 관련:` 줄, `**Given**`/`**When**`/`**Then**`/`**And**` 줄.
   - 번호는 문서의 마지막 번호 다음부터 차례로 붙인다(research.md 결정 2 "번호는 문서에 넣을 때 다음 빈 번호부터 붙인다").
   - 초안의 기대값은 research.md에 있는 그대로 보여 준다. 고칠 곳이 있으면 사용자가 정한다.
@@ -123,16 +125,16 @@ description: "주문 생성(티켓 001)의 작업 목록. 단계(Phase)마다 PR
     - "주문 API의 성공 응답 코드: 새 주문을 기록하면(확정·거절·실패) 201, 같은 고객이 같은 요청 키로 다시 보내면(처리중 포함) 200."
     - "주문 API의 오류 응답 본문은 Problem Details 형식이다. 토큰이 없으면 `code`는 `UNAUTHORIZED`다."
   - 머리말의 "상태" 줄을 어떻게 바꿀지(예: 추가한 날짜)도 함께 보여 준다.
-- [ ] T002 T001에서 승인받은 글을 더하고 "상태" 줄을 고친다. 새 케이스는 문서 끝(용어 절 앞)에, 공통 전제의 새 줄은 공통 전제 목록 끝에 더한다. 기존 글은 한 글자도 바꾸지 않는다. 새 용어가 있으면 용어 절에 더한다. 사용자 승인 필요 (docs/test-cases/order-placement.md)
-- [ ] T003 기존 글이 바뀌지 않았는지 확인한다 (docs/test-cases/order-placement.md)
-  - 명령: `git diff main -- docs/test-cases/order-placement.md`
+- [x] T002 T001에서 승인받은 글을 더하고 "상태" 줄을 고친다. 새 케이스는 문서 끝(용어 절 앞)에, 공통 전제의 새 줄은 공통 전제 목록 끝에 더한다. 기존 글은 한 글자도 바꾸지 않는다. 새 용어가 있으면 용어 절에 더한다. 사용자 승인 필요 (docs/test-cases/order-placement.md)
+- [x] T003 기존 글이 바뀌지 않았는지 확인한다 (docs/test-cases/order-placement.md)
+  - 명령: `git fetch origin` 뒤 `git diff origin/main -- docs/test-cases/order-placement.md`
   - 기대 결과: `-`로 시작하는 줄은 "상태" 줄 하나뿐이고, 나머지는 모두 `+` 줄이다.
   - 명령: `Select-String -Path docs/test-cases/order-placement.md -Pattern '^## TC-'` → 24줄
-- [ ] T004 사용자에게 보고하고 멈춘다. 고친 파일, 새로 붙은 번호 아홉 개와 ㉠·㉡·㉢·㉣·㉥·㉦·㉧·㉨·㉩의 짝, 공통 전제에 더한 줄, T003의 명령과 결과를 적는다. 커밋·push·PR은 사용자가 요청할 때 한다 (파일 없음, 대화창 보고)
+- [x] T004 사용자에게 보고하고 멈춘다. 고친 파일, 새로 붙은 번호 아홉 개와 ㉠·㉡·㉢·㉣·㉥·㉦·㉧·㉨·㉩의 짝, 공통 전제에 더한 줄, T003의 명령과 결과를 적는다. 커밋·push·PR은 사용자가 요청할 때 한다 (파일 없음, 대화창 보고)
 
 ### 0-B. 기준 문서를 plan 결정에 맞추기 (브랜치 `docs/align-001-decisions` `[제안]`)
 
-- [ ] T005 research.md 5절 "기준 문서와 어긋난 것" 표에서 아래 세 문서의 줄을 고칠 글을 사용자에게 보여 주고 승인을 받는다. 줄마다 지금 글, 고칠 글, 이유(research.md의 결정 번호)를 나란히 적는다. 사용자 승인 필요 (docs/standards/tech-stack.md, docs/standards/testing.md, docs/design/architecture.md)
+- [x] T005 research.md 5절 "기준 문서와 어긋난 것" 표에서 아래 세 문서의 줄을 고칠 글을 사용자에게 보여 주고 승인을 받는다. 줄마다 지금 글, 고칠 글, 이유(research.md의 결정 번호)를 나란히 적는다. 사용자 승인 필요 (docs/standards/tech-stack.md, docs/standards/testing.md, docs/design/architecture.md)
   - `docs/standards/tech-stack.md` 표의 여섯 줄: "재시도", "서킷 브레이커", "서비스 간 HTTP", "영속성", "테스트", "정적 분석"
   - `docs/standards/testing.md` 2절 "계약" 행과 "단위" 행(도구 "JUnit 5" → JUnit Jupiter 6. "단위" 행은 2026-10-06 사용자 결정으로 더했다)
   - `docs/standards/coding-conventions.md` 3-8절 표의 두 행(2026-10-06 사용자 결정으로 더했다): "`${}`와 `SELECT *`를 쓰지 않는다" 행의 검사 주체("테스트가" → Gradle 작업), "인수 시나리오 테스트에 테스트 케이스 ID를 남긴다" 행의 대상(`docs/test-cases/*.md` → `docs/test-cases/order-placement.md`, 운영 테스트는 대상에서 뺀다). 근거는 research.md 결정 11(사용자 결정)이다.
@@ -140,26 +142,26 @@ description: "주문 생성(티켓 001)의 작업 목록. 단계(Phase)마다 PR
   - 저장소 루트 `CLAUDE.md` 7절에 받치는 테스트의 기대값 출처 예외를 더한다(2026-10-06 사용자 결정). 7절 둘째 줄("테스트 코드는 Claude가 쓰더라도, 기대값은 위 문서에서 그대로 가져온다…") 바로 아래에 더할 문장은 아래와 같다(2026-10-06 사용자가 문장과 0-B에 넣는 것을 승인).
     - "받치는 테스트(인수 시나리오를 검증하지 않는 단위·Mapper·계약 테스트)는 위 문서에 더해, 사용자가 확정한 `docs/design/`과 `docs/analysis/` 문서에서도 기대값을 가져올 수 있다. 그 문서에서 "제안"이나 "초안"으로 표시한 부분은 쓰지 않는다. Claude가 만든 `specs/` 아래 문서(research.md, data-model.md 등)에서는 가져오지 않는다. 인수 시나리오 테스트의 기대값은 `docs/test-cases/`에서만 가져온다."
   - 5절 표의 나머지 두 줄은 다른 곳에서 한다: 테스트 케이스 문서는 0-A(T001), spec.md의 `[제안]` 태그는 Phase 1의 첫 작업(T013).
-- [ ] T006 [P] T005에서 승인받은 대로 기술 스택 표의 여섯 줄을 고친다. 사용자 승인 필요 (docs/standards/tech-stack.md)
-- [ ] T007 [P] T005에서 승인받은 대로 2절 "계약" 행과 "단위" 행의 도구를 고친다. 사용자 승인 필요 (docs/standards/testing.md)
-- [ ] T008 [P] T005에서 승인받은 대로 머리말과 5절·6절을 고친다. 사용자 승인 필요 (docs/design/architecture.md)
-- [ ] T009 [P] T005에서 승인받은 대로 3-8절 표의 두 행을 고친다. 다른 행은 바꾸지 않는다. 사용자 승인 필요 (docs/standards/coding-conventions.md)
-- [ ] T010 [P] T005에서 승인받은 대로 7절에 받치는 테스트의 기대값 출처 예외를 더한다. 다른 줄은 바꾸지 않는다. 사용자 승인 필요 (CLAUDE.md)
-- [ ] T011 고친 곳이 승인받은 내용과 같은지 확인한다 (docs/standards/tech-stack.md, docs/standards/testing.md, docs/design/architecture.md, docs/standards/coding-conventions.md, CLAUDE.md)
-  - 명령: `git diff main --stat` → 바뀐 파일이 T006, T007, T008, T009, T010의 다섯 파일뿐이다.
-  - 명령: `git diff main -- CLAUDE.md` → `+` 줄은 승인받은 문장뿐이고 `-` 줄이 없다.
+- [x] T006 [P] T005에서 승인받은 대로 기술 스택 표의 여섯 줄을 고친다. 사용자 승인 필요 (docs/standards/tech-stack.md)
+- [x] T007 [P] T005에서 승인받은 대로 2절 "계약" 행과 "단위" 행의 도구를 고친다. 사용자 승인 필요 (docs/standards/testing.md)
+- [x] T008 [P] T005에서 승인받은 대로 머리말과 5절·6절을 고친다. 사용자 승인 필요 (docs/design/architecture.md)
+- [x] T009 [P] T005에서 승인받은 대로 3-8절 표의 두 행을 고친다. 다른 행은 바꾸지 않는다. 사용자 승인 필요 (docs/standards/coding-conventions.md)
+- [x] T010 [P] T005에서 승인받은 대로 7절에 받치는 테스트의 기대값 출처 예외를 더한다. 다른 줄은 바꾸지 않는다. 사용자 승인 필요 (CLAUDE.md)
+- [x] T011 고친 곳이 승인받은 내용과 같은지 확인한다 (docs/standards/tech-stack.md, docs/standards/testing.md, docs/design/architecture.md, docs/standards/coding-conventions.md, CLAUDE.md)
+  - 명령: `git fetch origin` 뒤 `git diff origin/main --stat` → 바뀐 파일이 T006, T007, T008, T009, T010의 다섯 파일뿐이다.
+  - 명령: `git diff origin/main -- CLAUDE.md` → `+` 줄은 승인받은 문장뿐이고 `-` 줄이 없다.
   - 명령: `Select-String -Path docs/design/architecture.md -Pattern 'REQUEST_HASH'` → 0줄
-- [ ] T012 사용자에게 보고하고 멈춘다. 고친 줄마다 지금 글과 바꾼 글, T011의 명령과 결과를 적는다 (파일 없음, 대화창 보고)
+- [x] T012 사용자에게 보고하고 멈춘다. 고친 줄마다 지금 글과 바꾼 글, T011의 명령과 결과를 적는다 (파일 없음, 대화창 보고)
 
 Phase 0에서는 항목 ID를 쓰지 않았다.
 
 ---
 
-## Phase 1: P1 단계 PR — 빌드 골격, 기계 검사, CI, 재고 서비스 (브랜치 `feat/001-place-order`)
+## Phase 1: P1 단계 PR — 빌드 골격, 기계 검사, CI, 재고 서비스 (브랜치 `feat/001-place-order-p1`)
 
 **목적**: 빌드 골격과 기계 검사, CI를 만들고 재고 서비스 전체(예약·해제 API)를 만든다. 서비스 사이 호출이 아직 없으므로 제한 시간과 서킷 브레이커 없이도 헌법 "실패를 전제한 호출" 원칙을 어기지 않는다(spec "우선순위와 PR 단계" 절).
 
-**담는 것** (plan.md "PR 단계" 표의 P1 줄): spec·plan·tasks 문서. 빌드 골격(Gradle wrapper, `settings.gradle`, `gradle.properties`, 버전 카탈로그, `build-logic`). 기계 검사와 `config/`, `libs/archunit-rules`. CI. 재고 서비스 전체(예약·해제 API, Flyway 스키마와 초기 데이터, 로그·추적·프로브·그레이스풀 셧다운 설정, `CLAUDE.md`). 재고 쪽 인수 시나리오 테스트 전부(P2·P3 스토리의 재고 쪽 포함, 2026-10-06 사용자 승인). 루트 `contracts/inventory-api.yaml`.
+**담는 것** (plan.md "PR 단계" 표의 P1 줄): 빌드 골격(Gradle wrapper, `settings.gradle`, `gradle.properties`, 버전 카탈로그, `build-logic`). 기계 검사와 `config/`, `libs/archunit-rules`. CI. 재고 서비스 전체(예약·해제 API, Flyway 스키마와 초기 데이터, 로그·추적·프로브·그레이스풀 셧다운 설정, `CLAUDE.md`). 재고 쪽 인수 시나리오 테스트 전부(P2·P3 스토리의 재고 쪽 포함, 2026-10-06 사용자 승인). 루트 `contracts/inventory-api.yaml`.
 
 **끝났다고 보는 기준** (plan.md "PR 단계" 표): `.\gradlew.bat build` 종료 코드 0(`msa.stage=P1`), 재고 쪽 인수 시나리오 테스트 통과, GitHub Actions 성공
 
@@ -169,9 +171,11 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 | 빌드와 모든 검사 | `.\gradlew.bat build` | 종료 코드 0 |
 | 재고 쪽 인수 시나리오 테스트 | `.\gradlew.bat :services:inventory-service:test` | 종료 코드 0. 테스트 보고서(`services/inventory-service/build/reports/tests/test/index.html`)에 시나리오 1.1, 1.2, 1.3, 1.4, 1.5, 시나리오 2.1·3.1·3.3·6.1·8.1·9.1의 재고 쪽, ㉠, ㉡, ㉥의 테스트가 모두 통과로 나온다 |
 | 계약 현재본과 기능 폴더의 계약이 같다 | `git diff --no-index contracts/inventory-api.yaml specs/001-place-order/contracts/inventory-api.yaml` | 출력 없음, 종료 코드 0 (quickstart.md 3절) |
-| GitHub Actions | 사용자가 push한 뒤 `gh run list --branch feat/001-place-order --limit 1` | 결론(conclusion)이 `success` |
+| GitHub Actions | 사용자가 push한 뒤 `gh run list --branch feat/001-place-order-p1 --limit 1` | 결론(conclusion)이 `success` |
 
-**시작 조건**: Phase 0의 0-A PR과 0-B PR이 모두 main에 병합되어 있다(Phase 0 머리의 "병합 순서"). 이 브랜치에 그 병합 결과가 들어와 있어야 ㉠과 ㉡의 기대값과 번호를 쓸 수 있고, 기술 스택 문서가 plan의 버전과 같아진다. 들어와 있지 않으면 main을 이 브랜치에 어떻게 합칠지 사용자에게 묻는다.
+**시작 조건**: Phase 0의 0-A PR과 0-B PR이 모두 main에 병합되어 있다(Phase 0 머리의 "병합 순서". 2026-10-07에 충족했다). 이 단계의 브랜치 `feat/001-place-order-p1`을 최신 main에서 만든다. spec·plan·tasks를 담은 브랜치 `feat/001-place-order`는 PR #16으로 이미 병합했으므로 다시 쓰지 않는다(`docs/standards/git-workflow.md` 2절 "병합된 PR의 브랜치에는 다시 push하지 않는다"). 브랜치를 만드는 일은 사용자에게 묻고 한다.
+
+- 확인 명령: `git branch --show-current` → `feat/001-place-order-p1`
 
 - 확인 명령: `Select-String -Path docs/test-cases/order-placement.md -Pattern '^## TC-'` → 24줄
 - 확인 명령: `Select-String -Path docs/standards/tech-stack.md -Pattern 'mybatis-spring-boot-starter 4.0.x'` → 0줄
@@ -732,7 +736,7 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
   - 기대 결과: `msa.stage=P1` 한 줄, `.\gradlew.bat build` 종료 코드 0, 재고 서비스 테스트 종료 코드 0, 계약 두 파일의 차이 없음. 실행한 명령과 종료 코드, 테스트 통과·실패 수를 보고에 적는다(저장소 루트 `CLAUDE.md` 6절).
   - quickstart.md 3절 P1 줄과 대조해, 재고 서비스의 인수 시나리오 테스트(시나리오 1.1, 1.2, 1.3, 1.4, 1.5, 시나리오 2.1·3.1·3.3·6.1·8.1·9.1의 재고 쪽, ㉠, ㉡, ㉥)가 모두 보고서에 있는지 하나씩 적는다.
 - [ ] T080 사용자가 push한 뒤 GitHub Actions 결과를 확인한다. research.md 6절 "GitHub Actions 러너에서 Oracle 컨테이너를 띄우는 시간과 메모리"도 여기서 확인한다 (.github/workflows/build.yml)
-  - 명령: `gh run list --branch feat/001-place-order --limit 1`, `gh run view <run-id> --log`
+  - 명령: `gh run list --branch feat/001-place-order-p1 --limit 1`, `gh run view <run-id> --log`
   - 기대 결과: 결론이 `success`. 로그에서 Oracle 컨테이너가 뜨는 데 걸린 시간과 전체 빌드 시간을 읽어 보고에 적는다. 메모리 부족으로 실패하면 멈추고 보고한다.
   - push는 사용자가 한다. push 전이면 이 작업은 "실행하지 않았다"로 보고한다.
 - [ ] T081 사용자에게 보고하고 멈춘다. 만들거나 고친 파일, T013·T041·T057·T068·T069·T074·T075·T077·T078·T079·T080의 명령과 결과, spec 시나리오 1.1, 1.2, 1.3, 1.4, 1.5와 시나리오 2.1·3.1·3.3·6.1·8.1·9.1의 재고 쪽, ㉠, ㉡, ㉥을 하나씩 대조한 결과, research.md 6절에서 이 단계에 확인한 다섯 가지(T041, T068, T069, T075, T080)와 tasks.md가 새로 적은 미확인 항목 세 가지(T041, T078)의 결과를 적는다. 커밋·push·PR은 사용자가 요청할 때 한다 (파일 없음, 대화창 보고)
@@ -753,7 +757,7 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 |---|---|---|
 | 단계 표시 | `Select-String -Path gradle.properties -Pattern '^msa.stage=P2$'` | 한 줄 |
 | 빌드와 모든 검사 | `.\gradlew.bat build` | 종료 코드 0 |
-| P1의 테스트가 그대로 통과 | `.\gradlew.bat :services:inventory-service:test` | 종료 코드 0. 이 단계는 재고 서비스를 고치지 않는다(`git diff main --stat -- services/inventory-service`의 출력이 없다) |
+| P1의 테스트가 그대로 통과 | `.\gradlew.bat :services:inventory-service:test` | 종료 코드 0. 이 단계는 재고 서비스를 고치지 않는다(`git fetch origin` 뒤 `git diff origin/main --stat -- services/inventory-service`의 출력이 없다) |
 | 주문 쪽 인수 시나리오 테스트 | `.\gradlew.bat :services:order-service:test` | 종료 코드 0. 시나리오 2.1, 3.1, 3.2, 3.3, 4.1, 5.1, 6.1, 7.1, 7.2와 ㉦, ㉧, ㉨, ㉩의 테스트가 통과로 나온다(quickstart.md 3절 P2 줄) |
 | GitHub Actions | 사용자가 push한 뒤 `gh run list --branch feat/001-place-order-p2 --limit 1` | 결론이 `success` |
 
@@ -1197,7 +1201,7 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 |---|---|---|
 | 단계 표시 | `Select-String -Path gradle.properties -Pattern '^msa.stage=P3$'` | 한 줄 |
 | 빌드와 모든 검사 | `.\gradlew.bat build` | 종료 코드 0 |
-| P1·P2의 테스트가 그대로 통과 | `.\gradlew.bat :services:inventory-service:test :services:order-service:test` | 종료 코드 0. P1·P2의 인수 시나리오 테스트 파일을 고치지 않았다(`git diff main --stat -- services/*/src/test`에 나오는 기존 파일은 이 단계에서 메서드를 더한 계약 테스트와 기본값 테스트뿐이다). 재고 서비스 파일은 바뀌지 않는다 |
+| P1·P2의 테스트가 그대로 통과 | `.\gradlew.bat :services:inventory-service:test :services:order-service:test` | 종료 코드 0. P1·P2의 인수 시나리오 테스트 파일을 고치지 않았다(`git fetch origin` 뒤 `git diff origin/main --stat -- services/*/src/test`에 나오는 기존 파일은 이 단계에서 메서드를 더한 계약 테스트와 기본값 테스트뿐이다). 재고 서비스 파일은 바뀌지 않는다 |
 | P3 인수 시나리오 테스트 | 위 명령의 테스트 보고서 | 시나리오 8.1, 시나리오 9.1의 주문 쪽, ㉢, ㉣의 테스트가 통과로 나온다(quickstart.md 3절 P3 줄) |
 | GitHub Actions | 사용자가 push한 뒤 `gh run list --branch feat/001-place-order-p3 --limit 1` | 결론이 `success` |
 
@@ -1542,9 +1546,9 @@ T115 PlaceOrderProductNotFoundIntegrationTest.java
 
 ## 사용자 확인 필요
 
-아래는 이번 실행에서 하지 않았다. 기준 문서나 spec, plan, research를 고치거나, 판정 기준 문서에 없는 기대값을 정하는 일이라서다. 헌법의 "반드시" 규칙을 어기게 되는 선택은 없었다. "(2026-10-06 정함)"이나 "(2026-10-07 정함)"이 붙은 항목은 /speckit-analyze 뒤에 사용자가 정했고, 정한 내용을 본문에 반영했다. 아직 열려 있는 것은 1번(Phase 0의 승인), 3번(spec 태그 지우기의 승인), 10번(구현 중에 생길 수 있는 결정)이다.
+아래는 이번 실행에서 하지 않았다. 기준 문서나 spec, plan, research를 고치거나, 판정 기준 문서에 없는 기대값을 정하는 일이라서다. 헌법의 "반드시" 규칙을 어기게 되는 선택은 없었다. "(2026-10-06 정함)"이나 "(2026-10-07 정함)"이 붙은 항목은 /speckit-analyze 뒤에 사용자가 정했고, 정한 내용을 본문에 반영했다. 아직 열려 있는 것은 3번(spec 태그 지우기의 승인)과 10번(구현 중에 생길 수 있는 결정)이다.
 
-1. **Phase 0의 모든 작업.** 테스트 케이스 아홉 개와 공통 전제 두 줄 추가(T001~T004), 기준 문서 네 개와 `CLAUDE.md` 고치기(T005~T012)는 사용자 승인 뒤에 한다. research.md 4절과 5절이 이미 승인을 받은 뒤 하기로 적어 둔 일이다. 두 PR이 모두 병합되어야 Phase 1을 시작한다.
+1. **(2026-10-07 끝남) Phase 0의 모든 작업.** 0-A는 PR #17, 0-B는 PR #18로 병합했다.
 2. **(2026-10-06 정함) research.md 5절 표에 없는 기준 문서 어긋남 두 가지.** 둘 다 0-B에서 고친다. 코딩 규약 3-8절 두 행은 T009, 테스트 전략 2절 "단위" 행은 T007이다.
 3. **spec.md의 `[제안]` 태그 11개 지우기**(T013, Phase 1의 첫 작업). research.md 결정 1에 따라 무엇을 지울지 보여 주고 승인받은 뒤 지운다.
 4. **(2026-10-06 정함) 주문 상태 전이의 단위 테스트.** 둔다. 기대값은 도메인 분석 4절의 그림에서 가져온다(T095).

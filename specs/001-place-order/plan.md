@@ -1,6 +1,6 @@
 # Implementation Plan: 주문 생성
 
-**Branch**: `feat/001-place-order` (P1), `feat/001-place-order-p2` (P2), `feat/001-place-order-p3` (P3) | **Date**: 2026-10-05 | **Spec**: [spec.md](spec.md)
+**Branch**: `feat/001-place-order` (spec·plan·tasks, PR #16으로 병합), `feat/001-place-order-p1` (P1), `feat/001-place-order-p2` (P2), `feat/001-place-order-p3` (P3) | **Date**: 2026-10-05 | **Spec**: [spec.md](spec.md)
 
 **Input**: Feature specification from `specs/001-place-order/spec.md`
 
@@ -283,9 +283,11 @@ tasks.md의 단계(Phase)는 이 경계를 따른다. 단계마다 브랜치 하
 |---|---|---|---|
 | 0-A | main에서 만든 docs 브랜치 `docs/order-test-cases` `[제안]` | 테스트 케이스 문서에 케이스 아홉 개 추가(research.md 결정 2)와 공통 전제 두 줄 추가(성공 응답 코드, 401의 오류 형식). 사용자가 초안을 승인한 뒤 만든다 | 사용자가 PR을 병합 |
 | 0-B | main에서 만든 docs 브랜치 `docs/align-001-decisions` `[제안]` | 기준 문서 네 개(`docs/standards/tech-stack.md`, `docs/standards/testing.md`, `docs/standards/coding-conventions.md`, `docs/design/architecture.md`)를 plan의 결정에 맞춘다(research.md 5절, 2026-10-06 사용자 결정). 저장소 루트 `CLAUDE.md` 7절에 받치는 테스트의 기대값 출처 예외를 더한다(2026-10-06 사용자 결정). 사용자가 고칠 글을 승인한 뒤 만든다 | 사용자가 PR을 병합 |
-| P1 | `feat/001-place-order` | spec·plan·tasks 문서. 빌드 골격(Gradle wrapper, `settings.gradle`, `gradle.properties`, 버전 카탈로그, `build-logic`). 기계 검사와 `config/`, `libs/archunit-rules`. CI. 재고 서비스 전체(예약·해제 API, Flyway 스키마와 초기 데이터, 로그·추적·프로브·그레이스풀 셧다운 설정, `CLAUDE.md`). 재고 쪽 인수 시나리오 테스트 전부(P2·P3 스토리의 재고 쪽 포함). 루트 `contracts/inventory-api.yaml` | `.\gradlew.bat build` 종료 코드 0(`msa.stage=P1`), 재고 쪽 인수 시나리오 테스트 통과, GitHub Actions 성공 |
+| P1 | `feat/001-place-order-p1` | 빌드 골격(Gradle wrapper, `settings.gradle`, `gradle.properties`, 버전 카탈로그, `build-logic`). 기계 검사와 `config/`, `libs/archunit-rules`. CI. 재고 서비스 전체(예약·해제 API, Flyway 스키마와 초기 데이터, 로그·추적·프로브·그레이스풀 셧다운 설정, `CLAUDE.md`). 재고 쪽 인수 시나리오 테스트 전부(P2·P3 스토리의 재고 쪽 포함). 루트 `contracts/inventory-api.yaml` | `.\gradlew.bat build` 종료 코드 0(`msa.stage=P1`), 재고 쪽 인수 시나리오 테스트 통과, GitHub Actions 성공 |
 | P2 | `feat/001-place-order-p2` | 주문 서비스 전체(주문 API, JWT 검증, 항목·요청 키 검사, 주문 저장, `InventoryClient`의 시도당 제한 시간과 서킷 브레이커, 해제 실행기, 추적 전달, 로그·프로브·그레이스풀 셧다운 설정, `CLAUDE.md`). `msa.stage=P2` | `.\gradlew.bat build` 종료 코드 0, P1의 테스트도 그대로 통과, GitHub Actions 성공 |
 | P3 | `feat/001-place-order-p3` | Resilience4j Retry(즉시·1·2·4·8초, 일시 오류만, 서킷 안쪽), 요청마다 30초 한도, 해제의 같은 재시도 정책. `msa.stage=P3` | `.\gradlew.bat build` 종료 코드 0, P1·P2의 테스트도 그대로 통과, GitHub Actions 성공 |
+
+0-A는 PR #17, 0-B는 PR #18로 2026-10-07에 병합했다. spec·plan·tasks 문서는 그보다 먼저 PR #16(브랜치 `feat/001-place-order`)으로 병합했다. 그래서 P1 단계 PR은 새 브랜치 `feat/001-place-order-p1`에서 만들고, 문서 없이 구현만 담는다.
 
 0-A와 0-B는 모두 P1 단계 PR보다 먼저 병합한다. 0-A를 먼저 병합하는 것은 research.md 4절 "테스트 케이스 추가 docs PR의 순서"의 `[제안]`이다. 0-B를 먼저 병합하는 것은 2026-10-06 사용자 승인이다. 헌법 "기술 제약" 절이 Technical Context에 기술 스택 문서의 값을 쓰라고 하는데, 이 plan의 MyBatis 스타터 4.1.0과 JUnit Jupiter 6은 0-B 전의 기술 스택 문서(4.0.x, JUnit 5)와 다르기 때문이다. Phase 0을 PR 두 개로 나누는 것은 tasks.md의 `[제안]`이다.
 
