@@ -175,7 +175,7 @@ sequenceDiagram
 **예약 처리 (재고 DB, 한 트랜잭션)**
 
 1. RESERVATIONS에서 주문 번호를 찾는다. 있으면, 해제 표식(항목 없음)이면 RELEASED를 돌려준다. 항목이 있으면 RESERVATION_ITEMS를 상품 ID 순으로 읽어 들어온 항목과 비교해, 다르면 409, 같으면 저장된 결과를 돌려준다.
-2. 없으면 항목의 재고 행을 **상품 ID 순서로 하나씩** `SELECT QUANTITY FROM STOCK WHERE PRODUCT_ID = :상품 FOR UPDATE`로 잠그고 읽는다. 행이 없는 상품은 없는 상품 목록에, 수량이 모자란 상품은 부족한 상품 목록에 모은다.
+2. 없으면 항목의 재고 행을 **상품 ID 순서로 하나씩** `SELECT PRODUCT_ID, QUANTITY FROM STOCK WHERE PRODUCT_ID = :상품 FOR UPDATE`로 잠그고 읽는다. 행이 없는 상품은 없는 상품 목록에, 수량이 모자란 상품은 부족한 상품 목록에 모은다.
 3. 없는 상품이나 부족한 상품이 하나라도 있으면 아무 수량도 바꾸지 않고 결과를 REJECTED로 정한다. 사유는 없는 상품이 하나라도 있으면 "상품 없음", 아니면 "재고 부족"이고, 두 목록은 모두 돌려준다(UC-001 A2, 2026-10-05 결정). 없으면 항목마다 수량을 줄이고 결과를 RESERVED로 정한다.
 4. RESERVATIONS와 RESERVATION_ITEMS(항목별 RESULT 포함)에 결과를 넣고 커밋한다. 같은 주문 번호가 동시에 들어와 고유 제약에 걸리면 전체를 롤백하고 1번부터 다시 한다.
 
