@@ -182,41 +182,41 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 ### 준비 (빌드 골격)
 
-- [ ] T013 spec.md의 `[제안]` 태그 11개를 지우는 일을 사용자에게 보여 주고 승인을 받은 뒤 지운다. 구현을 시작하기 전에 한다. spec이 사용자가 받아들인 내용을 아직 제안처럼 보여 주면, 구현하는 동안 무엇이 정해진 것인지 헷갈리기 때문이다(2026-10-06 사용자 승인). 사용자 승인 필요 (specs/001-place-order/spec.md)
+- [x] T013 spec.md의 `[제안]` 태그 11개를 지우는 일을 사용자에게 보여 주고 승인을 받은 뒤 지운다. 구현을 시작하기 전에 한다. spec이 사용자가 받아들인 내용을 아직 제안처럼 보여 주면, 구현하는 동안 무엇이 정해진 것인지 헷갈리기 때문이다(2026-10-06 사용자 승인). 사용자 승인 필요 (specs/001-place-order/spec.md)
   - 근거: research.md 결정 1("spec.md에서 11개의 `[제안]` 태그를 지우는 일은 spec 수정이다. 무엇을 지울지 보여 주고 사용자 승인을 받은 뒤 고친다").
   - 지울 곳은 spec.md Assumptions의 "`[제안]` 모음" 11개와, 그 11개가 본문에 붙은 자리다. 줄마다 지우기 전과 뒤를 보여 준다. 글의 내용은 바꾸지 않고 태그만 지운다.
   - 확인: `Select-String -Path specs/001-place-order/spec.md -Pattern '\[제안\]'` → 승인받은 곳이 모두 빠졌는지 본다.
 
-- [ ] T014 Gradle wrapper 9.8.0을 만든다 (gradlew, gradlew.bat, gradle/wrapper/gradle-wrapper.properties, gradle/wrapper/gradle-wrapper.jar)
+- [x] T014 Gradle wrapper 9.8.0을 만든다 (gradlew, gradlew.bat, gradle/wrapper/gradle-wrapper.properties, gradle/wrapper/gradle-wrapper.jar)
   - 근거: plan.md Technical Context "Gradle wrapper 9.8.0(Groovy DSL)", research.md 0절.
   - 이 PC에는 `gradle` 명령이 없다(2026-10-06 `command -v gradle`로 확인). Gradle 9.8.0 배포본(`https://services.gradle.org/distributions/gradle-9.8.0-bin.zip`)을 scratchpad 폴더에 받아 풀고, 그 안의 `gradle wrapper --gradle-version 9.8.0`을 저장소 루트에서 한 번 실행한다 `[제안]`. 받은 배포본은 저장소에 넣지 않는다.
   - 확인: `.\gradlew.bat --version` → 첫 줄에 `Gradle 9.8.0`, JVM 줄에 `17.0.2`.
-- [ ] T015 루트 `settings.gradle`을 만든다 (settings.gradle)
+- [x] T015 루트 `settings.gradle`을 만든다 (settings.gradle)
   - `rootProject.name = 'msa-example'` `[제안]`, `includeBuild('build-logic')`, `include 'libs:archunit-rules'`, `include 'services:inventory-service'`.
   - `services:order-service`는 이 단계에서 넣지 않고 Phase 2(T083)에서 더한다 `[제안]`. research.md 결정 4 "기능이 없는 빈 모듈을 미리 만들지 않는다"를 따른다.
   - 루트 `build.gradle`은 두지 않는다(plan.md "Structure Decision").
-- [ ] T016 단계 표시를 만든다. 내용은 `msa.stage=P1` 한 줄이다 (gradle.properties)
+- [x] T016 단계 표시를 만든다. 내용은 `msa.stage=P1` 한 줄이다 (gradle.properties)
   - 근거: research.md 결정 11 "지금 단계는 `gradle.properties`의 `msa.stage`(P1, P2, P3)에 적는다".
-- [ ] T017 버전 카탈로그를 만든다. P1이 쓰는 것만 넣고, P2·P3에서 쓰는 Resilience4j와 WireMock은 그 단계에서 더한다 `[제안]` (gradle/libs.versions.toml)
+- [x] T017 버전 카탈로그를 만든다. P1이 쓰는 것만 넣고, P2·P3에서 쓰는 Resilience4j와 WireMock은 그 단계에서 더한다 `[제안]` (gradle/libs.versions.toml)
   - 버전은 research.md 0절 표 그대로다: Spring Boot 4.1.1(플러그인과 BOM), mybatis-spring-boot-starter 4.1.0, mybatis-spring-boot-starter-test 4.1.0, OpenTelemetry Logback appender(`io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0`) 2.28.1-alpha, ArchUnit(`com.tngtech.archunit:archunit-junit5`) 1.5.1, swagger-request-validator-core 2.46.1, Spotless Gradle 플러그인 8.10.3, palantir-java-format 2.101.0, SpotBugs Gradle 플러그인 6.5.12, SpotBugs 4.10.4.
   - Spring Boot BOM이 관리하는 것(Flyway와 `flyway-database-oracle`, Oracle JDBC, Testcontainers와 `testcontainers-oracle-xe`, JUnit Jupiter, AssertJ, OpenTelemetry SDK)은 카탈로그에 버전을 적지 않는다. BOM은 Gradle의 `platform(...)`으로 가져온다(research.md 결정 11).
-- [ ] T018 포함 빌드 `build-logic`의 빌드 파일을 만든다 (build-logic/settings.gradle, build-logic/build.gradle)
+- [x] T018 포함 빌드 `build-logic`의 빌드 파일을 만든다 (build-logic/settings.gradle, build-logic/build.gradle)
   - `build-logic/settings.gradle`: 루트의 `gradle/libs.versions.toml`을 버전 카탈로그 `libs`로 읽는다.
   - `build-logic/build.gradle`: `groovy-gradle-plugin`을 적용하고, convention plugin이 적용할 Spring Boot Gradle 플러그인, Spotless 플러그인, SpotBugs 플러그인을 `implementation` 의존성으로 둔다.
-- [ ] T019 [P] SpotBugs 제외 파일을 만든다. 끄는 규칙은 `EI_EXPOSE_REP`와 `EI_EXPOSE_REP2` 두 개뿐이다 (config/spotbugs/exclude.xml)
+- [x] T019 [P] SpotBugs 제외 파일을 만든다. 끄는 규칙은 `EI_EXPOSE_REP`와 `EI_EXPOSE_REP2` 두 개뿐이다 (config/spotbugs/exclude.xml)
   - 근거: research.md 결정 10. 이 파일을 바꾸려면 PR에서 사용자가 승인한다.
-- [ ] T020 [P] 허용 목록 파일을 만든다. 첫 줄은 열 이름 `path,marker,reason,approved_pr`이고, 처음에는 열 이름 줄만 둔다 (config/quality/suppression-allowlist.csv)
+- [x] T020 [P] 허용 목록 파일을 만든다. 첫 줄은 열 이름 `path,marker,reason,approved_pr`이고, 처음에는 열 이름 줄만 둔다 (config/quality/suppression-allowlist.csv)
   - 근거: research.md 결정 11. 줄을 더하려면 PR에서 사용자가 승인한다(`docs/standards/testing.md` 3절 "검사를 끄는 표시").
-- [ ] T021 [P] 재고 API의 계약 현재본을 만든다. `specs/001-place-order/contracts/inventory-api.yaml`을 한 글자도 바꾸지 않고 복사한다 (contracts/inventory-api.yaml)
+- [x] T021 [P] 재고 API의 계약 현재본을 만든다. `specs/001-place-order/contracts/inventory-api.yaml`을 한 글자도 바꾸지 않고 복사한다 (contracts/inventory-api.yaml)
   - 근거: plan.md Constitution Check "계약 우선" 줄, `docs/standards/architecture-rules.md` 2절 "서비스 사이 호출"의 계약 현재본 규칙, quickstart.md 3절(두 파일의 차이 없음).
-- [ ] T022 [P] CI를 만든다 (.github/workflows/build.yml)
+- [x] T022 [P] CI를 만든다 (.github/workflows/build.yml)
   - 근거: research.md 결정 5. 검사 범위는 `docs/standards/git-workflow.md` 4절의 필수 검사이고, 기계 검사도 빌드 안에서 함께 돈다.
   - PR과 main push에서 `ubuntu-latest`로 돈다 `[제안]`. JDK 17(Temurin)을 설치한다 `[제안]`. Gradle 캐시는 `gradle/actions/setup-gradle`로 둔다 `[제안]`. Testcontainers는 러너의 Docker를 쓴다 `[제안]`.
   - Actions 버전은 구현할 때 각 저장소의 최신 릴리스를 조회해서 고정한다 `[제안]`. 조회한 명령과 결과를 보고에 적는다.
   - `./gradlew build` 전에 `chmod +x ./gradlew` 단계를 둔다 `[제안]`. Windows에서 만든 파일은 Git에 실행 권한 없이 올라갈 수 있기 때문이다.
   - main 규칙에 필수 검사를 켜는 일은 사용자가 한다(research.md 결정 5).
 
-- [ ] T023 [P] 테스트 케이스 단계 표를 만든다. plan.md "인수 시나리오와 테스트 층" 표의 "테스트 케이스", "서비스", "단계" 칸을 줄마다 옮긴다. 추가 케이스 아홉 개의 번호는 PR #17로 테스트 케이스 문서에 들어간 번호다 (config/quality/test-case-stages.csv)
+- [x] T023 [P] 테스트 케이스 단계 표를 만든다. plan.md "인수 시나리오와 테스트 층" 표의 "테스트 케이스", "서비스", "단계" 칸을 줄마다 옮긴다. 추가 케이스 아홉 개의 번호는 PR #17로 테스트 케이스 문서에 들어간 번호다 (config/quality/test-case-stages.csv)
   - 서비스 칸의 값은 `inventory`(재고), `order`(주문)로 쓴다 `[제안]`. 서비스 프로젝트 이름(`inventory-service`)에서 `-service`를 뺀 값이다.
   - 티켓 002로 넘긴 부분은 research.md 결정 11(사용자 결정)대로 단계를 `T002`로 적은 줄로 넣는다. 해당하는 곳은 시나리오 3.1의 "C1이 조회할 수 있다"와 시나리오 4.1의 조회 부분이다. 테스트 케이스 ID 검사(T029)는 `T002` 줄을 검사하지 않는다.
   - 재고 쪽 줄은 모두 P1이다. 재고 쪽 인수 시나리오 테스트를 모두 Phase 1에서 구현보다 먼저 쓰기 때문이다(이 문서 머리의 "테스트는 필수다").
@@ -469,54 +469,56 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 **⚠️ 이 절이 끝나기 전에는 User Story 1을 시작하지 않는다.**
 
-- [ ] T024 convention plugin `msa.java-service`를 만든다 (build-logic/src/main/groovy/msa.java-service.gradle)
+- [x] T024 convention plugin `msa.java-service`를 만든다 (build-logic/src/main/groovy/msa.java-service.gradle)
   - Java 17로 컴파일한다(`options.release = 17`) `[제안]`. Spring Boot Gradle 플러그인을 적용한다(`-parameters` 컴파일 옵션이 켜진다. research.md 결정 9).
   - Spring Boot BOM을 `platform(...)`으로 가져온다. `io.spring.dependency-management` 플러그인은 쓰지 않는다(research.md 결정 11).
   - Spotless를 적용하고 palantir-java-format 2.101.0, 4칸 들여쓰기로 검사한다(`docs/standards/coding-conventions.md` 3-5절).
   - SpotBugs 4.10.4를 적용한다. `effort=max`, `reportLevel=low`, 보고서는 HTML이다(research.md 결정 10의 `[제안]` 세부). 제외 파일은 `config/spotbugs/exclude.xml`이다. 하나라도 찾으면 빌드가 실패한다.
   - `test` 작업은 JUnit Platform을 쓴다. 저장소 루트 `contracts/` 폴더 경로를 시스템 속성 `msa.contractsDir`로 넘긴다 `[제안]`. 두 서비스의 계약 테스트가 이 값으로 계약 파일을 찾는다.
+  - 컴파일 작업의 `options.encoding`과 테스트 작업의 `defaultCharacterEncoding`을 `UTF-8`로 명시한다. 이 PC의 기본 인코딩은 MS949이고 소스는 UTF-8이기 때문이다(T180, 2026-10-08 사용자 승인).
   - T025~T029의 검사 작업을 등록하고 `check` 작업에 연결한다. 그래서 `build`가 검사를 돌린다(quickstart.md 2절).
-- [ ] T025 [P] Lombok 검사 작업을 만든다 (build-logic/src/main/groovy/msa/quality/NoLombokCheck.groovy)
+- [x] T025 [P] Lombok 검사 작업을 만든다 (build-logic/src/main/groovy/msa/quality/NoLombokCheck.groovy)
   - 검사 방법은 `docs/standards/coding-conventions.md` 3-8절 표의 원문 그대로다: "Gradle 빌드: 어떤 configuration에든 `org.projectlombok` 그룹이 들어오면 빌드를 실패시킨다. 보조로 소스에서 `import lombok.`을 찾는다."
-- [ ] T026 [P] 검사를 끄는 표시를 찾는 작업을 만든다 (build-logic/src/main/groovy/msa/quality/SuppressionMarkerCheck.groovy)
+- [x] T026 [P] 검사를 끄는 표시를 찾는 작업을 만든다 (build-logic/src/main/groovy/msa/quality/SuppressionMarkerCheck.groovy)
   - 검사 방법은 3-8절 표의 원문 그대로다: "`src/**/*.java`와 `build.gradle`에서 `@Disabled`, `@DisabledIf`, `@EnabledIf`, `Assumptions.assume`, `@SuppressWarnings`, `@SuppressFBWarnings`, `NOPMD`, `spotless:off`, `@formatter:off`, `FreezingArchRule`, 테스트 작업의 `exclude`를 찾는다. 허용 목록(파일 경로, 표시, 이유, 승인한 PR 번호)에 없으면 실패한다."
   - 허용 목록은 `config/quality/suppression-allowlist.csv`다. 검사 대상은 이 작업을 적용한 서비스 프로젝트 폴더다.
-- [ ] T027 [P] Mapper XML 검사 작업을 만든다 (build-logic/src/main/groovy/msa/quality/MapperXmlCheck.groovy)
+- [x] T027 [P] Mapper XML 검사 작업을 만든다 (build-logic/src/main/groovy/msa/quality/MapperXmlCheck.groovy)
   - 검사 방법은 3-8절 표의 원문 그대로다: "Mapper XML을 XML 파서로 읽고, 문장 요소(`select`, `insert`, `update`, `delete`, `sql`)의 글자를 검사한다. XML 주석은 빼고 본다. `${`는 허용 목록에 있는 것만 통과시킨다. `COUNT(*)`는 잡지 않는다". 찾는 것은 `${}`와 `SELECT *`다.
   - 3-8절은 이 검사를 "테스트가" 한다고 적지만, research.md 결정 11(사용자 결정)이 Gradle 작업으로 정했다. 3-8절은 Phase 0-B에서 결정 11에 맞게 고친다(T009, 2026-10-06 사용자 결정).
   - `${}` 예외도 `config/quality/suppression-allowlist.csv`에 적는다(research.md 결정 11). 이때 `marker` 칸은 `${`다 `[제안]`.
-- [ ] T028 [P] 19c 이후 SQL 키워드 검사 작업을 만든다 (build-logic/src/main/groovy/msa/quality/Sql19cKeywordCheck.groovy)
+- [x] T028 [P] 19c 이후 SQL 키워드 검사 작업을 만든다 (build-logic/src/main/groovy/msa/quality/Sql19cKeywordCheck.groovy)
   - 검사 방법은 3-8절 표의 원문 그대로다: "Mapper XML과 Flyway SQL에서 금지 키워드를 찾는다: `IF NOT EXISTS`, `IF EXISTS`, `BOOLEAN`(열 타입), `JSON`(열 타입. `IS JSON` 조건은 제외), `SQL_MACRO`, `VECTOR`, `DOMAIN`, `ANNOTATIONS`"
-- [ ] T029 [P] 테스트 케이스 ID 검사 작업을 만든다 (build-logic/src/main/groovy/msa/quality/TestCaseIdCheck.groovy)
+- [x] T029 [P] 테스트 케이스 ID 검사 작업을 만든다 (build-logic/src/main/groovy/msa/quality/TestCaseIdCheck.groovy)
   - 검사 방법은 research.md 결정 11 원문 그대로다: "검사는 두 가지를 본다. 첫째, `docs/test-cases/order-placement.md`의 모든 테스트 케이스 ID가 이 표에 있는가. 둘째, 단계가 지금 단계 이하인 줄마다 그 서비스의 테스트 소스에 `@DisplayName("<ID>`로 시작하는 테스트가 하나 이상 있는가." "티켓 002로 넘긴 부분은 단계를 `T002`로 적어 검사하지 않는다. 운영 테스트(`docs/test-cases/operations.md`)는 대상에서 뺀다."
   - 지금 단계는 `gradle.properties`의 `msa.stage`에서 읽는다. 단계 순서는 P1 < P2 < P3이다. 단계가 `T002`인 줄은 이 순서에 들지 않으므로 둘째 검사에서 언제나 건너뛴다.
   - 이 작업을 적용한 서비스는 표에서 자기 서비스 칸(T023의 `inventory`, `order`)인 줄만 둘째 검사로 본다 `[제안]`.
-- [ ] T030 [P] ArchUnit 규칙 라이브러리를 만든다 (libs/archunit-rules/build.gradle, libs/archunit-rules/src/main/java/com/example/msa/archrules/LayerRules.java, libs/archunit-rules/src/main/java/com/example/msa/archrules/MyBatisAnnotationRules.java, libs/archunit-rules/src/main/java/com/example/msa/archrules/TransactionalRemoteCallRules.java)
+- [x] T030 [P] ArchUnit 규칙 라이브러리를 만든다 (libs/archunit-rules/build.gradle, libs/archunit-rules/src/main/java/com/example/msa/archrules/LayerRules.java, libs/archunit-rules/src/main/java/com/example/msa/archrules/MyBatisAnnotationRules.java, libs/archunit-rules/src/main/java/com/example/msa/archrules/TransactionalRemoteCallRules.java)
   - `build.gradle`: `java-library`와 Spotless만 적용하고 ArchUnit을 `api` 의존성으로 둔다 `[제안]`. `msa.java-service`는 Spring Boot 플러그인이 붙어 라이브러리에 맞지 않는다.
+  - 컴파일 작업의 `options.encoding`을 `UTF-8`로 명시한다. 이 PC의 기본 인코딩은 MS949이고, 이 라이브러리는 `msa.java-service`를 적용하지 않아 그 설정을 받지 못하기 때문이다(T180, 2026-10-08 사용자 승인).
   - 규칙은 서비스의 기본 패키지(`com.example.msa.inventory` 등)를 받아 만든다. 업무 규칙, DTO, Mapper, SQL은 두지 않는다(`docs/standards/architecture-rules.md` 1절 "서비스 경계"의 `libs/` 규칙).
   - `LayerRules`: `docs/standards/coding-conventions.md` 2절 "의존 방향" 원문 그대로다. "controller는 mapper와 client를 직접 부르지 않는다." "mapper, client, domain은 service와 controller를 모른다." "domain은 Spring과 MyBatis를 모른다(순수 Java)." `dto`는 어디서나 쓸 수 있다.
   - `MyBatisAnnotationRules`: 3-8절 원문 그대로다. "`@Select`, `@Insert`, `@Update`, `@Delete`, `@SelectProvider`, `@InsertProvider`, `@UpdateProvider`, `@DeleteProvider`를 쓰지 못하게 한다"
   - `TransactionalRemoteCallRules`: 3-8절 원문 그대로다. "`@Transactional`이 붙은 메서드와 클래스는 `client` 패키지의 클래스를 직접 부르지 않는다"
-- [ ] T031 재고 서비스 빌드 파일을 만든다. `plugins { id 'msa.java-service' }`를 적용한다 (services/inventory-service/build.gradle)
+- [x] T031 재고 서비스 빌드 파일을 만든다. `plugins { id 'msa.java-service' }`를 적용한다 (services/inventory-service/build.gradle)
   - 의존성: `spring-boot-starter-webmvc`, `-validation`, `-actuator`, `-flyway`, `-opentelemetry`, `flyway-database-oracle`, Oracle JDBC(`com.oracle.database.jdbc:ojdbc17`) `[제안]`, `mybatis-spring-boot-starter`, OpenTelemetry Logback appender.
   - 테스트 의존성: Spring Boot 테스트 스타터, `spring-boot-testcontainers`, `testcontainers-oracle-xe`, `mybatis-spring-boot-starter-test`, `archunit-junit5`, `swagger-request-validator-core`, `project(':libs:archunit-rules')`. Spring Boot 4.1.1의 테스트 스타터 이름은 구현할 때 Spring Boot 4.1.1 문서에서 확인한다. 확인하지 못했다. research.md 0절은 이 스타터를 조회하지 않았다. 확인 결과는 T041에서 보고한다.
   - 재고 서비스는 다른 서비스를 부르지 않으므로 `restclient`, Resilience4j, WireMock을 넣지 않는다(plan.md "Structure Decision").
-- [ ] T032 앱 진입점을 만든다 (services/inventory-service/src/main/java/com/example/msa/inventory/InventoryServiceApplication.java)
-- [ ] T033 앱 설정을 만든다 (services/inventory-service/src/main/resources/application.yml)
+- [x] T032 앱 진입점을 만든다 (services/inventory-service/src/main/java/com/example/msa/inventory/InventoryServiceApplication.java)
+- [x] T033 앱 설정을 만든다 (services/inventory-service/src/main/resources/application.yml)
   - DB 접속 값은 환경변수로 받는다 `[제안]`: `INVENTORY_DB_URL`(기본 `jdbc:oracle:thin:@//localhost:1522/XEPDB1`. `infra/compose/compose.yaml`의 inventory-db 호스트 포트가 1522다), `INVENTORY_DB_USERNAME`(기본 `INVENTORY_SVC`), `INVENTORY_SVC_PASSWORD`(기본값 없음. `.env.example`에 이미 있는 이름이다). 저장소에 비밀번호를 넣지 않는다(`docs/standards/architecture-rules.md` 3절 "실행과 배포"의 비밀값 규칙).
   - MyBatis: `mybatis.mapper-locations=classpath:mapper/*.xml`, `mybatis.configuration.map-underscore-to-camel-case=true`, `mybatis.configuration.arg-name-based-constructor-auto-mapping=true` (research.md 결정 9).
   - 로그: `logging.structured.format.console=ecs` `[제안]` (research.md 4절 "로그 형식"의 `[제안]`).
   - 프로브: `management.endpoint.health.probes.enabled=true`. readiness 그룹에 DB 연결 확인(`db`)을 넣고 `[제안]`, 노출 엔드포인트는 `health`만 둔다 `[제안]` (research.md 4절 "프로브"의 `[제안]`). liveness 그룹에는 외부 상태를 넣지 않는다(`docs/standards/architecture-rules.md` 3절 "실행과 배포"의 프로브 규칙).
   - 그레이스풀 셧다운: `server.shutdown=graceful`, `spring.lifecycle.timeout-per-shutdown-phase=35s` (research.md 4절 "그레이스풀 셧다운", 같은 절의 그레이스풀 셧다운 규칙).
   - OTLP 주소는 환경변수 `OTLP_ENDPOINT`(기본 `http://lgtm:4318`)로 받는다 `[제안]`. Spring Boot 4.1.1의 OTLP 속성 이름은 구현할 때 문서에서 확인한다. 확인하지 못했다. 확인 결과는 T078에서 보고한다.
-- [ ] T034 [P] 로그 설정을 만든다. 표준 출력은 ECS JSON, 같은 로그를 OpenTelemetry Logback appender로 OTLP에 보낸다. 파일 appender를 두지 않는다 (services/inventory-service/src/main/resources/logback-spring.xml, services/inventory-service/src/main/java/com/example/msa/inventory/config/ObservabilityConfig.java)
+- [x] T034 [P] 로그 설정을 만든다. 표준 출력은 ECS JSON, 같은 로그를 OpenTelemetry Logback appender로 OTLP에 보낸다. 파일 appender를 두지 않는다 (services/inventory-service/src/main/resources/logback-spring.xml, services/inventory-service/src/main/java/com/example/msa/inventory/config/ObservabilityConfig.java)
   - 근거: research.md 4절 "OTLP 전송", `docs/standards/architecture-rules.md` 4절 "관측성"의 두 규칙.
   - appender에 OpenTelemetry 객체를 연결하는 코드(`OpenTelemetryAppender.install(...)`)를 `ObservabilityConfig`에 둔다 `[제안]`. Spring Boot 4.1.1이 이것을 자동으로 하는지는 구현할 때 문서에서 확인한다. 자동이면 이 클래스를 만들지 않는다. 확인 결과는 T078에서 보고한다.
-- [ ] T035 [P] 테스트 설정을 만든다. OTLP 내보내기를 끈다. 테스트는 이 설정을 `@ActiveProfiles("test")`로 켠다 `[제안]` (services/inventory-service/src/test/resources/application-test.yml)
+- [x] T035 [P] 테스트 설정을 만든다. OTLP 내보내기를 끈다. 테스트는 이 설정을 `@ActiveProfiles("test")`로 켠다 `[제안]` (services/inventory-service/src/test/resources/application-test.yml)
   - 근거: research.md 4절 "OTLP 전송"의 "테스트에서는 내보내기를 끈다".
-- [ ] T036 [P] 재고 서비스 규칙 문서를 만든다. 패키지 구조(plan.md "Source Code" 트리의 재고 서비스 부분), DB 계정 `INVENTORY_SVC`와 테이블 세 개, 재고 행은 상품 ID 순서로 잠근다는 규칙, `RESERVATION_ITEMS`가 `STOCK`으로 외래 키를 두지 않는 이유, 테스트 데이터는 상품 ID `A`, `B`, `Z`를 테스트가 직접 넣고 지운다는 규칙을 적는다 (services/inventory-service/CLAUDE.md)
+- [x] T036 [P] 재고 서비스 규칙 문서를 만든다. 패키지 구조(plan.md "Source Code" 트리의 재고 서비스 부분), DB 계정 `INVENTORY_SVC`와 테이블 세 개, 재고 행은 상품 ID 순서로 잠근다는 규칙, `RESERVATION_ITEMS`가 `STOCK`으로 외래 키를 두지 않는 이유, 테스트 데이터는 상품 ID `A`, `B`, `Z`를 테스트가 직접 넣고 지운다는 규칙을 적는다 (services/inventory-service/CLAUDE.md)
   - 근거: 헌법 "기술 제약" 절("한 서비스에만 해당하는 규칙은 `services/<서비스>/CLAUDE.md`에 적는다"), research.md 결정 4, data-model.md 3절·6-2절, research.md 4절 "초기 재고 데이터".
-- [ ] T037 재고 스키마 마이그레이션을 만든다. 아래 data-model.md 3절의 열과 제약을 그대로 만든다. 이미 적용된 마이그레이션 파일은 나중에 고치지 않는다 (services/inventory-service/src/main/resources/db/migration/V1__inventory.sql)
+- [x] T037 재고 스키마 마이그레이션을 만든다. 아래 data-model.md 3절의 열과 제약을 그대로 만든다. 이미 적용된 마이그레이션 파일은 나중에 고치지 않는다 (services/inventory-service/src/main/resources/db/migration/V1__inventory.sql)
   - 원문 (data-model.md 3-1절 `STOCK`):
 
     | 열 | 타입 | NULL | 뜻 |
@@ -555,14 +557,14 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
   - CHECK 제약의 값 목록은 위 "뜻" 칸의 값이다. `RESERVATION_ITEMS.RESULT`의 값 목록 CHECK는 data-model.md에 없으므로 두지 않는다 `[제안]`.
   - SQL은 19c에서 도는 것만 쓴다(`docs/standards/coding-conventions.md` 3-3절). T028의 검사가 금지 키워드를 잡는다.
-- [ ] T038 [P] 초기 재고 데이터를 만든다. `P-001`부터 `P-005`까지 각 100개다 (services/inventory-service/src/main/resources/db/migration/V2__seed_stock.sql)
+- [x] T038 [P] 초기 재고 데이터를 만든다. `P-001`부터 `P-005`까지 각 100개다 (services/inventory-service/src/main/resources/db/migration/V2__seed_stock.sql)
   - 근거: data-model.md 3-1절, research.md 4절 "초기 재고 데이터". 테스트는 이 행을 쓰지 않는다.
-- [ ] T039 테스트용 Oracle 컨테이너를 만든다. `gvenzl/oracle-xe:21.3.0-slim-faststart` 컨테이너 하나를 `@ServiceConnection`이 붙은 정적 필드로 두고, 재고 서비스의 Mapper 테스트와 서비스 통합 테스트가 함께 쓴다 (services/inventory-service/src/test/java/com/example/msa/inventory/OracleTestContainer.java `[제안]`)
+- [x] T039 테스트용 Oracle 컨테이너를 만든다. `gvenzl/oracle-xe:21.3.0-slim-faststart` 컨테이너 하나를 `@ServiceConnection`이 붙은 정적 필드로 두고, 재고 서비스의 Mapper 테스트와 서비스 통합 테스트가 함께 쓴다 (services/inventory-service/src/test/java/com/example/msa/inventory/OracleTestContainer.java `[제안]`)
   - 근거: research.md 4절 "Testcontainers Oracle 재사용", `docs/standards/testing.md` 3절 "DB는 진짜 Oracle". H2를 쓰지 않는다.
   - 위치는 테스트 최상위 패키지다 `[제안]`. plan.md 트리에 더했다(2026-10-07 사용자 결정).
-- [ ] T040 [P] 제공자 계약 검증 도우미를 만든다. 서비스 통합 테스트가 보낸 요청과 받은 응답을 swagger-request-validator-core의 `Request`·`Response`로 옮겨 `contracts/inventory-api.yaml`로 검증한다. 계약 파일 경로는 시스템 속성 `msa.contractsDir`(T024)에서 얻는다 (services/inventory-service/src/test/java/com/example/msa/inventory/contract/ProviderContractValidator.java)
+- [x] T040 [P] 제공자 계약 검증 도우미를 만든다. 서비스 통합 테스트가 보낸 요청과 받은 응답을 swagger-request-validator-core의 `Request`·`Response`로 옮겨 `contracts/inventory-api.yaml`로 검증한다. 계약 파일 경로는 시스템 속성 `msa.contractsDir`(T024)에서 얻는다 (services/inventory-service/src/test/java/com/example/msa/inventory/contract/ProviderContractValidator.java)
   - 근거: research.md 결정 12. 이 도우미는 주문 서비스와 공유하지 않는다(같은 결정의 `[제안]` 세부).
-- [ ] T041 빌드 골격이 도는지 확인한다. research.md 6절 "palantir-java-format이 JDK 17의 Gradle 9.8.0 안에서 Spotless로 도는지"를 여기서 확인한다 (build-logic/src/main/groovy/msa.java-service.gradle)
+- [x] T041 빌드 골격이 도는지 확인한다. research.md 6절 "palantir-java-format이 JDK 17의 Gradle 9.8.0 안에서 Spotless로 도는지"를 여기서 확인한다 (build-logic/src/main/groovy/msa.java-service.gradle)
   - 명령: `.\gradlew.bat :services:inventory-service:spotlessCheck :services:inventory-service:compileJava :services:inventory-service:spotbugsMain :services:inventory-service:compileTestJava`
   - 기대 결과: 종료 코드 0.
   - `compileTestJava`가 테스트 의존성을 모두 내려받는지 본다. T031에서 고른 Spring Boot 4.1.1 테스트 스타터 이름과, 그 이름을 확인한 문서 주소를 보고에 적는다.
@@ -585,28 +587,28 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 #### 인수 시나리오 테스트 (구현보다 먼저)
 
-- [ ] T042 [P] [US1] 시나리오 1.1의 서비스 통합 테스트를 쓴다. 본 흐름(같은 요청을 다시 보냄), 변형 1(같은 요청 두 개를 동시에 보냄), 변형 2(REJECTED 뒤 재고를 채우고 다시 보냄)를 테스트 메서드 세 개로 나눈다 `[제안]`. 메서드마다 `@DisplayName`은 시나리오 1.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReservationIdempotencyIntegrationTest.java)
-- [ ] T043 [P] [US1] 시나리오 1.2의 서비스 통합 테스트를 쓴다. 서로 다른 주문 번호 20개로 상품 A 1개씩 예약 요청을 동시에 보낸다. `@DisplayName`은 시나리오 1.2의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReservationConcurrencyIntegrationTest.java)
-- [ ] T044 [P] [US1] 시나리오 1.3의 서비스 통합 테스트를 쓴다. 해제 먼저, 예약 나중, 같은 해제 두 번째를 차례로 보낸다. `@DisplayName`은 시나리오 1.3의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReleaseBeforeReserveIntegrationTest.java)
-- [ ] T045 [P] [US1] 시나리오 1.4의 서비스 통합 테스트를 쓴다. spec 시나리오 1.4가 "이 스토리에서 검증하는 줄"로 고른 네 줄(Given, When, Then 409, 재고는 변하지 않는다)만 검증한다. 주문 서비스 쪽 두 줄은 Phase 2의 T139가 검증한다. `@DisplayName`은 시나리오 1.4의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReservationConflictIntegrationTest.java)
-- [ ] T046 [P] [US1] 시나리오 1.5의 서비스 통합 테스트를 쓴다. 50건은 항목을 "B 1개, A 1개" 순서로, 50건은 "A 1개, B 1개" 순서로 적어 서로 다른 주문 번호 100개로 동시에 보낸다. `@DisplayName`은 시나리오 1.5의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReservationDeadlockIntegrationTest.java)
-- [ ] T047 [P] [US1] 시나리오 1.6(㉠ 거절된 예약에 해제 요청이 와도 재고는 그대로다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. `@DisplayName`은 시나리오 1.6의 테스트 케이스 ID로 시작한다. 스토리 라벨은 해제 동작이 User Story 1의 범위라서 `[US1]`로 붙였다 `[제안]` (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReleaseRejectedReservationIntegrationTest.java)
-- [ ] T048 [P] [US1] 시나리오 1.7(㉡ 해제한 예약의 기록은 남아, 같은 예약 요청이 다시 와도 재고가 줄지 않는다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. `@DisplayName`은 시나리오 1.7의 테스트 케이스 ID로 시작한다. 스토리 라벨은 `[US1]`이다 `[제안]` (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReserveAfterReleaseIntegrationTest.java)
-- [ ] T049 [P] [US1] 시나리오 1.8(㉥ 예약된 재고에 해제가 두 번 와도 수량은 한 번만 돌아온다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. `@DisplayName`은 시나리오 1.8의 테스트 케이스 ID로 시작한다. 스토리 라벨은 해제 동작이 User Story 1의 범위라서 `[US1]`이다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReleaseTwiceIntegrationTest.java `[제안]`)
+- [x] T042 [P] [US1] 시나리오 1.1의 서비스 통합 테스트를 쓴다. 본 흐름(같은 요청을 다시 보냄), 변형 1(같은 요청 두 개를 동시에 보냄), 변형 2(REJECTED 뒤 재고를 채우고 다시 보냄)를 테스트 메서드 세 개로 나눈다 `[제안]`. 메서드마다 `@DisplayName`은 시나리오 1.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReservationIdempotencyIntegrationTest.java)
+- [x] T043 [P] [US1] 시나리오 1.2의 서비스 통합 테스트를 쓴다. 서로 다른 주문 번호 20개로 상품 A 1개씩 예약 요청을 동시에 보낸다. `@DisplayName`은 시나리오 1.2의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReservationConcurrencyIntegrationTest.java)
+- [x] T044 [P] [US1] 시나리오 1.3의 서비스 통합 테스트를 쓴다. 해제 먼저, 예약 나중, 같은 해제 두 번째를 차례로 보낸다. `@DisplayName`은 시나리오 1.3의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReleaseBeforeReserveIntegrationTest.java)
+- [x] T045 [P] [US1] 시나리오 1.4의 서비스 통합 테스트를 쓴다. spec 시나리오 1.4가 "이 스토리에서 검증하는 줄"로 고른 네 줄(Given, When, Then 409, 재고는 변하지 않는다)만 검증한다. 주문 서비스 쪽 두 줄은 Phase 2의 T139가 검증한다. `@DisplayName`은 시나리오 1.4의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReservationConflictIntegrationTest.java)
+- [x] T046 [P] [US1] 시나리오 1.5의 서비스 통합 테스트를 쓴다. 50건은 항목을 "B 1개, A 1개" 순서로, 50건은 "A 1개, B 1개" 순서로 적어 서로 다른 주문 번호 100개로 동시에 보낸다. `@DisplayName`은 시나리오 1.5의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReservationDeadlockIntegrationTest.java)
+- [x] T047 [P] [US1] 시나리오 1.6(㉠ 거절된 예약에 해제 요청이 와도 재고는 그대로다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. `@DisplayName`은 시나리오 1.6의 테스트 케이스 ID로 시작한다. 스토리 라벨은 해제 동작이 User Story 1의 범위라서 `[US1]`로 붙였다 `[제안]` (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReleaseRejectedReservationIntegrationTest.java)
+- [x] T048 [P] [US1] 시나리오 1.7(㉡ 해제한 예약의 기록은 남아, 같은 예약 요청이 다시 와도 재고가 줄지 않는다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. `@DisplayName`은 시나리오 1.7의 테스트 케이스 ID로 시작한다. 스토리 라벨은 `[US1]`이다 `[제안]` (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReserveAfterReleaseIntegrationTest.java)
+- [x] T049 [P] [US1] 시나리오 1.8(㉥ 예약된 재고에 해제가 두 번 와도 수량은 한 번만 돌아온다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. `@DisplayName`은 시나리오 1.8의 테스트 케이스 ID로 시작한다. 스토리 라벨은 해제 동작이 User Story 1의 범위라서 `[US1]`이다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReleaseTwiceIntegrationTest.java `[제안]`)
   - 근거: FR-009의 "해제 요청이 여러 번 와도 수량은 한 번만 되돌린다". 이 동작을 예약된 상태에서 보는 테스트 케이스가 없어 0-A에서 더한다(2026-10-06 사용자 결정).
-- [ ] T050 [P] [US9] 시나리오 9.1의 재고 쪽 서비스 통합 테스트를 쓴다. 상품 A 10개에서 주문 번호 하나로 A 3개를 예약하고, 같은 주문 번호로 해제한 뒤 재고를 읽는다. 기대값은 테스트 케이스의 "상품 A의 재고는 10개다"이고 `docs/test-cases/order-placement.md`에서 그대로 가져온다. `@DisplayName`은 시나리오 9.1의 테스트 케이스 ID로 시작한다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReleaseRestoresStockIntegrationTest.java)
+- [x] T050 [P] [US9] 시나리오 9.1의 재고 쪽 서비스 통합 테스트를 쓴다. 상품 A 10개에서 주문 번호 하나로 A 3개를 예약하고, 같은 주문 번호로 해제한 뒤 재고를 읽는다. 기대값은 테스트 케이스의 "상품 A의 재고는 10개다"이고 `docs/test-cases/order-placement.md`에서 그대로 가져온다. `@DisplayName`은 시나리오 9.1의 테스트 케이스 ID로 시작한다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReleaseRestoresStockIntegrationTest.java)
   - 근거: research.md 결정 3, 테스트 케이스의 비고("재고 쪽(해제하면 수량이 복구된다)은 재고 서비스 테스트로 검증한다").
-- [ ] T051 [P] [US2] 시나리오 2.1의 재고 쪽 서비스 통합 테스트를 쓴다. 상품 A 10개, 상품 B 5개에서 주문 쪽 테스트(Phase 2의 T099)가 보내는 것과 같은 예약 요청(A 3개, B 2개)을 재고 서비스에 보내고 재고를 읽는다. `@DisplayName`은 시나리오 2.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ConfirmedOrderStockIntegrationTest.java)
+- [x] T051 [P] [US2] 시나리오 2.1의 재고 쪽 서비스 통합 테스트를 쓴다. 상품 A 10개, 상품 B 5개에서 주문 쪽 테스트(Phase 2의 T099)가 보내는 것과 같은 예약 요청(A 3개, B 2개)을 재고 서비스에 보내고 재고를 읽는다. `@DisplayName`은 시나리오 2.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ConfirmedOrderStockIntegrationTest.java)
   - 근거: plan.md 표의 "2.1의 재고 쪽" 줄("같은 예약 요청 → 7개, 3개").
-- [ ] T052 [P] [US3] 시나리오 3.1의 재고 쪽 서비스 통합 테스트를 쓴다. 상품 A 10개, 상품 B 1개에서 같은 예약 요청(A 3개, B 2개)을 재고 서비스에 보내고 재고를 읽는다. `@DisplayName`은 시나리오 3.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/RejectedOrderStockIntegrationTest.java)
-- [ ] T053 [P] [US3] 시나리오 3.3의 재고 쪽 서비스 통합 테스트를 쓴다. 본 흐름(A 10개, Z 없음)과 변형(B 1개 더함)을 메서드 두 개로 나누고, 같은 예약 요청을 보낸 뒤 응답의 사유와 두 목록, 재고를 검사한다. `@DisplayName`은 시나리오 3.3의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ProductNotFoundStockIntegrationTest.java)
-- [ ] T054 [P] [US6] 시나리오 6.1의 재고 쪽 서비스 통합 테스트를 쓴다. 상품 A 10개에서 서로 다른 주문 번호 두 개로 A 3개 예약을 차례로 보내고, 첫 예약 뒤 7개, 둘째 예약 뒤 4개인지 검사한다. `@DisplayName`은 시나리오 6.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/DistinctOrdersStockIntegrationTest.java)
+- [x] T052 [P] [US3] 시나리오 3.1의 재고 쪽 서비스 통합 테스트를 쓴다. 상품 A 10개, 상품 B 1개에서 같은 예약 요청(A 3개, B 2개)을 재고 서비스에 보내고 재고를 읽는다. `@DisplayName`은 시나리오 3.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/RejectedOrderStockIntegrationTest.java)
+- [x] T053 [P] [US3] 시나리오 3.3의 재고 쪽 서비스 통합 테스트를 쓴다. 본 흐름(A 10개, Z 없음)과 변형(B 1개 더함)을 메서드 두 개로 나누고, 같은 예약 요청을 보낸 뒤 응답의 사유와 두 목록, 재고를 검사한다. `@DisplayName`은 시나리오 3.3의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ProductNotFoundStockIntegrationTest.java)
+- [x] T054 [P] [US6] 시나리오 6.1의 재고 쪽 서비스 통합 테스트를 쓴다. 상품 A 10개에서 서로 다른 주문 번호 두 개로 A 3개 예약을 차례로 보내고, 첫 예약 뒤 7개, 둘째 예약 뒤 4개인지 검사한다. `@DisplayName`은 시나리오 6.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/DistinctOrdersStockIntegrationTest.java)
   - 근거: plan.md 표의 "6.1의 재고 쪽" 줄("서로 다른 주문 번호의 예약 두 번 → 7개, 4개").
-- [ ] T055 [P] [US8] 시나리오 8.1의 재고 쪽 서비스 통합 테스트를 쓴다. 상품 A 10개에서 같은 주문 번호와 같은 내용(A 3개)의 예약 요청을 세 번 보내고 재고가 7개인지 검사한다. 세 번 보내는 이유는 주문 쪽(Phase 3)이 같은 요청을 세 번 보내기 때문이다 `[제안]`. `@DisplayName`은 시나리오 8.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/RetriedReservationStockIntegrationTest.java)
+- [x] T055 [P] [US8] 시나리오 8.1의 재고 쪽 서비스 통합 테스트를 쓴다. 상품 A 10개에서 같은 주문 번호와 같은 내용(A 3개)의 예약 요청을 세 번 보내고 재고가 7개인지 검사한다. 세 번 보내는 이유는 주문 쪽(Phase 3)이 같은 요청을 세 번 보내기 때문이다 `[제안]`. `@DisplayName`은 시나리오 8.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/RetriedReservationStockIntegrationTest.java)
   - 근거: plan.md 표의 "8.1의 재고 쪽" 줄("같은 예약 요청 → 7개").
-- [ ] T056 [P] [US1] 제공자 계약 테스트를 쓴다. 예약 `PUT` 200(시나리오 1.1의 요청), 해제 `DELETE` 200(시나리오 1.3의 요청), 409 Problem Details(시나리오 1.4의 요청), `PRODUCT_NOT_FOUND` 거절 응답(시나리오 3.3의 재고 쪽 요청), 시나리오 1.6(㉠)의 해제 `DELETE` 200(REJECTED)을 보내고, 요청과 응답을 T040의 도우미로 `contracts/inventory-api.yaml`에 맞춰 검증한다. 계약 테스트에는 테스트 케이스 ID를 붙이지 않는다 (services/inventory-service/src/test/java/com/example/msa/inventory/contract/ReservationProviderContractTest.java)
+- [x] T056 [P] [US1] 제공자 계약 테스트를 쓴다. 예약 `PUT` 200(시나리오 1.1의 요청), 해제 `DELETE` 200(시나리오 1.3의 요청), 409 Problem Details(시나리오 1.4의 요청), `PRODUCT_NOT_FOUND` 거절 응답(시나리오 3.3의 재고 쪽 요청), 시나리오 1.6(㉠)의 해제 `DELETE` 200(REJECTED)을 보내고, 요청과 응답을 T040의 도우미로 `contracts/inventory-api.yaml`에 맞춰 검증한다. 계약 테스트에는 테스트 케이스 ID를 붙이지 않는다 (services/inventory-service/src/test/java/com/example/msa/inventory/contract/ReservationProviderContractTest.java)
   - 근거: plan.md "인수 시나리오와 테스트 층" 표의 "계약" 칸(제공자: 200 응답, `DELETE` 200, 409 Problem Details, 3.3의 재고 쪽 "제공자")과 시나리오 1.6 줄(서비스 통합, 제공자 계약), research.md 결정 12.
-- [ ] T057 [US1] 위 테스트가 실패하는 것을 확인한다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReservationIdempotencyIntegrationTest.java)
+- [x] T057 [US1] 위 테스트가 실패하는 것을 확인한다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReservationIdempotencyIntegrationTest.java)
   - 명령: `.\gradlew.bat :services:inventory-service:test --tests "com.example.msa.inventory.integration.*" --tests "com.example.msa.inventory.contract.*"`
   - 기대 결과: 종료 코드가 0이 아니다. 테스트 보고서(`services/inventory-service/build/reports/tests/test/index.html`)에서 위 "인수 시나리오 테스트" 묶음의 테스트가 모두 실패로 나오고, 실패 이유가 엔드포인트가 없어서 생긴 단언 실패(예: 기대 200, 실제 404)다. 하나라도 통과하면 멈추고 사용자에게 묻는다.
   - 컴파일 오류로 실패하면 이 확인은 성공이 아니다. 테스트가 아직 없는 클래스를 참조하는지 보고 고친다.
@@ -746,42 +748,42 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 받치는 테스트(단위, Mapper)는 구현 클래스를 참조하므로, 쓰고 나면 컴파일 오류로 실패한다. 그 실패를 본 뒤 구현한다.
 
-- [ ] T058 [P] [US1] 예약 상태와 사유 enum을 만든다. `ReservationStatus`는 `RESERVED`, `REJECTED`, `RELEASED`, `ReservationReason`은 `OUT_OF_STOCK`, `PRODUCT_NOT_FOUND`다. 이 값 목록은 계약의 enum과 같아야 한다 (services/inventory-service/src/main/java/com/example/msa/inventory/domain/ReservationStatus.java, services/inventory-service/src/main/java/com/example/msa/inventory/domain/ReservationReason.java)
+- [x] T058 [P] [US1] 예약 상태와 사유 enum을 만든다. `ReservationStatus`는 `RESERVED`, `REJECTED`, `RELEASED`, `ReservationReason`은 `OUT_OF_STOCK`, `PRODUCT_NOT_FOUND`다. 이 값 목록은 계약의 enum과 같아야 한다 (services/inventory-service/src/main/java/com/example/msa/inventory/domain/ReservationStatus.java, services/inventory-service/src/main/java/com/example/msa/inventory/domain/ReservationReason.java)
   - 근거: research.md 결정 13, `contracts/inventory-api.yaml`의 `ReservationResult`. 값을 나중에 더하면 계약을 깨는 변경이다(`docs/standards/architecture-rules.md` 2절의 API 변경 규칙).
-- [ ] T059 [US1] 예약 판단의 단위 테스트를 쓴다. plan.md 표의 시나리오 1.1 "단위" 칸 "예약 판단(같은 내용, 다른 내용)"이다. 같은 내용(저장된 A 3개, 들어온 A 3개)이면 저장된 결과를 돌려준다는 판단, 다른 내용(A 5개)이면 충돌이라는 판단, 항목 순서만 다르면 같은 내용이라는 판단, 해제 표식이면 비교하지 않고 RELEASED라는 판단을 검사한다. 값은 시나리오 1.1, 1.3, 1.4의 값을 쓴다 (services/inventory-service/src/test/java/com/example/msa/inventory/domain/ReservationDecisionTest.java)
+- [x] T059 [US1] 예약 판단의 단위 테스트를 쓴다. plan.md 표의 시나리오 1.1 "단위" 칸 "예약 판단(같은 내용, 다른 내용)"이다. 같은 내용(저장된 A 3개, 들어온 A 3개)이면 저장된 결과를 돌려준다는 판단, 다른 내용(A 5개)이면 충돌이라는 판단, 항목 순서만 다르면 같은 내용이라는 판단, 해제 표식이면 비교하지 않고 RELEASED라는 판단을 검사한다. 값은 시나리오 1.1, 1.3, 1.4의 값을 쓴다 (services/inventory-service/src/test/java/com/example/msa/inventory/domain/ReservationDecisionTest.java)
   - 기대값의 출처: 도메인 분석 6절 첫 문단("내용(상품 순으로 정렬한 항목 목록)이 다르면 호출한 쪽의 버그로 본다")과 표 1번, 3번, 7번. 구현 방법의 근거는 data-model.md 6-2절 1번과 research.md 결정 14다. 해제 표식을 "항목 없는 기록"으로 나타내는 것은 data-model.md에만 있으므로 단언하지 않는다. Spring 없이 돈다.
-- [ ] T060 [US3] 사유 우선순위의 단위 테스트를 쓴다. plan.md 표의 "3.3의 재고 쪽" 줄 "단위" 칸 "사유 우선순위(상품 없음이 먼저)"다. 시나리오 3.3 변형의 값(Z 없음, B 부족)으로 사유가 `PRODUCT_NOT_FOUND`이고 두 목록이 모두 차는지 검사한다. 예약 판단 로직(T061)보다 먼저 쓴다. 테스트 전략 문서 3절이 도메인 단위 테스트에 TDD를 권장하기 때문이다(2026-10-06 사용자 승인) (services/inventory-service/src/test/java/com/example/msa/inventory/domain/ReservationDecisionReasonTest.java)
-- [ ] T061 [US1] 예약 판단 로직을 만든다. 저장된 항목과 들어온 항목을 상품 ID 순으로 정렬해 비교한다. 항목별 재고 확인 결과로 RESERVED와 REJECTED를 정하고, 사유는 없는 상품이 하나라도 있으면 `PRODUCT_NOT_FOUND`, 아니면 `OUT_OF_STOCK`이다. 부족한 상품 목록과 없는 상품 목록은 상품 ID 순이다. Spring과 MyBatis를 모르는 순수 Java로 쓴다 (services/inventory-service/src/main/java/com/example/msa/inventory/domain/ReservationDecision.java)
+- [x] T060 [US3] 사유 우선순위의 단위 테스트를 쓴다. plan.md 표의 "3.3의 재고 쪽" 줄 "단위" 칸 "사유 우선순위(상품 없음이 먼저)"다. 시나리오 3.3 변형의 값(Z 없음, B 부족)으로 사유가 `PRODUCT_NOT_FOUND`이고 두 목록이 모두 차는지 검사한다. 예약 판단 로직(T061)보다 먼저 쓴다. 테스트 전략 문서 3절이 도메인 단위 테스트에 TDD를 권장하기 때문이다(2026-10-06 사용자 승인) (services/inventory-service/src/test/java/com/example/msa/inventory/domain/ReservationDecisionReasonTest.java)
+- [x] T061 [US1] 예약 판단 로직을 만든다. 저장된 항목과 들어온 항목을 상품 ID 순으로 정렬해 비교한다. 항목별 재고 확인 결과로 RESERVED와 REJECTED를 정하고, 사유는 없는 상품이 하나라도 있으면 `PRODUCT_NOT_FOUND`, 아니면 `OUT_OF_STOCK`이다. 부족한 상품 목록과 없는 상품 목록은 상품 ID 순이다. Spring과 MyBatis를 모르는 순수 Java로 쓴다 (services/inventory-service/src/main/java/com/example/msa/inventory/domain/ReservationDecision.java)
   - 근거: data-model.md 6-2절 1번·3번, `contracts/inventory-api.yaml`의 `shortageProductIds`, `missingProductIds` 설명("상품 ID 순").
   - 사유 우선순위의 단위 테스트는 위 T060이다.
-- [ ] T062 [P] [US1] DTO를 만든다. `ReserveRequest`(항목 목록. 항목은 안쪽 record `Item(productId, quantity)` `[제안]`), `ReservationResponse`(`orderNo`, `status`, `reason`, `shortageProductIds`, `missingProductIds`), `ReleaseResponse`(`orderNo`, `status`) `[제안]`, `StockRow`는 record다. `ReservationWithItems`는 `<collection>`으로 읽는 1:N 부모라서 Lombok 없는 일반 클래스다 (services/inventory-service/src/main/java/com/example/msa/inventory/dto/ReserveRequest.java, services/inventory-service/src/main/java/com/example/msa/inventory/dto/ReservationResponse.java, services/inventory-service/src/main/java/com/example/msa/inventory/dto/ReleaseResponse.java, services/inventory-service/src/main/java/com/example/msa/inventory/dto/StockRow.java, services/inventory-service/src/main/java/com/example/msa/inventory/dto/ReservationWithItems.java)
+- [x] T062 [P] [US1] DTO를 만든다. `ReserveRequest`(항목 목록. 항목은 안쪽 record `Item(productId, quantity)` `[제안]`), `ReservationResponse`(`orderNo`, `status`, `reason`, `shortageProductIds`, `missingProductIds`), `ReleaseResponse`(`orderNo`, `status`) `[제안]`, `StockRow`는 record다. `ReservationWithItems`는 `<collection>`으로 읽는 1:N 부모라서 Lombok 없는 일반 클래스다 (services/inventory-service/src/main/java/com/example/msa/inventory/dto/ReserveRequest.java, services/inventory-service/src/main/java/com/example/msa/inventory/dto/ReservationResponse.java, services/inventory-service/src/main/java/com/example/msa/inventory/dto/ReleaseResponse.java, services/inventory-service/src/main/java/com/example/msa/inventory/dto/StockRow.java, services/inventory-service/src/main/java/com/example/msa/inventory/dto/ReservationWithItems.java)
   - 근거: data-model.md 7절, research.md 결정 9. `ReleaseResponse`는 data-model.md 7절에 없다. 계약의 `ReleaseResult`가 `ReservationResult`와 필드가 달라서 따로 둔다 `[제안]`.
   - 받는 쪽이 모르는 필드를 무시하도록 JSON 역직렬화 설정을 둔다(plan.md Constitution Check 7번 줄의 `[제안]`).
-- [ ] T063 [US1] 재고 Mapper 테스트를 쓴다. plan.md 표의 시나리오 1.2 "Mapper" 칸 "재고 행 잠금과 감소"다. 상품 A 10개 행을 `SELECT ... FOR UPDATE`로 읽고 1개 줄이면 9개가 되는지, 잠금을 잡은 동안 다른 트랜잭션의 같은 행 잠금이 기다리는지 검사한다. `@MybatisTest`와 T039의 Oracle 컨테이너를 쓴다 (services/inventory-service/src/test/java/com/example/msa/inventory/mapper/StockMapperTest.java)
+- [x] T063 [US1] 재고 Mapper 테스트를 쓴다. plan.md 표의 시나리오 1.2 "Mapper" 칸 "재고 행 잠금과 감소"다. 상품 A 10개 행을 `SELECT ... FOR UPDATE`로 읽고 1개 줄이면 9개가 되는지, 잠금을 잡은 동안 다른 트랜잭션의 같은 행 잠금이 기다리는지 검사한다. `@MybatisTest`와 T039의 Oracle 컨테이너를 쓴다 (services/inventory-service/src/test/java/com/example/msa/inventory/mapper/StockMapperTest.java)
   - 기대값의 출처: 설계 6절 "예약 처리" 2번("재고 행을 상품 ID 순서로 하나씩 `SELECT ... FOR UPDATE`로 잠그고 읽는다")과 그 아래 설명("행 잠금으로 동시 예약의 초과 판매를 막고").
-- [ ] T064 [US1] 예약 Mapper 테스트를 쓴다. plan.md 표의 시나리오 1.1 "Mapper" 칸 "예약 기록 삽입, 고유 제약 충돌"과 시나리오 1.3 "Mapper" 칸 "해제 표식 삽입"이다. 주문 번호 1001의 예약 기록과 항목을 넣고 `ReservationWithItems`로 한 번에 읽는지(`<collection>`), 같은 주문 번호를 한 번 더 넣으면 고유 제약 위반 예외가 나는지, 주문 번호 1002의 해제 표식(RELEASED)을 넣고 읽는지 검사한다 (services/inventory-service/src/test/java/com/example/msa/inventory/mapper/ReservationMapperTest.java)
+- [x] T064 [US1] 예약 Mapper 테스트를 쓴다. plan.md 표의 시나리오 1.1 "Mapper" 칸 "예약 기록 삽입, 고유 제약 충돌"과 시나리오 1.3 "Mapper" 칸 "해제 표식 삽입"이다. 주문 번호 1001의 예약 기록과 항목을 넣고 `ReservationWithItems`로 한 번에 읽는지(`<collection>`), 같은 주문 번호를 한 번 더 넣으면 고유 제약 위반 예외가 나는지, 주문 번호 1002의 해제 표식(RELEASED)을 넣고 읽는지 검사한다 (services/inventory-service/src/test/java/com/example/msa/inventory/mapper/ReservationMapperTest.java)
   - 기대값의 출처: 도메인 분석 6절 표 2번("예약 기록의 주문 번호 고유 제약 때문에 한쪽만 반영된다")과 6번("해제 표식(해제됨)만 남긴다"), 설계 6절 "예약 처리" 4번. `<collection>`으로 한 번에 읽는 것은 `docs/standards/coding-conventions.md` 3-2절이다.
-- [ ] T065 [US9] 수량 복구 Mapper 테스트를 쓴다. plan.md 표의 시나리오 9.1 재고 쪽 "Mapper" 칸 "수량 복구"다. 상품 A 7개 행에 3개를 되돌리면 10개가 되는지 검사한다. T063과 파일을 나눠 User Story 9의 작업이 User Story 1의 파일을 고치지 않게 한다 `[제안]` (services/inventory-service/src/test/java/com/example/msa/inventory/mapper/StockRestoreMapperTest.java)
-- [ ] T066 [US1] 재고 Mapper와 SQL을 만든다. 아래 data-model.md 6-2절의 SQL을 쓰고, 수량 복구는 같은 모양의 `UPDATE STOCK SET QUANTITY = QUANTITY + #{quantity} WHERE PRODUCT_ID = #{productId}`로 쓴다 `[제안]`. 메서드 이름은 `select…`, `update…`로 시작하고 SQL id와 같다 (services/inventory-service/src/main/java/com/example/msa/inventory/mapper/StockMapper.java, services/inventory-service/src/main/resources/mapper/StockMapper.xml)
-  - 원문 (data-model.md 6-2절 2번): `SELECT QUANTITY FROM STOCK WHERE PRODUCT_ID = #{productId} FOR UPDATE`
+- [x] T065 [US9] 수량 복구 Mapper 테스트를 쓴다. plan.md 표의 시나리오 9.1 재고 쪽 "Mapper" 칸 "수량 복구"다. 상품 A 7개 행에 3개를 되돌리면 10개가 되는지 검사한다. T063과 파일을 나눠 User Story 9의 작업이 User Story 1의 파일을 고치지 않게 한다 `[제안]` (services/inventory-service/src/test/java/com/example/msa/inventory/mapper/StockRestoreMapperTest.java)
+- [x] T066 [US1] 재고 Mapper와 SQL을 만든다. 아래 data-model.md 6-2절의 SQL을 쓰고, 수량 복구는 같은 모양의 `UPDATE STOCK SET QUANTITY = QUANTITY + #{quantity} WHERE PRODUCT_ID = #{productId}`로 쓴다 `[제안]`. 메서드 이름은 `select…`, `update…`로 시작하고 SQL id와 같다 (services/inventory-service/src/main/java/com/example/msa/inventory/mapper/StockMapper.java, services/inventory-service/src/main/resources/mapper/StockMapper.xml)
+  - 원문 (data-model.md 6-2절 2번): `SELECT PRODUCT_ID, QUANTITY FROM STOCK WHERE PRODUCT_ID = #{productId} FOR UPDATE`
   - 원문 (data-model.md 6-2절 3번): `UPDATE STOCK SET QUANTITY = QUANTITY - #{quantity} WHERE PRODUCT_ID = #{productId}`
   - 파라미터는 `#{}`만 쓴다. `SELECT *`를 쓰지 않는다. 애너테이션 SQL을 쓰지 않는다(`docs/standards/coding-conventions.md` 3-2절).
-- [ ] T067 [US1] 예약 Mapper와 SQL을 만든다. 예약 기록과 항목을 상품 ID 순으로 한 번에 읽는 `resultMap`(`<collection>`), 예약 기록 잠금 조회(`SELECT ... FOR UPDATE`, data-model.md 6-3절 1번), 예약 기록 삽입, 항목 삽입(항목별 `RESULT` 포함), 상태 변경을 둔다 (services/inventory-service/src/main/java/com/example/msa/inventory/mapper/ReservationMapper.java, services/inventory-service/src/main/resources/mapper/ReservationMapper.xml)
-- [ ] T068 [US1] research.md 6절 "Testcontainers 2.0.5가 이 PC의 Docker Desktop에서 `gvenzl/oracle-xe:21.3.0-slim-faststart`를 띄우는지"를 확인한다. 첫 Mapper 테스트를 돌린다 (services/inventory-service/src/test/java/com/example/msa/inventory/mapper/StockMapperTest.java)
+- [x] T067 [US1] 예약 Mapper와 SQL을 만든다. 예약 기록과 항목을 상품 ID 순으로 한 번에 읽는 `resultMap`(`<collection>`), 예약 기록 잠금 조회(`SELECT ... FOR UPDATE`, data-model.md 6-3절 1번), 예약 기록 삽입, 항목 삽입(항목별 `RESULT` 포함), 상태 변경을 둔다 (services/inventory-service/src/main/java/com/example/msa/inventory/mapper/ReservationMapper.java, services/inventory-service/src/main/resources/mapper/ReservationMapper.xml)
+- [x] T068 [US1] research.md 6절 "Testcontainers 2.0.5가 이 PC의 Docker Desktop에서 `gvenzl/oracle-xe:21.3.0-slim-faststart`를 띄우는지"를 확인한다. 첫 Mapper 테스트를 돌린다 (services/inventory-service/src/test/java/com/example/msa/inventory/mapper/StockMapperTest.java)
   - 명령: `.\gradlew.bat :services:inventory-service:test --tests "com.example.msa.inventory.mapper.*"`
   - 기대 결과: 종료 코드 0. 컨테이너가 뜨는 데 걸린 시간을 테스트 로그에서 읽어 보고에 적는다.
   - 컨테이너가 뜨지 않으면 `docs/references/docker-desktop.md`부터 본다. 로컬 인프라가 떠 있어 메모리가 모자라면 `.\tools\infra-down.ps1`로 내릴지 사용자에게 먼저 묻는다(quickstart.md 1절).
-- [ ] T069 [US1] research.md 6절 "MyBatis 3.5.19에서 record 생성자 매핑이 되는지, 생성자 안 `<collection>`이 안 되는지"를 확인한다 (services/inventory-service/src/test/java/com/example/msa/inventory/mapper/ReservationMapperTest.java)
+- [x] T069 [US1] research.md 6절 "MyBatis 3.5.19에서 record 생성자 매핑이 되는지, 생성자 안 `<collection>`이 안 되는지"를 확인한다 (services/inventory-service/src/test/java/com/example/msa/inventory/mapper/ReservationMapperTest.java)
   - record 생성자 매핑: `StockRow`(record)를 읽는 Mapper 테스트가 T068에서 통과했는지 본다.
   - 생성자 안 `<collection>`: `ReservationWithItems`를 잠시 record로 바꾸고 `<constructor>` 안에 `<collection>`을 두어 T064를 돌려 본다. 결과를 보고에 적고 일반 클래스로 되돌린다.
   - record로 된다면 research.md 결정 9의 판단과 다르다. plan을 바꿀지는 사용자가 정하므로, 일반 클래스를 그대로 두고 보고한다.
-- [ ] T070 [US1] 예약·해제 트랜잭션 서비스를 만든다. `reserve`와 `release`는 각각 한 트랜잭션이다. `reserve`는 data-model.md 6-2절 1~4번, `release`는 6-3절 1~2번 순서를 따른다. 재고 행은 언제나 상품 ID 순서로 잠근다 (services/inventory-service/src/main/java/com/example/msa/inventory/service/ReservationTxService.java)
+- [x] T070 [US1] 예약·해제 트랜잭션 서비스를 만든다. `reserve`와 `release`는 각각 한 트랜잭션이다. `reserve`는 data-model.md 6-2절 1~4번, `release`는 6-3절 1~2번 순서를 따른다. 재고 행은 언제나 상품 ID 순서로 잠근다 (services/inventory-service/src/main/java/com/example/msa/inventory/service/ReservationTxService.java)
   - 근거: data-model.md 6-2절, 6-3절, `docs/standards/coding-conventions.md` 3-2절 "여러 행을 잠글 때는 언제나 같은 순서".
-- [ ] T071 [US1] 예약 흐름 서비스를 만든다. `ReservationTxService`를 부르고, 같은 주문 번호가 동시에 들어와 `PK_RESERVATIONS`에 걸리면 전체를 롤백한 뒤 1번부터 한 번 다시 한다. 해제 표식을 넣다 `PK_RESERVATIONS`에 걸려도 같다 (services/inventory-service/src/main/java/com/example/msa/inventory/service/ReservationService.java)
+- [x] T071 [US1] 예약 흐름 서비스를 만든다. `ReservationTxService`를 부르고, 같은 주문 번호가 동시에 들어와 `PK_RESERVATIONS`에 걸리면 전체를 롤백한 뒤 1번부터 한 번 다시 한다. 해제 표식을 넣다 `PK_RESERVATIONS`에 걸려도 같다 (services/inventory-service/src/main/java/com/example/msa/inventory/service/ReservationService.java)
   - 근거: data-model.md 6-2절 4번("다시 하는 횟수는 한 번으로 둔다 `[제안]`"), 6-3절 2번.
-- [ ] T072 [US1] 오류 응답 변환을 만든다. 모두 Problem Details(`application/problem+json`)이고 `type`은 `urn:msa-example:problem:<코드>`, 확장 필드는 `code`와 `errors`다. 형식 오류 400은 `INVALID_REQUEST`(필드별 `errors`), 같은 주문 번호에 다른 내용 409는 `RESERVATION_CONFLICT`, 교착(`ORA-00060`) 등 예상하지 못한 오류 500은 `INTERNAL_ERROR`다 (services/inventory-service/src/main/java/com/example/msa/inventory/exception/ProblemDetailsHandler.java, services/inventory-service/src/main/java/com/example/msa/inventory/exception/ReservationConflictException.java)
+- [x] T072 [US1] 오류 응답 변환을 만든다. 모두 Problem Details(`application/problem+json`)이고 `type`은 `urn:msa-example:problem:<코드>`, 확장 필드는 `code`와 `errors`다. 형식 오류 400은 `INVALID_REQUEST`(필드별 `errors`), 같은 주문 번호에 다른 내용 409는 `RESERVATION_CONFLICT`, 교착(`ORA-00060`) 등 예상하지 못한 오류 500은 `INTERNAL_ERROR`다 (services/inventory-service/src/main/java/com/example/msa/inventory/exception/ProblemDetailsHandler.java, services/inventory-service/src/main/java/com/example/msa/inventory/exception/ReservationConflictException.java)
   - 근거: research.md 결정 13, `contracts/inventory-api.yaml`의 응답 정의.
-- [ ] T073 [US1] 예약·해제 컨트롤러를 만든다. `PUT /reservations/{orderNo}`와 `DELETE /reservations/{orderNo}`이고 업무 결과는 처음이든 재요청이든 언제나 200이다. 컨트롤러는 형식 검사, 서비스 호출, 응답 변환만 한다 (services/inventory-service/src/main/java/com/example/msa/inventory/controller/ReservationController.java)
+- [x] T073 [US1] 예약·해제 컨트롤러를 만든다. `PUT /reservations/{orderNo}`와 `DELETE /reservations/{orderNo}`이고 업무 결과는 처음이든 재요청이든 언제나 200이다. 컨트롤러는 형식 검사, 서비스 호출, 응답 변환만 한다 (services/inventory-service/src/main/java/com/example/msa/inventory/controller/ReservationController.java)
   - 형식 검사는 data-model.md 5-2절 원문 그대로다:
 
     | 검사 | 실패하면 |
@@ -790,11 +792,11 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
     | 항목이 1개 이상 20개 이하, 수량 1~99, 같은 상품은 한 줄, 상품 ID 형식 | 400 |
 
   - 상품 ID 형식은 `^[A-Z0-9-]{1,20}$`다(`contracts/inventory-api.yaml`의 `ReservationItem.productId`).
-- [ ] T074 [US1] 이 절의 테스트가 모두 통과하는지 확인한다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReservationIdempotencyIntegrationTest.java)
+- [x] T074 [US1] 이 절의 테스트가 모두 통과하는지 확인한다 (services/inventory-service/src/test/java/com/example/msa/inventory/integration/ReservationIdempotencyIntegrationTest.java)
   - 명령: `.\gradlew.bat :services:inventory-service:test`
   - 기대 결과: 종료 코드 0. 위 "인수 시나리오 테스트" 묶음의 테스트와 받치는 테스트(T059, T060, T063, T064, T065)가 모두 통과한다. 통과·실패 수를 보고에 적는다.
   - 실패하면 구현을 고친다. 기대값을 바꾸지 않는다.
-- [ ] T075 [US1] research.md 6절 "swagger-request-validator-core 2.46.1이 OpenAPI 3.0.3 계약과 JDK 17에서 도는지"를 확인한다. T074에서 T056의 계약 테스트가 통과했는지 보고, 계약에 어긋난 응답을 하나 일부러 만들어(예: 응답의 `status`를 계약에 없는 값으로 바꾼 가짜 응답) 도우미가 잡는지 본 뒤 되돌린다 (services/inventory-service/src/test/java/com/example/msa/inventory/contract/ReservationProviderContractTest.java)
+- [x] T075 [US1] research.md 6절 "swagger-request-validator-core 2.46.1이 OpenAPI 3.0.3 계약과 JDK 17에서 도는지"를 확인한다. T074에서 T056의 계약 테스트가 통과했는지 보고, 계약에 어긋난 응답을 하나 일부러 만들어(예: 응답의 `status`를 계약에 없는 값으로 바꾼 가짜 응답) 도우미가 잡는지 본 뒤 되돌린다 (services/inventory-service/src/test/java/com/example/msa/inventory/contract/ReservationProviderContractTest.java)
 
 이 목록에서는 항목 ID를 쓰지 않았다.
 
@@ -802,9 +804,9 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 ### 마무리와 확인
 
-- [ ] T076 재고 서비스의 아키텍처 테스트를 쓴다. `libs/archunit-rules`의 세 규칙(계층 의존, 애너테이션 SQL 금지, `@Transactional`에서 `client` 직접 호출 금지)을 `com.example.msa.inventory`에 적용한다. 재고 서비스에는 `client` 패키지가 없으므로, 트랜잭션 안 원격 호출 규칙에만 `allowEmptyShould(true)`를 둔다. 나중에 재고 서비스에 `client` 패키지가 생기면 이 규칙이 바로 검사한다(2026-10-07 사용자 승인. `CLAUDE.md` 7절의 "ArchUnit 규칙 예외"로 승인받은 것이다). 구현이 끝난 뒤에 쓰는 이유는, ArchUnit이 검사할 클래스가 없는 규칙을 실패로 보기 때문이다 (services/inventory-service/src/test/java/com/example/msa/inventory/architecture/ArchitectureTest.java)
+- [x] T076 재고 서비스의 아키텍처 테스트를 쓴다. `libs/archunit-rules`의 세 규칙(계층 의존, 애너테이션 SQL 금지, `@Transactional`에서 `client` 직접 호출 금지)을 `com.example.msa.inventory`에 적용한다. 재고 서비스에는 `client` 패키지가 없으므로, 트랜잭션 안 원격 호출 규칙에만 `allowEmptyShould(true)`를 둔다. 나중에 재고 서비스에 `client` 패키지가 생기면 이 규칙이 바로 검사한다(2026-10-07 사용자 승인. `CLAUDE.md` 7절의 "ArchUnit 규칙 예외"로 승인받은 것이다). 구현이 끝난 뒤에 쓰는 이유는, ArchUnit이 검사할 클래스가 없는 규칙을 실패로 보기 때문이다 (services/inventory-service/src/test/java/com/example/msa/inventory/architecture/ArchitectureTest.java)
   - 근거: plan.md "인수 시나리오와 테스트 층" 절 끝 문단("모든 단계에서 함께 도는 아키텍처 테스트"), `docs/standards/testing.md` 2절 "아키텍처" 층.
-- [ ] T077 기계 검사와 아키텍처 테스트가 실제로 잡는지 하나씩 확인한다. 아래 위반을 하나 넣고 `.\gradlew.bat :services:inventory-service:check`가 실패하는 것과 실패 메시지가 그 규칙을 가리키는 것을 본 뒤 되돌린다. 위반은 한 번에 하나씩 넣는다 (services/inventory-service/build.gradle)
+- [x] T077 기계 검사와 아키텍처 테스트가 실제로 잡는지 하나씩 확인한다. 아래 위반을 하나 넣고 `.\gradlew.bat :services:inventory-service:check`가 실패하는 것과 실패 메시지가 그 규칙을 가리키는 것을 본 뒤 되돌린다. 위반은 한 번에 하나씩 넣는다 (services/inventory-service/build.gradle)
   1. 컨트롤러에서 `StockMapper`를 직접 부른다 → T076의 계층 규칙
   2. Mapper 메서드에 `@Select`를 붙인다 → T076의 애너테이션 SQL 규칙
   3. Mapper XML에 `${orderNo}`를 쓴다 → T027
@@ -815,18 +817,18 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
   8. 인수 시나리오 테스트 하나의 `@DisplayName` 앞 ID를 잠시 지운다 → T029
   - 끝나면 `git status`와 `git diff`로 위반이 모두 되돌려졌는지 본다. 결과(위반, 실패한 작업, 메시지 한 줄)를 표로 보고에 적는다.
   - 트랜잭션 안 원격 호출 규칙은 `client` 패키지가 생기는 Phase 2(T151)에서 확인한다.
-- [ ] T078 재고 서비스 설정이 plan대로 들어갔는지 확인한다 (services/inventory-service/src/main/resources/application.yml)
+- [x] T078 재고 서비스 설정이 plan대로 들어갔는지 확인한다 (services/inventory-service/src/main/resources/application.yml)
   - 명령: `Select-String -Path services/inventory-service/src/main/resources/application.yml -Pattern 'shutdown: graceful','timeout-per-shutdown-phase: 35s','probes','structured','arg-name-based-constructor-auto-mapping'`
   - 기대 결과: 다섯 가지가 모두 나온다. 비밀번호 값이 파일에 없다(`Select-String -Pattern 'password'`로 나온 줄이 환경변수 참조뿐이다).
   - T033과 T034에서 "확인하지 못했다"로 남긴 두 가지의 결과를 보고에 적는다. 하나는 Spring Boot 4.1.1의 OTLP 속성 이름이고, 다른 하나는 OpenTelemetry Logback appender를 자동으로 연결하는지다. 각각 확인한 문서 주소와 그 결과로 고른 설정(속성 이름, `ObservabilityConfig`를 만들었는지)을 적는다.
-- [ ] T079 이 단계의 기준을 확인한다. 이 단계 머리의 "끝났다고 보는 기준" 표에서 GitHub Actions를 뺀 네 줄을 차례로 실행한다 (gradle.properties)
+- [x] T079 이 단계의 기준을 확인한다. 이 단계 머리의 "끝났다고 보는 기준" 표에서 GitHub Actions를 뺀 네 줄을 차례로 실행한다 (gradle.properties)
   - 기대 결과: `msa.stage=P1` 한 줄, `.\gradlew.bat build` 종료 코드 0, 재고 서비스 테스트 종료 코드 0, 계약 두 파일의 차이 없음. 실행한 명령과 종료 코드, 테스트 통과·실패 수를 보고에 적는다(저장소 루트 `CLAUDE.md` 6절).
   - quickstart.md 3절 P1 줄과 대조해, 재고 서비스의 인수 시나리오 테스트(시나리오 1.1, 1.2, 1.3, 1.4, 1.5, 시나리오 2.1·3.1·3.3·6.1·8.1·9.1의 재고 쪽, ㉠, ㉡, ㉥)가 모두 보고서에 있는지 하나씩 적는다.
 - [ ] T080 사용자가 push한 뒤 GitHub Actions 결과를 확인한다. research.md 6절 "GitHub Actions 러너에서 Oracle 컨테이너를 띄우는 시간과 메모리"도 여기서 확인한다 (.github/workflows/build.yml)
   - 명령: `gh run list --branch feat/001-place-order-p1 --limit 1`, `gh run view <run-id> --log`
   - 기대 결과: 결론이 `success`. 로그에서 Oracle 컨테이너가 뜨는 데 걸린 시간과 전체 빌드 시간을 읽어 보고에 적는다. 메모리 부족으로 실패하면 멈추고 보고한다.
   - push는 사용자가 한다. push 전이면 이 작업은 "실행하지 않았다"로 보고한다.
-- [ ] T081 사용자에게 보고하고 멈춘다. 만들거나 고친 파일, T013·T041·T057·T068·T069·T074·T075·T077·T078·T079·T080의 명령과 결과, spec 시나리오 1.1, 1.2, 1.3, 1.4, 1.5와 시나리오 2.1·3.1·3.3·6.1·8.1·9.1의 재고 쪽, ㉠, ㉡, ㉥을 하나씩 대조한 결과, research.md 6절에서 이 단계에 확인한 다섯 가지(T041, T068, T069, T075, T080)와 tasks.md가 새로 적은 미확인 항목 세 가지(T041, T078)의 결과를 적는다. 커밋·push·PR은 사용자가 요청할 때 한다 (파일 없음, 대화창 보고)
+- [x] T081 사용자에게 보고하고 멈춘다. 만들거나 고친 파일, T013·T041·T057·T068·T069·T074·T075·T077·T078·T079·T080의 명령과 결과, spec 시나리오 1.1, 1.2, 1.3, 1.4, 1.5와 시나리오 2.1·3.1·3.3·6.1·8.1·9.1의 재고 쪽, ㉠, ㉡, ㉥을 하나씩 대조한 결과, research.md 6절에서 이 단계에 확인한 다섯 가지(T041, T068, T069, T075, T080)와 tasks.md가 새로 적은 미확인 항목 세 가지(T041, T078)의 결과를 적는다. 커밋·push·PR은 사용자가 요청할 때 한다 (파일 없음, 대화창 보고)
 
 이 목록에서는 항목 ID를 쓰지 않았다.
 
@@ -1724,3 +1726,44 @@ T115 PlaceOrderProductNotFoundIntegrationTest.java
 - **버전 카탈로그 (version catalog)**: 의존성 버전을 `gradle/libs.versions.toml` 한 파일에 모아 두는 Gradle 기능이다.
 - **BOM (Bill of Materials)**: 서로 맞는 라이브러리 버전 묶음을 적은 파일이다. Spring Boot BOM을 `platform(...)`으로 가져와 관리 대상 라이브러리의 버전을 따로 적지 않는다.
 - **Problem Details**: HTTP API의 오류 응답을 JSON으로 적는 표준 형식(RFC 9457)이다. 두 서비스의 모든 오류 응답이 이 형식이고, `code`와 `errors` 필드를 더한다.
+
+---
+
+## Phase 4: Convergence
+
+이 절의 작업은 P1 단계 PR(브랜치 `feat/001-place-order-p1`)에서 처리한다.
+
+**만든 때**: 2026-10-08, `/speckit-converge`. Phase 1(T013~T081, T080 제외)의 구현을 spec, plan, tasks, 헌법과 대조해 갭 3개를 찾았다. 셋 다 심각도가 LOW다. 갭은 인코딩 설정 세 곳, `selectStockForUpdate`의 `PRODUCT_ID` 열 추가, 모르는 필드 무시의 명시 설정 없음이다. 사용자가 앞의 둘을 골라 덧붙였다(2026-10-08 사용자 결정). 셋째는 동작이 Spring Boot 기본값으로 이미 맞아서 덧붙이지 않았다.
+
+**이 절의 작업은 코드를 바꾸지 않는다.** 둘 다 사용자 승인이 필요한 작업이다. 승인하면 코드는 그대로 두고, 문서를 맞추는 일은 사용자가 한다. 승인하지 않으면 작업을 끝내지 않고 사용자에게 보고하고 멈춘다 `[제안]`. 코드를 바꾸는 일은 테스트 작업과 "테스트가 실패하는 것을 확인한다" 작업을 앞에 둔 새 작업으로 따로 더한다 `[제안]`.
+
+**끝났다고 보는 기준** `[제안]`: 두 작업에 대한 사용자의 답이 이 절에 적혀 있다. 코드를 바꿨다면 `.\gradlew.bat build`가 종료 코드 0이다.
+
+- [x] T180 인코딩 설정 세 곳이 필요한지 사용자에게 보여 주고 정하게 한다. 사용자 승인 필요 per T024와 T030 (unrequested)
+  - 어긋난 내용: T024와 T030은 인코딩 설정을 적지 않았다. 코드에는 세 곳이 있다. 코드 주석은 "이 PC의 기본 인코딩은 MS949다. 소스는 UTF-8이므로 명시한다"고 이유를 적는다.
+  - 근거 (파일과 줄):
+    - `build-logic/src/main/groovy/msa.java-service.gradle` 33~34줄: 컴파일 작업의 `options.encoding = 'UTF-8'`
+    - 같은 파일 39줄: 테스트 작업의 `defaultCharacterEncoding = 'UTF-8'`
+    - `libs/archunit-rules/build.gradle` 14~17줄: 컴파일 작업의 `options.encoding = 'UTF-8'`
+  - 사용자에게 보여 줄 것: 위 세 곳과 코드 주석. 세 곳을 지우면 Windows 기본 인코딩(MS949)으로 UTF-8 소스를 읽어 컴파일이 깨질 수 있다. 이 말은 실행해 보지 않아서 확인하지 못했다.
+  - 승인하면: 코드를 바꾸지 않는다. plan.md "Source Code" 트리와 tasks.md T024·T030의 설명에 이 설정을 적는 일은 사용자가 한다.
+  - 승인하지 않으면: 이 작업을 끝내지 않고 사용자에게 보고하고 멈춘다 `[제안]`. 세 줄을 지우는 일은 새 작업으로 더하고, 지운 뒤 `.\gradlew.bat build`가 종료 코드 0인지 본다 `[제안]`.
+  - 확인: `Select-String -Path build-logic/src/main/groovy/msa.java-service.gradle,libs/archunit-rules/build.gradle -Pattern 'encoding'` → 승인하면 세 줄이 그대로 나온다.
+  - 사용자 답 (2026-10-08): 승인한다. 코드를 바꾸지 않았다. 확인 명령 결과: 3줄.
+- [x] T181 `selectStockForUpdate`가 `PRODUCT_ID`를 함께 읽는 것을 사용자에게 보여 주고 승인받는다. 사용자 승인 필요 per T066 (contradicts)
+  - 어긋난 내용: T066은 data-model.md 6-2절 2번의 SQL을 그대로 쓰라고 하고, 그 SQL을 `SELECT QUANTITY FROM STOCK WHERE PRODUCT_ID = #{productId} FOR UPDATE`로 인용한다. 코드는 `StockRow` record(`productId`, `quantity`)를 채우려고 `PRODUCT_ID`를 함께 읽는다. 행을 잠그고 수량을 읽는 동작은 같다.
+  - 근거 (파일과 줄):
+    - `services/inventory-service/src/main/resources/mapper/StockMapper.xml` 5줄(이유를 적은 주석), 7줄(`SELECT PRODUCT_ID, QUANTITY`)
+    - `services/inventory-service/src/test/java/com/example/msa/inventory/mapper/StockMapperTest.java` 69줄(`row.productId()` 단언)
+    - `docs/design/architecture.md` 178줄(6절 "예약 처리" 2번)에도 같은 SQL이 `SELECT QUANTITY`로 적혀 있다.
+  - 사용자에게 보여 줄 것: 위 근거. 승인하지 않을 때 필요한 변경은 `StockRow`를 `quantity` 한 칸으로 줄이고 SQL을 원문대로 되돌리는 것이다. 이때 `StockMapperTest` 69줄의 단언도 지워야 한다. 이 단언을 지우는 일은 `CLAUDE.md` 7절에 따라 사용자 승인이 필요하다.
+  - 승인하면: 코드를 바꾸지 않는다. data-model.md 6-2절 2번, T066의 원문 인용, `docs/design/architecture.md` 6절 "예약 처리" 2번의 SQL을 코드에 맞추는 일은 사용자가 한다. `docs/` 아래 기준 문서는 무엇을 왜 고칠지 먼저 보여 주고 답을 받은 뒤에 고친다(`CLAUDE.md` 1절).
+  - 승인하지 않으면: 이 작업을 끝내지 않고 사용자에게 보고하고 멈춘다 `[제안]`. SQL과 `StockRow`를 되돌리는 일은 테스트 작업과 "테스트가 실패하는 것을 확인한다" 작업을 앞에 둔 새 작업으로 더한다 `[제안]`.
+  - 확인: `Select-String -Path services/inventory-service/src/main/resources/mapper/StockMapper.xml -Pattern 'SELECT\s+PRODUCT_ID'` → 승인하면 1줄이 그대로 나온다.
+  - 사용자 답 (2026-10-08): 승인한다. 코드를 바꾸지 않았다. 확인 명령 결과: 1줄.
+
+### 이 절의 용어
+
+- **요청받지 않은 코드 (unrequested)**: spec, plan, tasks 어디에도 없는데 코드에 있는 일이다. 이 절에서는 사용자가 필요 여부를 정해야 하는 코드를 가리킨다.
+- **어긋남 (contradicts)**: 코드가 문서에 적힌 내용과 다른 갭이다. 이 절에서는 SQL 문장이 tasks.md가 인용한 문장과 다른 경우를 가리킨다.
+- **MS949**: 한국어 Windows의 기본 문자 인코딩이다. 이 절에서는 UTF-8로 쓴 소스를 이 PC에서 컴파일할 때 인코딩을 명시한 이유로 코드 주석이 적은 말이다.

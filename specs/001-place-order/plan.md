@@ -197,7 +197,7 @@ msa-example/
 │   ├── settings.gradle
 │   ├── build.gradle                     # groovy-gradle-plugin
 │   └── src/main/groovy/
-│       ├── msa.java-service.gradle      # Java 17, Spring Boot BOM, Spotless, SpotBugs, 기계 검사 작업 연결
+│       ├── msa.java-service.gradle      # Java 17, 컴파일·테스트 인코딩 UTF-8, Spring Boot BOM, Spotless, SpotBugs, 기계 검사 작업 연결
 │       └── msa/quality/                 # 검사 작업: Lombok, 검사를 끄는 표시, Mapper XML, 19c 키워드, 테스트 케이스 ID
 ├── config/
 │   ├── quality/
@@ -205,7 +205,7 @@ msa-example/
 │   │   └── test-case-stages.csv         # tc_id,service,stage
 │   └── spotbugs/exclude.xml             # EI_EXPOSE_REP, EI_EXPOSE_REP2
 ├── libs/
-│   └── archunit-rules/                  # 계층·애너테이션 SQL·트랜잭션 안 원격 호출 규칙 (P1)
+│   └── archunit-rules/                  # 계층·애너테이션 SQL·트랜잭션 안 원격 호출 규칙, 컴파일 인코딩 UTF-8 (P1)
 │       └── src/main/java/com/example/msa/archrules/
 ├── contracts/
 │   └── inventory-api.yaml               # 재고 API 현재본 (P1)

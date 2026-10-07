@@ -208,7 +208,7 @@ Flyway 파일: `services/inventory-service/src/main/resources/db/migration/V1__i
 1. `RESERVATIONS`에서 주문 번호를 찾는다. 있으면 아래처럼 한다.
    - 해제 표식(항목 없음)이면 `RELEASED`를 돌려준다.
    - 항목이 있으면 `RESERVATION_ITEMS`를 상품 ID 순으로 읽어 들어온 항목과 비교한다. 다르면 409, 같으면 저장된 결과(상태, 사유, `RESULT`로 만든 상품 목록)를 돌려준다.
-2. 없으면 항목의 재고 행을 상품 ID 순서로 하나씩 `SELECT QUANTITY FROM STOCK WHERE PRODUCT_ID = #{productId} FOR UPDATE`로 잠그고 읽는다. 행이 없는 상품은 없는 상품 목록에, 수량이 모자란 상품은 부족한 상품 목록에 모은다.
+2. 없으면 항목의 재고 행을 상품 ID 순서로 하나씩 `SELECT PRODUCT_ID, QUANTITY FROM STOCK WHERE PRODUCT_ID = #{productId} FOR UPDATE`로 잠그고 읽는다. 행이 없는 상품은 없는 상품 목록에, 수량이 모자란 상품은 부족한 상품 목록에 모은다.
 3. 없는 상품이나 부족한 상품이 하나라도 있으면 아무 수량도 바꾸지 않고 `REJECTED`로 정한다. 사유는 없는 상품이 하나라도 있으면 `PRODUCT_NOT_FOUND`, 아니면 `OUT_OF_STOCK`이다. 그렇지 않으면 항목마다 `UPDATE STOCK SET QUANTITY = QUANTITY - #{quantity} WHERE PRODUCT_ID = #{productId}`로 줄이고 `RESERVED`로 정한다.
 4. `RESERVATIONS`와 `RESERVATION_ITEMS`(항목별 `RESULT` 포함)를 넣고 커밋한다. 같은 주문 번호가 동시에 들어와 `PK_RESERVATIONS`에 걸리면 전체를 롤백하고 1번부터 다시 한다. 다시 하는 횟수는 한 번으로 둔다 `[제안]`.
 
