@@ -1,0 +1,15 @@
+// Spotless 적용과 서식 규칙(palantir-java-format)을 한곳에 둔다.
+// 서비스(msa.java-service)와 libs/archunit-rules가 함께 쓴다. 두 프로젝트가 같은 build-logic 클래스패스로 Spotless를 불러와야
+// Spotless의 공용 빌드 서비스가 클래스로더 충돌 없이 돈다.
+
+plugins {
+    id 'com.diffplug.spotless'
+}
+
+def catalog = extensions.getByType(VersionCatalogsExtension).named('libs')
+
+spotless {
+    java {
+        palantirJavaFormat(catalog.findVersion('palantir-java-format').get().requiredVersion)
+    }
+}

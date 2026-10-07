@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SpotBugs에서 끄는 규칙은 EI_EXPOSE_REP와 EI_EXPOSE_REP2 두 개뿐이다.
+  List를 담은 record와 생성자로 빈을 받는 Spring 클래스에서 거의 언제나 오탐을 낸다.
+  근거: specs/001-place-order/research.md 결정 10, docs/standards/tech-stack.md의 정적 분석 행.
+  이 파일을 바꾸려면 PR에서 사용자가 승인한다.
+-->
+<FindBugsFilter>
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP"/>
+    </Match>
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+</FindBugsFilter>

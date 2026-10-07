@@ -1,0 +1,6 @@
+rootProject.name = 'msa-example'
+
+includeBuild('build-logic')
+
+include 'libs:archunit-rules'
+include 'services:inventory-service'

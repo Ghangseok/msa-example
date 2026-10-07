@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.msa.inventory.mapper.StockMapper">
+
+    <!-- 설계 문서 6절 "예약 처리" 2번의 SQL이다. 설계의 SQL은 QUANTITY만 읽는다. StockRow record를 채우려고 PRODUCT_ID도 함께 읽는다. -->
+    <select id="selectStockForUpdate" resultType="com.example.msa.inventory.dto.StockRow">
+        SELECT PRODUCT_ID, QUANTITY
+          FROM STOCK
+         WHERE PRODUCT_ID = #{productId}
+           FOR UPDATE
+    </select>
+
+    <update id="updateDecreaseQuantity">
+        UPDATE STOCK
+           SET QUANTITY = QUANTITY - #{quantity}
+         WHERE PRODUCT_ID = #{productId}
+    </update>
+
+    <update id="updateIncreaseQuantity">
+        UPDATE STOCK
+           SET QUANTITY = QUANTITY + #{quantity}
+         WHERE PRODUCT_ID = #{productId}
+    </update>
+
+</mapper>

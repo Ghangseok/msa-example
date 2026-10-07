@@ -1,0 +1,17 @@
+plugins {
+    id 'java-library'
+    id 'msa.spotless'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    api libs.archunit.junit5
+}
+
+tasks.withType(JavaCompile).configureEach {
+    // 이 PC의 기본 인코딩은 MS949다. 소스는 UTF-8이므로 명시한다.
+    options.encoding = 'UTF-8'
+}
