@@ -1,0 +1,133 @@
+import com.github.spotbugs.snom.Confidence
+import com.github.spotbugs.snom.Effort
+import com.github.spotbugs.snom.SpotBugsTask
+import msa.quality.MapperXmlCheck
+import msa.quality.NoLombokCheck
+import msa.quality.Sql19cKeywordCheck
+import msa.quality.SuppressionMarkerCheck
+import msa.quality.TestCaseIdCheck
+
+// 서비스 프로젝트에 공통으로 적용하는 convention plugin이다.
+// Java 17, Spring Boot BOM, Spotless, SpotBugs, 기계 검사 작업(docs/standards/coding-conventions.md 3-8절)을 묶는다.
+
+plugins {
+    id 'java'
+    id 'org.springframework.boot'
+    id 'msa.spotless'
+    id 'com.github.spotbugs'
+}
+
+def catalog = extensions.getByType(VersionCatalogsExtension).named('libs')
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Spring Boot BOM은 Gradle의 platform으로 가져온다. io.spring.dependency-management 플러그인은 쓰지 않는다.
+    implementation platform(catalog.findLibrary('spring-boot-dependencies').get())
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.release.set(17)
+    // 이 PC의 기본 인코딩은 MS949다. 소스는 UTF-8이므로 명시한다.
+    options.encoding = 'UTF-8'
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+    defaultCharacterEncoding = 'UTF-8'
+    // 계약 테스트가 저장소 루트 contracts/ 폴더에서 계약 파일을 찾는다.
+    systemProperty 'msa.contractsDir', rootProject.file('contracts').absolutePath
+}
+
+spotbugs {
+    toolVersion.set(catalog.findVersion('spotbugs').get().requiredVersion)
+    // Groovy는 Effort.MAX를 enum 상수가 아니라 같은 이름의 중첩 클래스로 읽으므로 valueOf를 쓴다.
+    effort.set(Effort.valueOf('MAX'))
+    reportLevel.set(Confidence.valueOf('LOW'))
+    excludeFilter.set(rootProject.file('config/spotbugs/exclude.xml'))
+}
+
+tasks.withType(SpotBugsTask).configureEach {
+    reports {
+        html {
+            required.set(true)
+        }
+    }
+}
+
+// 기계 검사 작업. check 작업에 연결하므로 build가 모두 돌린다.
+def javaSources = fileTree('src') { include '**/*.java' }
+def mapperXmls = fileTree('src/main/resources/mapper') { include '**/*.xml' }
+def migrationSqls = fileTree('src/main/resources/db/migration') { include '**/*.sql' }
+def testJavaSources = fileTree('src/test/java') { include '**/*.java' }
+def rootDir = rootProject.layout.projectDirectory
+def allowlistFile = rootDir.file('config/quality/suppression-allowlist.csv')
+
+def noLombok = tasks.register('checkNoLombok', NoLombokCheck) {
+    group = 'verification'
+    description = 'Lombok을 쓰지 않는지 검사한다.'
+    sourceFiles.from(javaSources)
+    dependencyGroups.set(provider {
+        Set<String> groups = new HashSet<>()
+        configurations.toList().each { configuration ->
+            configuration.allDependencies.each { dependency ->
+                if (dependency.group != null) {
+                    groups.add(dependency.group)
+                }
+            }
+            if (configuration.canBeResolved) {
+                try {
+                    configuration.incoming.resolutionResult.allComponents.each { component ->
+                        if (component.moduleVersion != null) {
+                            groups.add(component.moduleVersion.group)
+                        }
+                    }
+                } catch (Exception e) {
+                    // 해석할 수 없는 configuration은 선언된 의존성만 본다.
+                }
+            }
+        }
+        return groups
+    })
+}
+
+def suppressionMarkers = tasks.register('checkSuppressionMarkers', SuppressionMarkerCheck) {
+    group = 'verification'
+    description = '검사를 끄는 표시가 허용 목록에 있는지 검사한다.'
+    javaFiles.from(javaSources)
+    buildFiles.from(file('build.gradle'))
+    allowlist.set(allowlistFile)
+    rootDirectory.set(rootDir)
+}
+
+def mapperXml = tasks.register('checkMapperXml', MapperXmlCheck) {
+    group = 'verification'
+    description = 'Mapper XML에 ${}와 SELECT *가 없는지 검사한다.'
+    mapperFiles.from(mapperXmls)
+    allowlist.set(allowlistFile)
+    rootDirectory.set(rootDir)
+}
+
+def sql19c = tasks.register('checkSql19c', Sql19cKeywordCheck) {
+    group = 'verification'
+    description = 'Mapper XML과 Flyway SQL에 19c 이후 SQL 키워드가 없는지 검사한다.'
+    mapperFiles.from(mapperXmls)
+    sqlFiles.from(migrationSqls)
+    rootDirectory.set(rootDir)
+}
+
+def testCaseIds = tasks.register('checkTestCaseIds', TestCaseIdCheck) {
+    group = 'verification'
+    description = '지금 단계(msa.stage)까지의 테스트 케이스 ID가 테스트에 있는지 검사한다.'
+    testCaseDocument.set(rootDir.file('docs/test-cases/order-placement.md'))
+    stageTable.set(rootDir.file('config/quality/test-case-stages.csv'))
+    currentStage.set(providers.gradleProperty('msa.stage').orElse('없음'))
+    serviceName.set(project.name.replaceFirst('-service$', ''))
+    testSources.from(testJavaSources)
+}
+
+tasks.named('check') {
+    dependsOn(noLombok, suppressionMarkers, mapperXml, sql19c, testCaseIds)
+}

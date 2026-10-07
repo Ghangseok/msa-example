@@ -1,0 +1,53 @@
+spring:
+  application:
+    name: inventory-service
+  datasource:
+    # 환경마다 다른 값은 환경변수로 받는다. 비밀번호는 기본값이 없고, 저장소에 넣지 않는다.
+    url: ${INVENTORY_DB_URL:jdbc:oracle:thin:@//localhost:1522/XEPDB1}
+    username: ${INVENTORY_DB_USERNAME:INVENTORY_SVC}
+    password: ${INVENTORY_SVC_PASSWORD}
+  lifecycle:
+    # Pod의 terminationGracePeriodSeconds(45초)보다 짧게 둔다.
+    timeout-per-shutdown-phase: 35s
+
+server:
+  shutdown: graceful
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    arg-name-based-constructor-auto-mapping: true
+
+logging:
+  structured:
+    format:
+      console: ecs
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      group:
+        # readiness에는 DB 연결을 넣고, liveness에는 외부 상태를 넣지 않는다.
+        readiness:
+          include: readinessState,db
+  # OTLP 주소는 환경변수 OTLP_ENDPOINT로 받는다. 신호별 속성에는 경로까지 적는다.
+  opentelemetry:
+    tracing:
+      export:
+        otlp:
+          endpoint: ${OTLP_ENDPOINT:http://lgtm:4318}/v1/traces
+    logging:
+      export:
+        otlp:
+          endpoint: ${OTLP_ENDPOINT:http://lgtm:4318}/v1/logs
+  otlp:
+    metrics:
+      export:
+        url: ${OTLP_ENDPOINT:http://lgtm:4318}/v1/metrics

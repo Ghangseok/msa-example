@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.msa.inventory.mapper.ReservationMapper">
+
+    <!--
+      예약 기록 하나와 그 항목들을 <collection>으로 한 번에 읽는다(코딩 규약 3-2절).
+      항목이 없는 기록(해제 표식)은 LEFT JOIN에서 항목 열이 모두 비어 나온다.
+      notNullColumn을 PRODUCT_ID로 정해야 이 줄에서 항목 객체를 만들지 않고 빈 목록이 된다.
+      항목은 record라서 생성자 인자 이름(name)으로 열을 짝짓는다. 이름은 컴파일 옵션 -parameters로 클래스 파일에 남는다.
+    -->
+    <resultMap id="reservationWithItemsMap" type="com.example.msa.inventory.dto.ReservationWithItems">
+        <id property="orderNo" column="ORDER_NO"/>
+        <result property="status" column="STATUS"/>
+        <result property="reason" column="REASON"/>
+        <collection property="items"
+                    ofType="com.example.msa.inventory.dto.ReservationWithItems$StoredItem"
+                    notNullColumn="PRODUCT_ID">
+            <constructor>
+                <arg name="productId" column="PRODUCT_ID" javaType="string"/>
+                <arg name="quantity" column="QUANTITY" javaType="_int"/>
+                <arg name="result" column="RESULT" javaType="com.example.msa.inventory.domain.ReservationReason"/>
+            </constructor>
+        </collection>
+    </resultMap>
+
+    <select id="selectReservationWithItems" resultMap="reservationWithItemsMap">
+        SELECT r.ORDER_NO, r.STATUS, r.REASON, i.PRODUCT_ID, i.QUANTITY, i.RESULT
+          FROM RESERVATIONS r
+          LEFT JOIN RESERVATION_ITEMS i ON i.ORDER_NO = r.ORDER_NO
+         WHERE r.ORDER_NO = #{orderNo}
+         ORDER BY i.PRODUCT_ID
+    </select>
+
+    <!-- 설계 문서 6절 "해제 처리" 1번이다. 예약 기록 한 줄만 잠근다. -->
+    <select id="selectStatusForUpdate" resultType="com.example.msa.inventory.domain.ReservationStatus">
+        SELECT STATUS
+          FROM RESERVATIONS
+         WHERE ORDER_NO = #{orderNo}
+           FOR UPDATE
+    </select>
+
+    <insert id="insertReservation">
+        INSERT INTO RESERVATIONS (ORDER_NO, STATUS, REASON, CREATED_AT, UPDATED_AT)
+        VALUES (#{orderNo}, #{status}, #{reason,jdbcType=VARCHAR}, SYSTIMESTAMP, SYSTIMESTAMP)
+    </insert>
+
+    <insert id="insertReservationItem">
+        INSERT INTO RESERVATION_ITEMS (ORDER_NO, PRODUCT_ID, QUANTITY, RESULT)
+        VALUES (#{orderNo}, #{productId}, #{quantity}, #{result,jdbcType=VARCHAR})
+    </insert>
+
+    <update id="updateReservationStatus">
+        UPDATE RESERVATIONS
+           SET STATUS = #{status},
+               UPDATED_AT = SYSTIMESTAMP
+         WHERE ORDER_NO = #{orderNo}
+    </update>
+
+</mapper>
