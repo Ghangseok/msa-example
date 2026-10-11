@@ -2,7 +2,7 @@
 
 - 상태: **확정 (2026-10-05)** (2026-10-04 초안, OQ-001~009 결정 반영)
 - 출처: P = [마이크로서비스와 쿠버네티스 기초](../references/msa-k8s-primer.md)
-- 관련: [UC-002](uc-002-view-orders.md), [NFR](non-functional.md), [TC-001~015](../test-cases/order-placement.md), [ADR-0004](../adr/0004-sync-reservation-call.md), [ADR-0006](../adr/0006-keycloak-jwt-auth.md), [미결 사항](../analysis/domain-analysis.md#9-미결-사항)
+- 관련: [UC-002](uc-002-view-orders.md), [NFR](non-functional.md), [TC-001~033](../test-cases/order-placement.md), [ADR-0004](../adr/0004-sync-reservation-call.md), [ADR-0006](../adr/0006-keycloak-jwt-auth.md), [미결 사항](../analysis/domain-analysis.md#9-미결-사항)
 
 이 문서는 기술에 중립으로 쓴다. 어느 서비스가 무엇을 하는지는 [analysis/domain-analysis.md](../analysis/domain-analysis.md)와 [design/architecture.md](../design/architecture.md)에 적는다.
 
