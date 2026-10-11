@@ -48,7 +48,7 @@ services/order-service/src/main/resources/
 2. **고객 ID는 JWT의 `sub`에서만 얻는다.** 요청 본문이나 헤더로 받은 사용자 정보는 믿지 않는다. 토큰 전체는 로그에 남기지 않는다.
 3. **재고는 `InventoryClient`로만 부른다.** `RestClient`는 Spring Boot가 주는 `RestClient.Builder`로 만든다. `RestClient.builder()`를 직접 부르면 추적 정보(`traceparent`)가 붙지 않는다.
 4. **재고 호출의 제한 시간, 서킷 브레이커 값, 주소는 코드에 적지 않는다.** `application.yml`에 두고 `@ConfigurationProperties`로 받는다.
-5. **실패한 주문의 해제는 고객 응답 뒤에 따로 돌린다.** `ReservationReleaser`가 `releaseExecutor`에서 `InventoryClient.release()`를 한 번 부르고, 결과를 새 트랜잭션으로 저장한다. 재시도는 Phase 3에서 더한다.
+5. **실패한 주문의 해제는 고객 응답 뒤에 따로 돌린다.** `ReservationReleaser`가 `releaseExecutor`에서 `InventoryClient.release()`를 부르고, 결과를 새 트랜잭션으로 저장한다. 해제도 예약과 같은 재시도 정책(일시 오류에 즉시, 1, 2, 4, 8초 뒤 최대 5번, 재시도 포함 전체 30초)을 따른다.
 6. **SQL은 Mapper XML에만 쓴다.** 애너테이션 SQL을 쓰지 않는다. 값은 `#{}`로만 넣고, `SELECT *`를 쓰지 않는다.
 7. **오류 응답은 Problem Details(`application/problem+json`)로 낸다.** `type`은 `urn:msa-example:problem:<코드>`이고, 확장 필드는 `code`와 `errors`다. 401도 같다.
 
