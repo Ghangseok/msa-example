@@ -2,6 +2,7 @@ package com.example.msa.order.config;
 
 import io.github.resilience4j.circuitbreaker.CircuitBreakerConfig.SlidingWindowType;
 import java.time.Duration;
+import java.util.List;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -10,11 +11,20 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @param baseUrl 재고 서비스 주소. 쿠버네티스 Service 이름으로 부른다
  * @param connectTimeout 시도 하나의 연결 제한 시간
  * @param requestTimeout 시도 하나의 요청 제한 시간
+ * @param maxRetries 최초 시도 뒤 재시도의 최대 횟수. 최초 시도를 포함해 시도는 최대 {@code maxRetries + 1}번이다
+ * @param retryWaits 재시도 전 대기. {@code n}번째 값이 {@code n}번째 재시도 전의 대기다. 길이는 {@code maxRetries}와 같다
+ * @param overallTimeLimit 재시도를 포함한 전체 한도. 시작 시각부터 잰다
  * @param circuitBreaker 재고 호출의 서킷 브레이커 값
  */
 @ConfigurationProperties("inventory-client")
 public record InventoryClientProperties(
-        String baseUrl, Duration connectTimeout, Duration requestTimeout, CircuitBreakerProperties circuitBreaker) {
+        String baseUrl,
+        Duration connectTimeout,
+        Duration requestTimeout,
+        int maxRetries,
+        List<Duration> retryWaits,
+        Duration overallTimeLimit,
+        CircuitBreakerProperties circuitBreaker) {
 
     /**
      * 서킷 브레이커 값이다. 설계 문서 4절의 값을 Resilience4j 설정 이름으로 옮겼다.

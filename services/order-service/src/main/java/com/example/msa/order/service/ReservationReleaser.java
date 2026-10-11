@@ -1,6 +1,5 @@
 package com.example.msa.order.service;
 
-import com.example.msa.order.client.InventoryCallContext;
 import com.example.msa.order.client.InventoryCallFailure;
 import com.example.msa.order.client.InventoryClient;
 import com.example.msa.order.client.ReservationResult;
@@ -17,7 +16,8 @@ import org.springframework.stereotype.Service;
  * {@link OrderService}가 "실패" 결과를 저장한 트랜잭션이 커밋된 뒤에 맡기고 바로 응답한다.
  * 같은 클래스 안에서 비동기 메서드를 부르면 Spring 프록시를 거치지 않으므로 별도 빈에 둔다.
  *
- * <p>해제 작업은 {@link InventoryClient#release}를 한 번 부른다. 결과가 RELEASED나 REJECTED면 "해제 완료"로, 끝내 실패하면
+ * <p>해제 작업은 {@link InventoryClient#release}를 한 번 부른다. 그 안에서 예약과 같은 재시도 정책(일시 오류에 즉시, 1, 2, 4, 8초 뒤
+ * 최대 5번, 전체 30초 한도)을 쓴다. 결과가 RELEASED나 REJECTED면 "해제 완료"로, 끝내 실패하면
  * "해제 실패"로 새 트랜잭션에 저장하고 오류 로그를 남긴다. 해제까지 실패하면 관리자 조회로 찾는다(도메인 분석 4절).
  */
 @Service
@@ -51,7 +51,8 @@ public class ReservationReleaser {
     private void release(long orderNo) {
         ReleaseStatus releaseStatus;
         try {
-            InventoryClient.ReleaseResult result = inventoryClient.release(orderNo, new InventoryCallContext());
+            // 예약과 같은 재시도 정책이다. 서킷이 열려 막히면 재시도하지 않고 끝내 실패한다.
+            InventoryClient.ReleaseResult result = inventoryClient.release(orderNo, inventoryClient.newCallContext());
             // 거절된 예약의 해제는 REJECTED를 그대로 돌려준다. 어느 쪽이든 재고가 줄어든 채 남지 않았다.
             boolean stockIsNotHeld = result.status() == ReservationResult.Status.RELEASED
                     || result.status() == ReservationResult.Status.REJECTED;

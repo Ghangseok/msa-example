@@ -1321,17 +1321,17 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 ### 준비
 
-- [ ] T156 단계 표시를 `msa.stage=P3`으로 올리고, 테스트 케이스 단계 표에서 단계가 P3인 줄이 plan.md 표와 추가 케이스 표와 같은지 확인한다. 다르면 표를 고치지 말고 멈춰 사용자에게 묻는다 (gradle.properties, config/quality/test-case-stages.csv)
+- [x] T156 단계 표시를 `msa.stage=P3`으로 올리고, 테스트 케이스 단계 표에서 단계가 P3인 줄이 plan.md 표와 추가 케이스 표와 같은지 확인한다. 다르면 표를 고치지 말고 멈춰 사용자에게 묻는다 (gradle.properties, config/quality/test-case-stages.csv)
   - 확인: `Select-String -Path config/quality/test-case-stages.csv -Pattern ',P3$'` → 4줄 (모두 `order` 줄이다)
-- [ ] T157 버전 카탈로그에 Resilience4j `resilience4j-retry` 2.4.0을 더하고 주문 서비스 의존성에 넣는다 (gradle/libs.versions.toml, services/order-service/build.gradle)
+- [x] T157 버전 카탈로그에 Resilience4j `resilience4j-retry` 2.4.0을 더하고 주문 서비스 의존성에 넣는다 (gradle/libs.versions.toml, services/order-service/build.gradle)
   - 근거: research.md 결정 7.
-- [ ] T158 재시도와 전체 한도 설정을 더한다. 기본 설정은 재시도 최대 5번, 재시도 전 대기 0·1·2·4·8초, 전체 30초다. 테스트 설정은 이 문서 머리의 "시간 값은 1/5로 줄인다" 표대로 대기 0·200·400·800·1600ms, 전체 6초다 `[제안]`. 서킷의 횟수 값(10번, 50%, 3번)은 시간 값이 아니므로 줄이지 않는다 (services/order-service/src/main/resources/application.yml, services/order-service/src/test/resources/application-test.yml)
+- [x] T158 재시도와 전체 한도 설정을 더한다. 기본 설정은 재시도 최대 5번, 재시도 전 대기 0·1·2·4·8초, 전체 30초다. 테스트 설정은 이 문서 머리의 "시간 값은 1/5로 줄인다" 표대로 대기 0·200·400·800·1600ms, 전체 6초다 `[제안]`. 서킷의 횟수 값(10번, 50%, 3번)은 시간 값이 아니므로 줄이지 않는다 (services/order-service/src/main/resources/application.yml, services/order-service/src/test/resources/application-test.yml)
 
 이 목록에서는 항목 ID를 쓰지 않았다.
 
 ### 기반
 
-- [ ] T159 재고 호출 설정 클래스에 재시도 최대 횟수, 대기 목록, 전체 한도를 더하고, 기본값 단위 테스트(T142)에 이 세 값의 검사를 더한다. 기대값은 비기능 요구사항 문서(`docs/requirements/non-functional.md`)의 "장애 전파 차단" 목표값("재시도 포함 전체 30초, 시도당 2.5초, 재시도 최대 5회(즉시, 1, 2, 4, 8초 뒤)") 가운데 재시도 세 값이다. 이미 있는 검사는 바꾸지 않는다 (services/order-service/src/main/java/com/example/msa/order/config/InventoryClientProperties.java, services/order-service/src/test/java/com/example/msa/order/config/InventoryClientPropertiesTest.java)
+- [x] T159 재고 호출 설정 클래스에 재시도 최대 횟수, 대기 목록, 전체 한도를 더하고, 기본값 단위 테스트(T142)에 이 세 값의 검사를 더한다. 기대값은 비기능 요구사항 문서(`docs/requirements/non-functional.md`)의 "장애 전파 차단" 목표값("재시도 포함 전체 30초, 시도당 2.5초, 재시도 최대 5회(즉시, 1, 2, 4, 8초 뒤)") 가운데 재시도 세 값이다. 이미 있는 검사는 바꾸지 않는다 (services/order-service/src/main/java/com/example/msa/order/config/InventoryClientProperties.java, services/order-service/src/test/java/com/example/msa/order/config/InventoryClientPropertiesTest.java)
   - 근거: research.md 4절 "설정 클래스", `docs/standards/testing.md` 3절 "시간".
 
 이 목록에서는 항목 ID를 쓰지 않았다.
@@ -1344,14 +1344,14 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 #### 인수 시나리오 테스트 (구현보다 먼저)
 
-- [ ] T160 [P] [US8] 시나리오 8.1의 주문 쪽 서비스 통합 테스트를 쓴다. WireMock 시나리오 기능으로 예약 요청 첫 두 번에 503, 셋째부터 RESERVED를 돌려준다. 응답이 `CONFIRMED`인지, 예약 요청이 정확히 3번 갔는지, 세 요청의 주문 번호와 본문이 같은지, 간격이 맞는지 검사한다. 간격은 1/5 규칙으로 줄인 값이다 `[제안]`: 둘째는 첫째 응답 뒤 0.1초 안, 셋째는 둘째 응답 뒤 0.16초 이상 0.3초 이하. 응답을 받은 시각은 WireMock이 요청을 받은 시각으로 대신 잰다 `[제안]`. 503 스텁에는 지연이 없어 두 시각의 차이가 작기 때문이다. 재고 수량 기대값(7개)은 T055가 재고 쪽에서 본다. `@DisplayName`은 시나리오 8.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/TransientErrorRetryIntegrationTest.java)
-- [ ] T161 [P] [US8] 시나리오 8.2(㉢ 재시도하던 중에 서킷이 열리면 남은 재시도를 하지 않는다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. 시간 값은 1/5 규칙을 따른다 `[제안]`. `@DisplayName`은 시나리오 8.2의 테스트 케이스 ID로 시작한다. 스토리 라벨은 재시도 동작이라 `[US8]`로 붙였다 `[제안]` (services/order-service/src/test/java/com/example/msa/order/integration/CircuitOpensDuringRetryIntegrationTest.java)
+- [x] T160 [P] [US8] 시나리오 8.1의 주문 쪽 서비스 통합 테스트를 쓴다. WireMock 시나리오 기능으로 예약 요청 첫 두 번에 503, 셋째부터 RESERVED를 돌려준다. 응답이 `CONFIRMED`인지, 예약 요청이 정확히 3번 갔는지, 세 요청의 주문 번호와 본문이 같은지, 간격이 맞는지 검사한다. 간격은 1/5 규칙으로 줄인 값이다 `[제안]`: 둘째는 첫째 응답 뒤 0.1초 안, 셋째는 둘째 응답 뒤 0.16초 이상 0.3초 이하. 응답을 받은 시각은 WireMock이 요청을 받은 시각으로 대신 잰다 `[제안]`. 503 스텁에는 지연이 없어 두 시각의 차이가 작기 때문이다. 재고 수량 기대값(7개)은 T055가 재고 쪽에서 본다. `@DisplayName`은 시나리오 8.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/TransientErrorRetryIntegrationTest.java)
+- [x] T161 [P] [US8] 시나리오 8.2(㉢ 재시도하던 중에 서킷이 열리면 남은 재시도를 하지 않는다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. 시간 값은 1/5 규칙을 따른다 `[제안]`. `@DisplayName`은 시나리오 8.2의 테스트 케이스 ID로 시작한다. 스토리 라벨은 재시도 동작이라 `[US8]`로 붙였다 `[제안]` (services/order-service/src/test/java/com/example/msa/order/integration/CircuitOpensDuringRetryIntegrationTest.java)
   - 근거: plan.md "인수 시나리오와 테스트 층" 표의 시나리오 8.2 줄, FR-035.
-- [ ] T162 [US8] 소비자 계약 테스트에 시나리오 8.1의 RESERVED 스텁과 받은 예약 요청 세 개를 검증하는 메서드를 더한다. 503 스텁의 응답은 검증하지 않는다(T094) (services/order-service/src/test/java/com/example/msa/order/contract/InventoryConsumerContractTest.java)
+- [x] T162 [US8] 소비자 계약 테스트에 시나리오 8.1의 RESERVED 스텁과 받은 예약 요청 세 개를 검증하는 메서드를 더한다. 503 스텁의 응답은 검증하지 않는다(T094) (services/order-service/src/test/java/com/example/msa/order/contract/InventoryConsumerContractTest.java)
   - 근거: plan.md 표의 시나리오 8.1 "계약" 칸 "소비자".
-- [ ] T163 [P] [US8] 대기 일정의 단위 테스트를 쓴다. plan.md 표의 시나리오 8.1 "단위" 칸 "대기 일정(0·1·2·4·8초)"이다. 기본 설정으로 첫째부터 다섯째 재시도 전 대기가 0, 1000, 2000, 4000, 8000밀리초인지 검사한다. 기대값은 비기능 요구사항 문서(`docs/requirements/non-functional.md`)의 "장애 전파 차단" 목표값의 "재시도 최대 5회(즉시, 1, 2, 4, 8초 뒤)"다 (services/order-service/src/test/java/com/example/msa/order/client/RetryScheduleTest.java `[제안]`)
+- [x] T163 [P] [US8] 대기 일정의 단위 테스트를 쓴다. plan.md 표의 시나리오 8.1 "단위" 칸 "대기 일정(0·1·2·4·8초)"이다. 기본 설정으로 첫째부터 다섯째 재시도 전 대기가 0, 1000, 2000, 4000, 8000밀리초인지 검사한다. 기대값은 비기능 요구사항 문서(`docs/requirements/non-functional.md`)의 "장애 전파 차단" 목표값의 "재시도 최대 5회(즉시, 1, 2, 4, 8초 뒤)"다 (services/order-service/src/test/java/com/example/msa/order/client/RetryScheduleTest.java `[제안]`)
   - 위치는 `client/` 테스트 패키지다 `[제안]`. plan.md 트리에 더했다(2026-10-07 사용자 결정). 대기 일정 클래스(T165)가 `client` 패키지에 있어서다.
-- [ ] T164 [US8] 위 테스트가 실패하는 것을 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/TransientErrorRetryIntegrationTest.java)
+- [x] T164 [US8] 위 테스트가 실패하는 것을 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/TransientErrorRetryIntegrationTest.java)
   - 명령: `.\gradlew.bat :services:order-service:test --tests "com.example.msa.order.integration.TransientErrorRetryIntegrationTest" --tests "com.example.msa.order.integration.CircuitOpensDuringRetryIntegrationTest"`
   - 기대 결과: 종료 코드가 0이 아니다. 재시도가 없어 T160은 `FAILED`와 요청 1번으로 단언이 실패한다. T163은 대기 일정 클래스가 없어 컴파일 오류로 실패한다. 하나라도 통과하면 멈추고 사용자에게 묻는다.
 
@@ -1375,18 +1375,18 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 #### 구현
 
-- [ ] T165 [US8] 대기 일정 클래스를 만든다. 설정의 대기 목록을 받아, 몇 번째 재시도인지에 따라 대기 밀리초를 돌려준다. Resilience4j `IntervalBiFunction`으로 감싸 쓴다 (services/order-service/src/main/java/com/example/msa/order/client/RetrySchedule.java `[제안]`)
+- [x] T165 [US8] 대기 일정 클래스를 만든다. 설정의 대기 목록을 받아, 몇 번째 재시도인지에 따라 대기 밀리초를 돌려준다. Resilience4j `IntervalBiFunction`으로 감싸 쓴다 (services/order-service/src/main/java/com/example/msa/order/client/RetrySchedule.java `[제안]`)
   - 근거: research.md 결정 7("`IntervalBiFunction`으로 시도 번호에 따라 0, 1000, 2000, 4000, 8000밀리초를 돌려준다").
-- [ ] T166 [US8] 재시도를 만든다. 요청마다 `Retry`를 새로 만들고 설정 객체는 공유한다. 순서는 `Decorators`로 "재시도(서킷 브레이커(재고 호출))"다. 재시도할 예외는 연결 실패와 시간 초과(`ResourceAccessException`), 502·503·504(`HttpServerErrorException`의 상태 코드)뿐이다. 서킷이 열려 생긴 `CallNotPermittedException`, 409, 500, 4xx, 업무 결과에는 재시도하지 않는다. 재시도할 때 같은 주문 번호를 보낸다 (services/order-service/src/main/java/com/example/msa/order/client/InventoryClient.java, services/order-service/src/main/java/com/example/msa/order/config/InventoryClientConfig.java)
+- [x] T166 [US8] 재시도를 만든다. 요청마다 `Retry`를 새로 만들고 설정 객체는 공유한다. 순서는 `Decorators`로 "재시도(서킷 브레이커(재고 호출))"다. 재시도할 예외는 연결 실패와 시간 초과(`ResourceAccessException`), 502·503·504(`HttpServerErrorException`의 상태 코드)뿐이다. 서킷이 열려 생긴 `CallNotPermittedException`, 409, 500, 4xx, 업무 결과에는 재시도하지 않는다. 재시도할 때 같은 주문 번호를 보낸다 (services/order-service/src/main/java/com/example/msa/order/client/InventoryClient.java, services/order-service/src/main/java/com/example/msa/order/config/InventoryClientConfig.java)
   - 근거: research.md 결정 7, `docs/standards/architecture-rules.md` 2절 "서비스 사이 호출"의 재시도 규칙과 멱등 규칙과 서킷 브레이커 규칙.
   - 재고 호출 로그에 몇 번째 시도인지와 서킷 상태를 남긴다(`docs/standards/coding-conventions.md` 3-6절).
-- [ ] T167 [US8] "재시도하지 않는다"를 보는 테스트가 결함을 잡는지 확인한다. 이 테스트들은 재시도가 없던 P2에서 실패할 수 없었다(이 문서 머리의 "테스트는 필수다"). T166에서 만든 재시도 판단을 아래처럼 하나씩 잠시 바꾸고, 해당 테스트가 실패하는 것을 본 뒤 되돌린다(2026-10-06 사용자 승인) (services/order-service/src/main/java/com/example/msa/order/client/InventoryClient.java)
+- [x] T167 [US8] "재시도하지 않는다"를 보는 테스트가 결함을 잡는지 확인한다. 이 테스트들은 재시도가 없던 P2에서 실패할 수 없었다(이 문서 머리의 "테스트는 필수다"). T166에서 만든 재시도 판단을 아래처럼 하나씩 잠시 바꾸고, 해당 테스트가 실패하는 것을 본 뒤 되돌린다(2026-10-06 사용자 승인) (services/order-service/src/main/java/com/example/msa/order/client/InventoryClient.java)
   1. 업무 결과 REJECTED에도 재시도하게 바꾼다(`retryOnResult`) → 시나리오 3.2의 T114와 시나리오 3.3의 T115가 실패한다(예약 요청이 1번보다 많다)
   2. 500에도 재시도하게 바꾼다 → T140이 실패한다
   3. 409에도 재시도하게 바꾼다 → 시나리오 7.2의 T139가 실패한다
   - 명령: `.\gradlew.bat :services:order-service:test --tests "com.example.msa.order.integration.NoRetryOnOutOfStockIntegrationTest" --tests "com.example.msa.order.integration.PlaceOrderProductNotFoundIntegrationTest" --tests "com.example.msa.order.integration.InventoryServerErrorIntegrationTest" --tests "com.example.msa.order.integration.ReservationConflictOrderIntegrationTest"`
   - 기대 결과: 바꿀 때마다 해당 테스트가 실패하고, 되돌린 뒤에는 종료 코드 0이다. 되돌린 뒤 `git diff -- services/order-service/src/main`에 T166의 변경 말고 다른 것이 없는지 본다. 바꿨는데도 테스트가 통과하면 멈추고 사용자에게 묻는다.
-- [ ] T168 [US8] 이 스토리의 테스트와 P1·P2 테스트가 모두 통과하는지 확인한다. 특히 시나리오 3.2와 3.3의 "예약 요청은 정확히 1번", 시나리오 7.1, 시나리오 7.2, T140, T101의 테스트가 고치지 않은 채 통과하는지 본다 (services/order-service/src/test/java/com/example/msa/order/integration/TransientErrorRetryIntegrationTest.java)
+- [x] T168 [US8] 이 스토리의 테스트와 P1·P2 테스트가 모두 통과하는지 확인한다. 특히 시나리오 3.2와 3.3의 "예약 요청은 정확히 1번", 시나리오 7.1, 시나리오 7.2, T140, T101의 테스트가 고치지 않은 채 통과하는지 본다 (services/order-service/src/test/java/com/example/msa/order/integration/TransientErrorRetryIntegrationTest.java)
   - 명령: `.\gradlew.bat :services:order-service:test :services:inventory-service:test`
   - 기대 결과: 종료 코드 0. P2의 테스트가 실패하면 테스트를 고치지 않고 구현을 고친다. 테스트가 P2 동작에만 맞게 쓰여 있다고 판단되면 멈추고 사용자에게 묻는다(저장소 루트 `CLAUDE.md` 7절).
 
@@ -1402,14 +1402,14 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 #### 인수 시나리오 테스트 (구현보다 먼저)
 
-- [ ] T169 [P] [US9] 시나리오 9.1의 주문 쪽 서비스 통합 테스트를 쓴다. WireMock 예약 스텁은 RESERVED를 600ms(3초를 1/5로 `[제안]`) 뒤에 돌려주고, 해제 스텁은 RELEASED를 바로 돌려준다. 응답이 6.2초 안에 오고 주문 번호와 `FAILED`·`RETRY_LATER`인지, 예약 요청이 정확히 6번 갔는지, 주문이 `FAILED`로 기록되는지, 고객 응답 뒤 5초 안에 해제 요청이 가고 `RELEASE_STATUS`가 `RELEASED`인지, 그동안 다른 스레드에서 부른 health 확인이 1초 안에 200인지 검사한다. "상품 A의 재고는 10개다"는 T050이 재고 쪽에서 검증했다. `@DisplayName`은 시나리오 9.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/OverallTimeLimitIntegrationTest.java)
+- [x] T169 [P] [US9] 시나리오 9.1의 주문 쪽 서비스 통합 테스트를 쓴다. WireMock 예약 스텁은 RESERVED를 600ms(3초를 1/5로 `[제안]`) 뒤에 돌려주고, 해제 스텁은 RELEASED를 바로 돌려준다. 응답이 6.2초 안에 오고 주문 번호와 `FAILED`·`RETRY_LATER`인지, 예약 요청이 정확히 6번 갔는지, 주문이 `FAILED`로 기록되는지, 고객 응답 뒤 5초 안에 해제 요청이 가고 `RELEASE_STATUS`가 `RELEASED`인지, 그동안 다른 스레드에서 부른 health 확인이 1초 안에 200인지 검사한다. "상품 A의 재고는 10개다"는 T050이 재고 쪽에서 검증했다. `@DisplayName`은 시나리오 9.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/OverallTimeLimitIntegrationTest.java)
   - 1/5로 줄이면 여섯째 시도가 5.5초에 시작해 6초에 끝나고, 응답 기한(6.2초)까지 여유가 0.2초다. CI에서 이 여유가 모자라 흔들리면 기대값이나 비율을 바꾸지 말고 멈춰 사용자에게 묻는다.
-- [ ] T170 [P] [US9] 시나리오 9.2(㉣ 해제 요청도 일시 오류면 같은 정책으로 재시도한다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. 시간 값은 1/5 규칙을 따른다 `[제안]`. `@DisplayName`은 시나리오 9.2의 테스트 케이스 ID로 시작한다. 스토리 라벨은 실패 주문의 해제라서 `[US9]`로 붙였다 `[제안]` (services/order-service/src/test/java/com/example/msa/order/integration/ReleaseRetryIntegrationTest.java)
+- [x] T170 [P] [US9] 시나리오 9.2(㉣ 해제 요청도 일시 오류면 같은 정책으로 재시도한다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. 시간 값은 1/5 규칙을 따른다 `[제안]`. `@DisplayName`은 시나리오 9.2의 테스트 케이스 ID로 시작한다. 스토리 라벨은 실패 주문의 해제라서 `[US9]`로 붙였다 `[제안]` (services/order-service/src/test/java/com/example/msa/order/integration/ReleaseRetryIntegrationTest.java)
   - 근거: plan.md "인수 시나리오와 테스트 층" 표의 시나리오 9.2 줄, FR-036.
-- [ ] T171 [US9] 소비자 계약 테스트에 시나리오 9.1의 지연된 RESERVED 스텁, 해제 스텁, 받은 예약·해제 요청을 검증하는 메서드를 더한다 (services/order-service/src/test/java/com/example/msa/order/contract/InventoryConsumerContractTest.java)
+- [x] T171 [US9] 소비자 계약 테스트에 시나리오 9.1의 지연된 RESERVED 스텁, 해제 스텁, 받은 예약·해제 요청을 검증하는 메서드를 더한다 (services/order-service/src/test/java/com/example/msa/order/contract/InventoryConsumerContractTest.java)
   - 근거: plan.md 표의 "9.1의 주문 쪽" 줄 "계약" 칸 "소비자".
-- [ ] T172 [P] [US9] 30초 한도 판단의 단위 테스트를 쓴다. plan.md 표의 "9.1의 주문 쪽" 줄 "단위" 칸 "30초 한도 판단"이다. 시작 시각과 지금 시각, 다음 대기를 넣어, 다음 시도가 30초가 되기 전에 시작하면 재시도를 허락하고 그렇지 않으면 막는지 검사한다. 또 남은 시간이 시도당 제한 시간보다 짧을 때 그 시도에 주는 제한 시간이 남은 시간인지 검사한다. 이 기대값의 근거는 같은 공통 전제의 "시도는 30초에 끊는다"다(2026-10-06 사용자 승인). 기대값의 근거는 테스트 케이스 문서 공통 전제 "30초가 되기 전이면, 남은 시간이 시도당 제한 시간(2.5초)보다 짧아도 시도를 시작한다"와 비기능 요구사항 문서(`docs/requirements/non-functional.md`)의 "장애 전파 차단" 목표값의 "재시도 포함 전체 30초"다. 시각은 주입한 시계로 정한다 `[제안]` (services/order-service/src/test/java/com/example/msa/order/client/InventoryCallContextTest.java `[제안]`)
-- [ ] T173 [US9] 위 테스트가 실패하는 것을 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/OverallTimeLimitIntegrationTest.java)
+- [x] T172 [P] [US9] 30초 한도 판단의 단위 테스트를 쓴다. plan.md 표의 "9.1의 주문 쪽" 줄 "단위" 칸 "30초 한도 판단"이다. 시작 시각과 지금 시각, 다음 대기를 넣어, 다음 시도가 30초가 되기 전에 시작하면 재시도를 허락하고 그렇지 않으면 막는지 검사한다. 또 남은 시간이 시도당 제한 시간보다 짧을 때 그 시도에 주는 제한 시간이 남은 시간인지 검사한다. 이 기대값의 근거는 같은 공통 전제의 "시도는 30초에 끊는다"다(2026-10-06 사용자 승인). 기대값의 근거는 테스트 케이스 문서 공통 전제 "30초가 되기 전이면, 남은 시간이 시도당 제한 시간(2.5초)보다 짧아도 시도를 시작한다"와 비기능 요구사항 문서(`docs/requirements/non-functional.md`)의 "장애 전파 차단" 목표값의 "재시도 포함 전체 30초"다. 시각은 주입한 시계로 정한다 `[제안]` (services/order-service/src/test/java/com/example/msa/order/client/InventoryCallContextTest.java `[제안]`)
+- [x] T173 [US9] 위 테스트가 실패하는 것을 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/OverallTimeLimitIntegrationTest.java)
   - 명령: `.\gradlew.bat :services:order-service:test --tests "com.example.msa.order.integration.OverallTimeLimitIntegrationTest" --tests "com.example.msa.order.integration.ReleaseRetryIntegrationTest"`
   - 기대 결과: T170은 해제 재시도가 없어 실패한다. T172는 한도 판단 메서드가 없어 컴파일 오류로 실패한다.
   - T169는 User Story 8의 재시도만으로 통과할 수 있다. 시도당 2.5초와 대기를 모두 더해도 30초를 넘지 않기 때문이다(research.md 결정 7). 통과하면 그 사실을 보고에 적고, 테스트 설정의 시도당 제한 시간을 잠시 1초로 늘려 T169가 실패하는 것(예약 요청이 6번보다 적거나 응답이 늦다)을 본 뒤 되돌린다 `[제안]`. 이것은 시도당 제한 시간이 빠지면 이 테스트가 잡는다는 확인이다(spec SC-002).
@@ -1439,12 +1439,12 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 #### 구현
 
-- [ ] T174 [US9] 전체 한도 판단을 만든다. `InventoryCallContext`가 시작 시각과 시도 수를 들고, 재시도 여부 판단 함수(`retryOnException`)가 "지금 시각 + 다음 대기 < 시작 시각 + 전체 한도"일 때만 재시도를 허락한다. 한도를 넘으면 남은 재시도를 하지 않고 "실패"로 처리한다. 진행 중인 시도도 전체 한도에서 끊는다. 시도마다 제한 시간을 "시도당 제한 시간"과 "전체 한도까지 남은 시간" 가운데 짧은 쪽으로 준다 (services/order-service/src/main/java/com/example/msa/order/client/InventoryCallContext.java, services/order-service/src/main/java/com/example/msa/order/config/InventoryClientConfig.java)
+- [x] T174 [US9] 전체 한도 판단을 만든다. `InventoryCallContext`가 시작 시각과 시도 수를 들고, 재시도 여부 판단 함수(`retryOnException`)가 "지금 시각 + 다음 대기 < 시작 시각 + 전체 한도"일 때만 재시도를 허락한다. 한도를 넘으면 남은 재시도를 하지 않고 "실패"로 처리한다. 진행 중인 시도도 전체 한도에서 끊는다. 시도마다 제한 시간을 "시도당 제한 시간"과 "전체 한도까지 남은 시간" 가운데 짧은 쪽으로 준다 (services/order-service/src/main/java/com/example/msa/order/client/InventoryCallContext.java, services/order-service/src/main/java/com/example/msa/order/config/InventoryClientConfig.java)
   - 근거: 테스트 케이스 문서 공통 전제 "30초가 되기 전이면, 남은 시간이 시도당 제한 시간(2.5초)보다 짧아도 시도를 시작한다. 시도는 30초에 끊는다."와 spec FR-034(2026-10-06 사용자 승인). research.md 결정 7은 "시도당 2.5초와 대기를 모두 더해도 30초를 넘지 않으므로 끊지 않아도 된다"고 적었다. 그런데 이 계산은 한 시도가 연결 시간을 포함해 2.5초를 넘지 않는다는 전제에 기대고, 그 전제는 T148에서 확인하기 전까지 확인되지 않았다.
   - 시도 하나의 제한 시간을 남은 시간으로 줄이는 방법(예: 그 시도에만 제한 시간을 줄인 요청을 만든다)은 구현할 때 고르고 보고에 적는다 `[제안]`.
-- [ ] T175 [US9] 해제에 예약과 같은 재시도 정책을 쓴다. `ReservationReleaser`의 해제 호출을 예약과 같은 방식(요청마다 새 `Retry`, 같은 서킷 안쪽, 같은 전체 한도)으로 감싼다. 서킷에 막히면 재시도하지 않고, 끝내 실패하면 `RELEASE_FAILED`를 저장하고 오류 로그를 남긴다 (services/order-service/src/main/java/com/example/msa/order/service/ReservationReleaser.java, services/order-service/src/main/java/com/example/msa/order/client/InventoryClient.java)
+- [x] T175 [US9] 해제에 예약과 같은 재시도 정책을 쓴다. `ReservationReleaser`의 해제 호출을 예약과 같은 방식(요청마다 새 `Retry`, 같은 서킷 안쪽, 같은 전체 한도)으로 감싼다. 서킷에 막히면 재시도하지 않고, 끝내 실패하면 `RELEASE_FAILED`를 저장하고 오류 로그를 남긴다 (services/order-service/src/main/java/com/example/msa/order/service/ReservationReleaser.java, services/order-service/src/main/java/com/example/msa/order/client/InventoryClient.java)
   - 근거: FR-036, spec Edge Cases "서킷이 열린 상태에서 해제를 요청해야 한다", data-model.md 4-2절.
-- [ ] T176 [US9] 이 스토리의 테스트와 P1·P2·User Story 8 테스트가 모두 통과하는지 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/OverallTimeLimitIntegrationTest.java)
+- [x] T176 [US9] 이 스토리의 테스트와 P1·P2·User Story 8 테스트가 모두 통과하는지 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/OverallTimeLimitIntegrationTest.java)
   - 명령: `.\gradlew.bat :services:order-service:test :services:inventory-service:test`
   - 기대 결과: 종료 코드 0. 시나리오 9.1의 고객 응답 시간과 health 응답 시간을 테스트 로그에서 읽어 보고에 적는다.
 
@@ -1454,12 +1454,12 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 ### 마무리와 확인
 
-- [ ] T177 이 단계의 기준을 확인한다. 이 단계 머리의 "끝났다고 보는 기준" 표에서 GitHub Actions를 뺀 네 줄을 차례로 실행한다 (gradle.properties)
+- [x] T177 이 단계의 기준을 확인한다. 이 단계 머리의 "끝났다고 보는 기준" 표에서 GitHub Actions를 뺀 네 줄을 차례로 실행한다 (gradle.properties)
   - 기대 결과: `msa.stage=P3` 한 줄, `.\gradlew.bat build` 종료 코드 0, 두 서비스 테스트 종료 코드 0, P1·P2의 인수 시나리오 테스트 파일이 바뀌지 않음. 실행한 명령과 종료 코드, 테스트 통과·실패 수를 보고에 적는다.
   - quickstart.md 3절 P3 줄과 대조해, 시나리오 8.1, 시나리오 9.1의 주문 쪽, ㉢, ㉣의 테스트가 보고서에 있는지 하나씩 적는다. spec의 SC-001부터 SC-005까지 다섯 개를 하나씩 대조하고, 각각을 검증한 테스트를 적는다.
 - [ ] T178 사용자가 push한 뒤 GitHub Actions 결과를 확인한다. push 전이면 "실행하지 않았다"로 보고한다. 시나리오 9.1의 테스트가 CI에서 시간 여유 때문에 흔들렸는지도 로그에서 본다 (.github/workflows/build.yml)
   - 명령: `gh run list --branch feat/001-place-order-p3 --limit 1` → 결론이 `success`.
-- [ ] T179 사용자에게 보고하고 멈춘다. 만들거나 고친 파일, 각 확인 작업의 명령과 결과, spec 시나리오 8.1, 9.1의 주문 쪽, ㉢, ㉣과 SC-001부터 SC-005까지를 하나씩 대조한 결과, T167의 결과를 적는다. 커밋·push·PR은 사용자가 요청할 때 한다 (파일 없음, 대화창 보고)
+- [x] T179 사용자에게 보고하고 멈춘다. 만들거나 고친 파일, 각 확인 작업의 명령과 결과, spec 시나리오 8.1, 9.1의 주문 쪽, ㉢, ㉣과 SC-001부터 SC-005까지를 하나씩 대조한 결과, T167의 결과를 적는다. 커밋·push·PR은 사용자가 요청할 때 한다 (파일 없음, 대화창 보고)
 
 이 목록에서는 항목 ID를 쓰지 않았다.
 

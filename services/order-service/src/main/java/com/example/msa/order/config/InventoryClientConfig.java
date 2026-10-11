@@ -27,14 +27,22 @@ public class InventoryClientConfig {
 
     static final String CIRCUIT_BREAKER_NAME = "inventory";
 
+    /**
+     * 재고 서비스를 부르는 JDK HttpClient다. {@code RestClient}와, 전체 한도 때문에 요청 제한 시간을 줄인 시도가 함께 쓴다.
+     * 클러스터 안의 평문 HTTP 호출이다. JDK HttpClient의 기본 HTTP/2 업그레이드(h2c)를 쓰지 않고 HTTP/1.1로 고정한다.
+     */
     @Bean
-    RestClient inventoryRestClient(RestClient.Builder builder, InventoryClientProperties properties) {
-        // 클러스터 안의 평문 HTTP 호출이다. JDK HttpClient의 기본 HTTP/2 업그레이드(h2c)를 쓰지 않고 HTTP/1.1로 고정한다.
-        HttpClient httpClient = HttpClient.newBuilder()
+    HttpClient inventoryHttpClient(InventoryClientProperties properties) {
+        return HttpClient.newBuilder()
                 .version(HttpClient.Version.HTTP_1_1)
                 .connectTimeout(properties.connectTimeout())
                 .build();
-        JdkClientHttpRequestFactory requestFactory = new JdkClientHttpRequestFactory(httpClient);
+    }
+
+    @Bean
+    RestClient inventoryRestClient(
+            RestClient.Builder builder, InventoryClientProperties properties, HttpClient inventoryHttpClient) {
+        JdkClientHttpRequestFactory requestFactory = new JdkClientHttpRequestFactory(inventoryHttpClient);
         requestFactory.setReadTimeout(properties.requestTimeout());
         return builder.baseUrl(properties.baseUrl())
                 .requestFactory(requestFactory)
