@@ -1293,7 +1293,7 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 - [x] T153 이 단계의 기준을 확인한다. 이 단계 머리의 "끝났다고 보는 기준" 표에서 GitHub Actions를 뺀 네 줄을 차례로 실행한다 (gradle.properties)
   - 기대 결과: `msa.stage=P2` 한 줄, `.\gradlew.bat build` 종료 코드 0, 두 서비스의 테스트 종료 코드 0, 재고 서비스 파일이 바뀌지 않음. 실행한 명령과 종료 코드, 테스트 통과·실패 수를 보고에 적는다.
   - quickstart.md 3절 P2 줄과 대조해, 시나리오 2.1, 3.1, 3.2, 3.3, 4.1, 5.1, 6.1, 7.1, 7.2의 테스트, ㉦·㉧·㉨·㉩의 테스트, T101과 T140의 테스트가 모두 보고서에 있는지 하나씩 적는다.
-- [ ] T154 사용자가 push한 뒤 GitHub Actions 결과를 확인한다. push 전이면 "실행하지 않았다"로 보고한다 (.github/workflows/build.yml)
+- [x] T154 사용자가 push한 뒤 GitHub Actions 결과를 확인한다. push 전이면 "실행하지 않았다"로 보고한다 (.github/workflows/build.yml)
   - 명령: `gh run list --branch feat/001-place-order-p2 --limit 1` → 결론이 `success`.
 - [x] T155 사용자에게 보고하고 멈춘다. 만들거나 고친 파일, 각 확인 작업의 명령과 결과, spec 시나리오 2.1, 3.1, 3.2, 3.3, 4.1, 5.1, 6.1, 7.1, 7.2와 ㉦, ㉧, ㉨, ㉩을 하나씩 대조한 결과, research.md 6절에서 이 단계에 확인한 세 가지(T112, T148, T149)의 결과를 적는다. 커밋·push·PR은 사용자가 요청할 때 한다 (파일 없음, 대화창 보고)
 
