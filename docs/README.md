@@ -34,7 +34,7 @@ spec-kit이 따라야 하는 기준 문서와 참고 자료를 두는 곳이다.
 | [standards/testing.md](standards/testing.md) | 테스트 전략 (B안: 서비스 통합 중심) | 확정 |
 | [standards/coding-conventions.md](standards/coding-conventions.md) | 코딩 규약 (A안: 계층형 + MyBatis) | 확정 |
 | [standards/git-workflow.md](standards/git-workflow.md) | 브랜치, 커밋, PR 규칙 (GitHub Flow + spec 단위 브랜치) | 확정 |
-| [test-cases/order-placement.md](test-cases/order-placement.md) | 주문 생성·조회 테스트 TC-001~033 | 확정 |
+| [test-cases/order-placement.md](test-cases/order-placement.md) | 주문 생성·조회 테스트 TC-001~034 | 확정 |
 | [test-cases/operations.md](test-cases/operations.md) | 운영 상황 테스트 TC-101~109 | 확정 |
 | [adr/](adr/) | ADR-0001~0007 | 모두 채택 |
 
