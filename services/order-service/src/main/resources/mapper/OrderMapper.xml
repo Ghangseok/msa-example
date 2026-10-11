@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.msa.order.mapper.OrderMapper">
+
+    <!--
+      주문 하나와 그 항목들을 <collection>으로 한 번에 읽는다(코딩 규약 3-2절). 주문마다 항목을 따로 읽지 않는다.
+      항목은 record라서 생성자 인자 이름(name)으로 열을 짝짓는다. 이름은 컴파일 옵션 -parameters로 클래스 파일에 남는다.
+      notNullColumn을 PRODUCT_ID로 정해야 항목이 없는 주문에서 항목 객체를 만들지 않고 빈 목록이 된다.
+    -->
+    <resultMap id="orderWithItemsMap" type="com.example.msa.order.dto.OrderWithItems">
+        <id property="orderNo" column="ORDER_NO"/>
+        <result property="customerId" column="CUSTOMER_ID"/>
+        <result property="requestKey" column="REQUEST_KEY"/>
+        <result property="status" column="STATUS"/>
+        <result property="reason" column="REASON"/>
+        <result property="releaseStatus" column="RELEASE_STATUS"/>
+        <collection property="items"
+                    ofType="com.example.msa.order.dto.OrderWithItems$StoredItem"
+                    notNullColumn="PRODUCT_ID">
+            <constructor>
+                <arg name="productId" column="PRODUCT_ID" javaType="string"/>
+                <arg name="quantity" column="QUANTITY" javaType="_int"/>
+                <arg name="rejectReason" column="REJECT_REASON" javaType="com.example.msa.order.domain.OrderReason"/>
+            </constructor>
+        </collection>
+    </resultMap>
+
+    <!-- 주문 번호는 INSERT 전에 시퀀스에서 받아 order.orderNo에 채운다(코딩 규약 3-2절). -->
+    <insert id="insertOrder" parameterType="com.example.msa.order.dto.OrderWithItems">
+        <selectKey keyProperty="orderNo" resultType="long" order="BEFORE">
+            SELECT ORDERS_SEQ.NEXTVAL FROM DUAL
+        </selectKey>
+        INSERT INTO ORDERS (ORDER_NO, CUSTOMER_ID, REQUEST_KEY, STATUS, REASON, RELEASE_STATUS, CREATED_AT, UPDATED_AT)
+        VALUES (#{orderNo}, #{customerId}, #{requestKey}, #{status}, #{reason,jdbcType=VARCHAR},
+                #{releaseStatus,jdbcType=VARCHAR}, SYSTIMESTAMP, SYSTIMESTAMP)
+    </insert>
+
+    <insert id="insertOrderItem">
+        INSERT INTO ORDER_ITEMS (ORDER_NO, PRODUCT_ID, QUANTITY)
+        VALUES (#{orderNo}, #{productId}, #{quantity})
+    </insert>
+
+    <select id="selectOrderWithItems" resultMap="orderWithItemsMap">
+        SELECT o.ORDER_NO, o.CUSTOMER_ID, o.REQUEST_KEY, o.STATUS, o.REASON, o.RELEASE_STATUS,
+               i.PRODUCT_ID, i.QUANTITY, i.REJECT_REASON
+          FROM ORDERS o
+          LEFT JOIN ORDER_ITEMS i ON i.ORDER_NO = o.ORDER_NO
+         WHERE o.ORDER_NO = #{orderNo}
+         ORDER BY i.PRODUCT_ID
+    </select>
+
+    <select id="selectOrderWithItemsByCustomerKey" resultMap="orderWithItemsMap">
+        SELECT o.ORDER_NO, o.CUSTOMER_ID, o.REQUEST_KEY, o.STATUS, o.REASON, o.RELEASE_STATUS,
+               i.PRODUCT_ID, i.QUANTITY, i.REJECT_REASON
+          FROM ORDERS o
+          LEFT JOIN ORDER_ITEMS i ON i.ORDER_NO = o.ORDER_NO
+         WHERE o.CUSTOMER_ID = #{customerId}
+           AND o.REQUEST_KEY = #{requestKey}
+         ORDER BY i.PRODUCT_ID
+    </select>
+
+    <update id="updateItemRejectReason">
+        UPDATE ORDER_ITEMS
+           SET REJECT_REASON = #{rejectReason}
+         WHERE ORDER_NO = #{orderNo}
+           AND PRODUCT_ID = #{productId}
+    </update>
+
+    <update id="updateOrderResult">
+        UPDATE ORDERS
+           SET STATUS = #{status},
+               REASON = #{reason,jdbcType=VARCHAR},
+               RELEASE_STATUS = #{releaseStatus,jdbcType=VARCHAR},
+               UPDATED_AT = SYSTIMESTAMP
+         WHERE ORDER_NO = #{orderNo}
+    </update>
+
+</mapper>

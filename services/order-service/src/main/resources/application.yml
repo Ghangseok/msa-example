@@ -1,0 +1,83 @@
+spring:
+  application:
+    name: order-service
+  datasource:
+    # 환경마다 다른 값은 환경변수로 받는다. 비밀번호는 기본값이 없고, 저장소에 넣지 않는다.
+    url: ${ORDER_DB_URL:jdbc:oracle:thin:@//localhost:1521/XEPDB1}
+    username: ${ORDER_DB_USERNAME:ORDER_SVC}
+    password: ${ORDER_SVC_PASSWORD}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          # 서명, 만료, 발급자를 서비스가 직접 검증한다. 기본값은 로컬 Keycloak의 발급자다.
+          issuer-uri: ${JWT_ISSUER_URI:http://localhost:8180/realms/msa}
+  lifecycle:
+    # Pod의 terminationGracePeriodSeconds(45초)보다 짧게 둔다.
+    timeout-per-shutdown-phase: 35s
+
+server:
+  shutdown: graceful
+
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  configuration:
+    map-underscore-to-camel-case: true
+    arg-name-based-constructor-auto-mapping: true
+
+# 재고 서비스 호출 설정. 값은 InventoryClientProperties가 받는다.
+inventory-client:
+  # 서비스 사이 호출은 쿠버네티스 Service 이름으로 한다.
+  base-url: ${INVENTORY_BASE_URL:http://inventory:8080}
+  # 시도 하나의 연결 제한 시간과 요청 제한 시간이다.
+  connect-timeout: 2500ms
+  request-timeout: 2500ms
+  # 서킷 브레이커. 설계 문서 4절의 값을 Resilience4j 설정 이름으로 옮겼다.
+  circuit-breaker:
+    sliding-window-type: COUNT_BASED
+    sliding-window-size: 10
+    minimum-number-of-calls: 10
+    failure-rate-threshold: 50
+    wait-duration-in-open-state: 10s
+    permitted-number-of-calls-in-half-open-state: 3
+
+# 실패한 주문의 예약 해제를 고객 응답과 따로 돌리는 스레드 풀. 값은 ReleaseExecutorProperties가 받는다.
+release-executor:
+  core-pool-size: 2
+  max-pool-size: 4
+  queue-capacity: 100
+  # 종료할 때 실행 중인 해제를 기다리는 최대 시간이다.
+  await-termination: 30s
+
+logging:
+  structured:
+    format:
+      console: ecs
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      group:
+        # readiness에는 DB 연결을 넣고, liveness에는 외부 상태를 넣지 않는다.
+        readiness:
+          include: readinessState,db
+  # OTLP 주소는 환경변수 OTLP_ENDPOINT로 받는다. 신호별 속성에는 경로까지 적는다.
+  opentelemetry:
+    tracing:
+      export:
+        otlp:
+          endpoint: ${OTLP_ENDPOINT:http://lgtm:4318}/v1/traces
+    logging:
+      export:
+        otlp:
+          endpoint: ${OTLP_ENDPOINT:http://lgtm:4318}/v1/logs
+  otlp:
+    metrics:
+      export:
+        url: ${OTLP_ENDPOINT:http://lgtm:4318}/v1/metrics

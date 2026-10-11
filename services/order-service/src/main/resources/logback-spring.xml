@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!--
+      표준 출력(ECS JSON)과 OTLP로만 로그를 낸다. 파일 appender는 두지 않는다.
+      base.xml은 파일 appender를 함께 정의하므로 쓰지 않는다.
+      직접 만든 로그 설정에서는 structured-console-appender.xml을 가져와야 JSON으로 나온다.
+      console-appender.xml은 logging.structured.format.console을 무시하고 글자 형식으로 낸다.
+      JSON 형식은 application.yml의 logging.structured.format.console(ecs)이 정한다.
+    -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/structured-console-appender.xml"/>
+
+    <!-- OpenTelemetry 객체는 ObservabilityConfig가 시작할 때 연결한다. -->
+    <appender name="OTEL" class="io.opentelemetry.instrumentation.logback.appender.v1_0.OpenTelemetryAppender"/>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="OTEL"/>
+    </root>
+</configuration>

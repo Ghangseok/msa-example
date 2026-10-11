@@ -1,0 +1,24 @@
+# 테스트에는 관측 저장소가 없다. OTLP 내보내기를 모두 끈다.
+# 추적 자체는 끄지 않는다. 끄면 재고 호출에 traceparent 헤더도 붙지 않는다.
+management:
+  logging:
+    export:
+      otlp:
+        enabled: false
+  tracing:
+    export:
+      otlp:
+        enabled: false
+  otlp:
+    metrics:
+      export:
+        enabled: false
+
+# 서비스 통합 테스트는 시간 값을 1/5로 줄여 돌린다(tasks.md "시간 값은 1/5로 줄인다").
+# 시도당 제한 시간 2.5초 -> 500ms, 서킷 열려 있는 시간 10초 -> 2초.
+# 재고 주소는 테스트가 WireMock 주소로 바꾼다.
+inventory-client:
+  connect-timeout: 500ms
+  request-timeout: 500ms
+  circuit-breaker:
+    wait-duration-in-open-state: 2s

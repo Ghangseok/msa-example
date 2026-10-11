@@ -259,7 +259,7 @@ msa-example/
                 ├── OracleTestContainer.java  # 테스트용 Oracle 컨테이너 [제안]
                 ├── domain/              # 단위 테스트
                 ├── mapper/              # Mapper 테스트
-                ├── integration/         # 서비스 통합 테스트, InventoryWireMock [제안]
+                ├── integration/         # 서비스 통합 테스트, IntegrationTestSupport(공통 준비) [제안], InventoryWireMock(재고 자리) [제안]
                 ├── contract/            # 소비자 계약 테스트, ConsumerContractValidator [제안]
                 ├── config/              # 설정 기본값 단위 테스트 [제안]
                 ├── client/              # 대기 일정·30초 한도 판단 단위 테스트 [제안]

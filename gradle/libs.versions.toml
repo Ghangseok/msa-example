@@ -1,6 +1,6 @@
 # 버전의 근거와 확인 방법: specs/001-place-order/research.md 0절
 # Spring Boot BOM이 관리하는 라이브러리(Flyway, Oracle JDBC, Testcontainers, JUnit, AssertJ, OpenTelemetry SDK)는 버전을 적지 않는다.
-# P2·P3 단계에서 쓰는 Resilience4j와 WireMock은 그 단계에서 더한다.
+# Resilience4j 재시도 모듈(resilience4j-retry)은 P3 단계에서 더한다.
 
 [versions]
 spring-boot = "4.1.1"
@@ -8,6 +8,8 @@ mybatis-spring-boot = "4.1.0"
 opentelemetry-logback-appender = "2.28.1-alpha"
 archunit = "1.5.1"
 swagger-request-validator = "2.46.1"
+resilience4j = "2.4.0"
+wiremock = "3.13.2"
 spotless = "8.10.3"
 palantir-java-format = "2.101.0"
 spotbugs-plugin = "6.5.12"
@@ -23,3 +25,5 @@ mybatis-spring-boot-starter-test = { module = "org.mybatis.spring.boot:mybatis-s
 opentelemetry-logback-appender = { module = "io.opentelemetry.instrumentation:opentelemetry-logback-appender-1.0", version.ref = "opentelemetry-logback-appender" }
 archunit-junit5 = { module = "com.tngtech.archunit:archunit-junit5", version.ref = "archunit" }
 swagger-request-validator-core = { module = "com.atlassian.oai:swagger-request-validator-core", version.ref = "swagger-request-validator" }
+resilience4j-circuitbreaker = { module = "io.github.resilience4j:resilience4j-circuitbreaker", version.ref = "resilience4j" }
+wiremock-standalone = { module = "org.wiremock:wiremock-standalone", version.ref = "wiremock" }
