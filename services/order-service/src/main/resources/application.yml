@@ -32,6 +32,11 @@ inventory-client:
   # 시도 하나의 연결 제한 시간과 요청 제한 시간이다.
   connect-timeout: 2500ms
   request-timeout: 2500ms
+  # 재시도. 최초 시도 뒤 최대 5번, 재시도 전 대기는 즉시, 1, 2, 4, 8초다. 대기 목록의 길이가 재시도 횟수와 같다.
+  max-retries: 5
+  retry-waits: 0ms, 1000ms, 2000ms, 4000ms, 8000ms
+  # 재시도를 포함한 전체 한도다. 넘으면 남은 재시도를 하지 않고, 진행 중인 시도도 이 시각에 끊는다.
+  overall-time-limit: 30s
   # 서킷 브레이커. 설계 문서 4절의 값을 Resilience4j 설정 이름으로 옮겼다.
   circuit-breaker:
     sliding-window-type: COUNT_BASED

@@ -15,10 +15,14 @@ management:
         enabled: false
 
 # 서비스 통합 테스트는 시간 값을 1/5로 줄여 돌린다(tasks.md "시간 값은 1/5로 줄인다").
-# 시도당 제한 시간 2.5초 -> 500ms, 서킷 열려 있는 시간 10초 -> 2초.
+# 시도당 제한 시간 2.5초 -> 500ms, 재시도 전 대기 0, 1, 2, 4, 8초 -> 0, 200, 400, 800, 1600ms,
+# 재시도 포함 전체 30초 -> 6초, 서킷 열려 있는 시간 10초 -> 2초.
+# 서킷의 횟수 값(10번, 50%, 3번)과 재시도 횟수(5번)는 시간 값이 아니라서 줄이지 않는다.
 # 재고 주소는 테스트가 WireMock 주소로 바꾼다.
 inventory-client:
   connect-timeout: 500ms
   request-timeout: 500ms
+  retry-waits: 0ms, 200ms, 400ms, 800ms, 1600ms
+  overall-time-limit: 6s
   circuit-breaker:
     wait-duration-in-open-state: 2s

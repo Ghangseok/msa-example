@@ -1,6 +1,5 @@
 # 버전의 근거와 확인 방법: specs/001-place-order/research.md 0절
 # Spring Boot BOM이 관리하는 라이브러리(Flyway, Oracle JDBC, Testcontainers, JUnit, AssertJ, OpenTelemetry SDK)는 버전을 적지 않는다.
-# Resilience4j 재시도 모듈(resilience4j-retry)은 P3 단계에서 더한다.
 
 [versions]
 spring-boot = "4.1.1"
@@ -26,4 +25,5 @@ opentelemetry-logback-appender = { module = "io.opentelemetry.instrumentation:op
 archunit-junit5 = { module = "com.tngtech.archunit:archunit-junit5", version.ref = "archunit" }
 swagger-request-validator-core = { module = "com.atlassian.oai:swagger-request-validator-core", version.ref = "swagger-request-validator" }
 resilience4j-circuitbreaker = { module = "io.github.resilience4j:resilience4j-circuitbreaker", version.ref = "resilience4j" }
+resilience4j-retry = { module = "io.github.resilience4j:resilience4j-retry", version.ref = "resilience4j" }
 wiremock-standalone = { module = "org.wiremock:wiremock-standalone", version.ref = "wiremock" }

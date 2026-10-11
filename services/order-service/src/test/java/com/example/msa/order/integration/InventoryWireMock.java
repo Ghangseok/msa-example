@@ -5,16 +5,22 @@ import static com.github.tomakehurst.wiremock.client.WireMock.delete;
 import static com.github.tomakehurst.wiremock.client.WireMock.deleteRequestedFor;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.putRequestedFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.request;
 import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
+import com.github.tomakehurst.wiremock.client.ScenarioMappingBuilder;
+import com.github.tomakehurst.wiremock.http.RequestMethod;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import com.github.tomakehurst.wiremock.stubbing.Scenario;
 import com.github.tomakehurst.wiremock.stubbing.ServeEvent;
 import com.github.tomakehurst.wiremock.verification.LoggedRequest;
 import com.jayway.jsonpath.JsonPath;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.time.Duration;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -69,6 +75,30 @@ public abstract class InventoryWireMock extends IntegrationTestSupport {
 
     protected void stubRelease(ResponseDefinitionBuilder response) {
         inventory.stubFor(delete(urlPathMatching(RESERVATION_PATH)).willReturn(response));
+    }
+
+    /** 예약 요청이 올 때마다 응답을 차례로 돌려준다. 마지막 응답은 그 뒤의 요청에도 계속 돌려준다. */
+    protected void stubReserveSequence(ResponseDefinitionBuilder... responses) {
+        stubSequence("reserve-sequence", RequestMethod.PUT, responses);
+    }
+
+    /** 해제 요청이 올 때마다 응답을 차례로 돌려준다. 마지막 응답은 그 뒤의 요청에도 계속 돌려준다. */
+    protected void stubReleaseSequence(ResponseDefinitionBuilder... responses) {
+        stubSequence("release-sequence", RequestMethod.DELETE, responses);
+    }
+
+    /** WireMock 시나리오 기능으로 요청 순서에 따라 다른 응답을 준다. 상태 이름은 {@code step-<순번>}이다. */
+    private void stubSequence(String scenario, RequestMethod method, ResponseDefinitionBuilder... responses) {
+        for (int step = 0; step < responses.length; step++) {
+            ScenarioMappingBuilder mapping = request(method.getName(), urlPathMatching(RESERVATION_PATH))
+                    .inScenario(scenario)
+                    .whenScenarioStateIs(step == 0 ? Scenario.STARTED : "step-" + step)
+                    .willReturn(responses[step]);
+            if (step < responses.length - 1) {
+                mapping.willSetStateTo("step-" + (step + 1));
+            }
+            inventory.stubFor(mapping);
+        }
     }
 
     /** 예약 결과 RESERVED. 주문 번호는 요청 경로에서 가져온다(WireMock 응답 템플릿). */
@@ -137,6 +167,19 @@ public abstract class InventoryWireMock extends IntegrationTestSupport {
     /** 받은 해제 요청(DELETE /reservations/{orderNo}). */
     protected List<LoggedRequest> releaseRequests() {
         return inventory.findAll(deleteRequestedFor(urlPathMatching(RESERVATION_PATH)));
+    }
+
+    /** 받은 요청을 WireMock이 받은 시각 순으로 늘어놓는다. */
+    protected static List<LoggedRequest> inReceivedOrder(List<LoggedRequest> requests) {
+        return requests.stream()
+                .sorted(Comparator.comparing(LoggedRequest::getLoggedDate))
+                .toList();
+    }
+
+    /** 두 요청을 WireMock이 받은 시각의 차이다. 응답을 받은 시각 대신 쓴다. 지연 없는 스텁에서는 둘의 차이가 작다. */
+    protected static Duration gap(LoggedRequest earlier, LoggedRequest later) {
+        return Duration.between(
+                earlier.getLoggedDate().toInstant(), later.getLoggedDate().toInstant());
     }
 
     /** 받은 요청과 돌려준 응답의 기록. 계약 검증에 쓴다. */

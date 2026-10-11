@@ -67,7 +67,7 @@ public class OrderService {
             return answerForExistingKey(customerId, requestKey, items);
         }
         long orderNo = pending.getOrderNo();
-        InventoryCallContext context = new InventoryCallContext();
+        InventoryCallContext context = inventoryClient.newCallContext();
         ReservationResult result = null;
         try {
             result = inventoryClient.reserve(orderNo, items, context);

@@ -24,6 +24,7 @@ import org.springframework.core.io.ClassPathResource;
  * "장애 전파 차단" 목표값("재시도 포함 전체 30초, 시도당 2.5초, 재시도 최대 5회(즉시, 1, 2, 4, 8초 뒤). 서킷이 열린 뒤에는 1초 안에 실패 응답")이다.
  * 서킷 브레이커 값은 설계 문서(docs/design/architecture.md) 4절 표의 값이다. 최근 10번 중 50% 이상 실패하면(최소 10번 기록된 뒤) 열리고,
  * 열려 있는 시간은 10초이며, 그 뒤 시험 호출 3번을 보낸다.
+ * 재시도 최대 횟수, 재시도 전 대기, 전체 한도는 위 목표값 가운데 "재시도 포함 전체 30초"와 "재시도 최대 5회(즉시, 1, 2, 4, 8초 뒤)"다.
  */
 class InventoryClientPropertiesTest {
 
@@ -47,6 +48,27 @@ class InventoryClientPropertiesTest {
         assertThat(circuit.failureRateThreshold()).isEqualTo(50f);
         assertThat(circuit.waitDurationInOpenState()).isEqualTo(Duration.ofSeconds(10));
         assertThat(circuit.permittedNumberOfCallsInHalfOpenState()).isEqualTo(3);
+    }
+
+    @Test
+    @DisplayName("재시도는 최대 5번이고, 재시도 전 대기의 기본값은 즉시, 1, 2, 4, 8초다")
+    void retryCountAndWaitsFollowTargetValues() throws IOException {
+        InventoryClientProperties properties = bindDefaults();
+
+        assertThat(properties.maxRetries()).isEqualTo(5);
+        assertThat(properties.retryWaits())
+                .containsExactly(
+                        Duration.ZERO,
+                        Duration.ofSeconds(1),
+                        Duration.ofSeconds(2),
+                        Duration.ofSeconds(4),
+                        Duration.ofSeconds(8));
+    }
+
+    @Test
+    @DisplayName("재시도를 포함한 전체 한도의 기본값은 30초다")
+    void overallTimeLimitIs30Seconds() throws IOException {
+        assertThat(bindDefaults().overallTimeLimit()).isEqualTo(Duration.ofSeconds(30));
     }
 
     /** 테스트 설정을 섞지 않고 application.yml만 읽어 설정 클래스에 묶는다. 환경변수는 쓰지 않아서 기본값이 그대로 나온다. */
