@@ -856,17 +856,17 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 ### 준비
 
-- [ ] T082 단계 표시를 `msa.stage=P2`로 올리고, 테스트 케이스 단계 표에서 단계가 P2인 줄이 plan.md "인수 시나리오와 테스트 층" 표와 같은지 확인한다. 다르면 표를 고치지 말고 멈춰 사용자에게 묻는다 (gradle.properties, config/quality/test-case-stages.csv)
+- [x] T082 단계 표시를 `msa.stage=P2`로 올리고, 테스트 케이스 단계 표에서 단계가 P2인 줄이 plan.md "인수 시나리오와 테스트 층" 표와 같은지 확인한다. 다르면 표를 고치지 말고 멈춰 사용자에게 묻는다 (gradle.properties, config/quality/test-case-stages.csv)
   - 근거: research.md 결정 11. 표는 Phase 1(T023)에서 모든 줄을 넣었으므로, 이 단계에서는 보통 표를 바꿀 일이 없다.
   - 확인: `Select-String -Path config/quality/test-case-stages.csv -Pattern ',P2$'` → 13줄 (모두 `order` 줄이다)
-- [ ] T083 루트 설정에 `include 'services:order-service'`를 더한다 (settings.gradle)
-- [ ] T084 버전 카탈로그에 Resilience4j `resilience4j-circuitbreaker` 2.4.0과 WireMock `org.wiremock:wiremock-standalone` 3.13.2를 더한다. 재시도 모듈은 Phase 3(T157)에서 더한다 `[제안]` (gradle/libs.versions.toml)
+- [x] T083 루트 설정에 `include 'services:order-service'`를 더한다 (settings.gradle)
+- [x] T084 버전 카탈로그에 Resilience4j `resilience4j-circuitbreaker` 2.4.0과 WireMock `org.wiremock:wiremock-standalone` 3.13.2를 더한다. 재시도 모듈은 Phase 3(T157)에서 더한다 `[제안]` (gradle/libs.versions.toml)
   - 근거: research.md 0절, 결정 8. Resilience4j의 Spring Boot 자동 설정 모듈과 Spring Cloud Circuit Breaker는 쓰지 않는다.
-- [ ] T085 주문 서비스 빌드 파일을 만든다. `plugins { id 'msa.java-service' }`를 적용한다 (services/order-service/build.gradle)
+- [x] T085 주문 서비스 빌드 파일을 만든다. `plugins { id 'msa.java-service' }`를 적용한다 (services/order-service/build.gradle)
   - 의존성: `spring-boot-starter-webmvc`, `-validation`, `-actuator`, `-flyway`, `-opentelemetry`, `-oauth2-resource-server`, `-restclient`, `flyway-database-oracle`, Oracle JDBC(T031과 같은 것), `mybatis-spring-boot-starter`, OpenTelemetry Logback appender, `resilience4j-circuitbreaker`.
   - 테스트 의존성: Spring Boot 테스트 스타터(T031과 같은 것), `spring-boot-starter-security-test`, `spring-boot-testcontainers`, `testcontainers-oracle-xe`, `mybatis-spring-boot-starter-test`, `archunit-junit5`, `wiremock-standalone`, `swagger-request-validator-core`, `project(':libs:archunit-rules')`.
-- [ ] T086 앱 진입점을 만든다 (services/order-service/src/main/java/com/example/msa/order/OrderServiceApplication.java)
-- [ ] T087 앱 설정을 만든다 (services/order-service/src/main/resources/application.yml)
+- [x] T086 앱 진입점을 만든다 (services/order-service/src/main/java/com/example/msa/order/OrderServiceApplication.java)
+- [x] T087 앱 설정을 만든다 (services/order-service/src/main/resources/application.yml)
   - DB 접속 값은 환경변수로 받는다 `[제안]`: `ORDER_DB_URL`(기본 `jdbc:oracle:thin:@//localhost:1521/XEPDB1`. `infra/compose/compose.yaml`의 order-db 호스트 포트가 1521이다), `ORDER_DB_USERNAME`(기본 `ORDER_SVC`), `ORDER_SVC_PASSWORD`(기본값 없음. `.env.example`에 이미 있는 이름이다).
   - JWT 발급자: `spring.security.oauth2.resourceserver.jwt.issuer-uri`를 환경변수 `JWT_ISSUER_URI`(기본 `http://localhost:8180/realms/msa`)로 받는다 `[제안]`. 기본값은 data-model.md 5-1절의 발급자다.
   - 재고 호출: 주소는 환경변수 `INVENTORY_BASE_URL`(기본 `http://inventory:8080`)로 받는다 `[제안]`(research.md 4절 "재고 서비스 주소 기본값"). 연결·요청 제한 시간은 각각 2.5초다(research.md 결정 6).
@@ -874,9 +874,9 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
   - 해제 실행기: 스레드 2~4개, 대기열 100, 종료할 때 실행 중인 해제를 최대 30초 기다린다(research.md 4절 "해제를 고객 응답 뒤에 비동기로 돌리는 방식"의 `[제안]`).
   - MyBatis, 로그(`ecs`), 프로브, 그레이스풀 셧다운, OTLP 주소는 재고 서비스(T033)와 같은 방식이다.
   - 값은 모두 `@ConfigurationProperties`로 받는다(`docs/standards/coding-conventions.md` 3-5절). 코드에 적지 않는다.
-- [ ] T088 [P] 로그 설정을 만든다. 재고 서비스(T034)와 같은 방식이다 (services/order-service/src/main/resources/logback-spring.xml, services/order-service/src/main/java/com/example/msa/order/config/ObservabilityConfig.java)
-- [ ] T089 [P] 테스트 설정을 만든다. 이 문서 머리의 "시간 값은 1/5로 줄인다" 표대로 시도당 제한 시간 500ms, 서킷 열려 있는 시간 2초로 둔다 `[제안]`. OTLP 내보내기를 끈다 (services/order-service/src/test/resources/application-test.yml)
-- [ ] T090 [P] 주문 서비스 규칙 문서를 만든다. 패키지 구조(plan.md "Source Code" 트리의 주문 서비스 부분), DB 계정 `ORDER_SVC`와 테이블, `OrderService.place()`에는 트랜잭션이 없고 저장은 `OrderTxService`에서 따로 커밋한다는 규칙, 고객 ID는 JWT `sub`에서만 얻는다는 규칙, 재고는 `InventoryClient`로만 부른다는 규칙을 적는다 (services/order-service/CLAUDE.md)
+- [x] T088 [P] 로그 설정을 만든다. 재고 서비스(T034)와 같은 방식이다 (services/order-service/src/main/resources/logback-spring.xml, services/order-service/src/main/java/com/example/msa/order/config/ObservabilityConfig.java)
+- [x] T089 [P] 테스트 설정을 만든다. 이 문서 머리의 "시간 값은 1/5로 줄인다" 표대로 시도당 제한 시간 500ms, 서킷 열려 있는 시간 2초로 둔다 `[제안]`. OTLP 내보내기를 끈다 (services/order-service/src/test/resources/application-test.yml)
+- [x] T090 [P] 주문 서비스 규칙 문서를 만든다. 패키지 구조(plan.md "Source Code" 트리의 주문 서비스 부분), DB 계정 `ORDER_SVC`와 테이블, `OrderService.place()`에는 트랜잭션이 없고 저장은 `OrderTxService`에서 따로 커밋한다는 규칙, 고객 ID는 JWT `sub`에서만 얻는다는 규칙, 재고는 `InventoryClient`로만 부른다는 규칙을 적는다 (services/order-service/CLAUDE.md)
   - 근거: 헌법 "기술 제약" 절, research.md 결정 4, `docs/standards/coding-conventions.md` 3-1절, `docs/standards/architecture-rules.md` 5절 "보안"의 JWT 규칙.
 
 이 목록에서는 항목 ID를 쓰지 않았다.
@@ -885,7 +885,7 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 **⚠️ 이 절이 끝나기 전에는 User Story 2를 시작하지 않는다.**
 
-- [ ] T091 주문 스키마 마이그레이션을 만든다. 아래 data-model.md 2절의 시퀀스, 열, 제약을 그대로 만든다 (services/order-service/src/main/resources/db/migration/V1__orders.sql)
+- [x] T091 주문 스키마 마이그레이션을 만든다. 아래 data-model.md 2절의 시퀀스, 열, 제약을 그대로 만든다 (services/order-service/src/main/resources/db/migration/V1__orders.sql)
   - 원문 (data-model.md 2-1절): 주문 번호를 만드는 시퀀스다. `START WITH 1 INCREMENT BY 1 NOCACHE`로 만든다 `[제안]`.
   - 원문 (data-model.md 2-2절 `ORDERS`):
 
@@ -918,23 +918,23 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
     - `CK_ORDER_ITEMS_QTY` CHECK (`QUANTITY BETWEEN 1 AND 99`)
 
   - 시퀀스 이름은 `ORDERS_SEQ`다(data-model.md 1절 표). CHECK 제약의 값 목록은 위 "뜻" 칸의 값이다. `ORDER_ITEMS.REJECT_REASON`의 값 목록 CHECK는 data-model.md에 없으므로 두지 않는다 `[제안]`.
-- [ ] T092 테스트용 Oracle 컨테이너를 만든다. 재고 서비스의 T039와 같은 방식이고, 공유하지 않고 주문 서비스에 따로 둔다 (services/order-service/src/test/java/com/example/msa/order/OracleTestContainer.java `[제안]`)
-- [ ] T093 [P] WireMock 도우미를 만든다. JUnit 확장 `WireMockExtension`으로 WireMock을 띄우고, 재고 주소 설정을 그 주소로 바꾸고, 예약·해제 스텁과 받은 요청 조회를 돕는다 (services/order-service/src/test/java/com/example/msa/order/integration/InventoryWireMock.java `[제안]`)
+- [x] T092 테스트용 Oracle 컨테이너를 만든다. 재고 서비스의 T039와 같은 방식이고, 공유하지 않고 주문 서비스에 따로 둔다 (services/order-service/src/test/java/com/example/msa/order/OracleTestContainer.java `[제안]`)
+- [x] T093 [P] WireMock 도우미를 만든다. JUnit 확장 `WireMockExtension`으로 WireMock을 띄우고, 재고 주소 설정을 그 주소로 바꾸고, 예약·해제 스텁과 받은 요청 조회를 돕는다. 서비스 통합 테스트의 공통 준비(앱 기동, MockMvc, 고객 흉내, DB 정리, 주문 요청 보내기)는 같은 폴더의 `IntegrationTestSupport`에 두고 `InventoryWireMock`이 상속한다 `[제안]` (services/order-service/src/test/java/com/example/msa/order/integration/InventoryWireMock.java `[제안]`, services/order-service/src/test/java/com/example/msa/order/integration/IntegrationTestSupport.java `[제안]`)
   - 근거: research.md 4절 "WireMock"(`wiremock-standalone` 3.13.2와 `WireMockExtension`).
-- [ ] T094 [P] 소비자 계약 검증 도우미를 만든다. WireMock 스텁이 돌려주는 응답과 WireMock이 받은 요청(`getAllServeEvents`)을 swagger-request-validator-core의 `Request`·`Response`로 옮겨 `contracts/inventory-api.yaml`로 검증한다. 계약 파일 경로는 시스템 속성 `msa.contractsDir`에서 얻는다 (services/order-service/src/test/java/com/example/msa/order/contract/ConsumerContractValidator.java)
+- [x] T094 [P] 소비자 계약 검증 도우미를 만든다. WireMock 스텁이 돌려주는 응답과 WireMock이 받은 요청(`getAllServeEvents`)을 swagger-request-validator-core의 `Request`·`Response`로 옮겨 `contracts/inventory-api.yaml`로 검증한다. 계약 파일 경로는 시스템 속성 `msa.contractsDir`에서 얻는다 (services/order-service/src/test/java/com/example/msa/order/contract/ConsumerContractValidator.java)
   - 근거: research.md 결정 12. 재고 서비스의 T040과 공유하지 않는다.
   - 계약에 없는 응답 코드(502·503·504와 지연·연결 끊김)는 재고 앱이 아니라 네트워크와 인프라의 오류를 흉내 낸 것이다. 그래서 그 스텁의 응답은 계약 검증에서 뺀다 `[제안]`. 받은 요청은 언제나 검증한다.
-- [ ] T095 [P] 주문 상태 전이의 단위 테스트를 쓴다. `OrderStatus.canMoveTo(...)`가 아래를 지키는지 검사한다. 이 테스트는 아직 없는 `OrderStatus`를 참조하므로 컴파일 오류로 실패한다. 그 실패를 본 뒤 T096을 한다 (services/order-service/src/test/java/com/example/msa/order/domain/OrderStatusTest.java `[제안]`)
+- [x] T095 [P] 주문 상태 전이의 단위 테스트를 쓴다. `OrderStatus.canMoveTo(...)`가 아래를 지키는지 검사한다. 이 테스트는 아직 없는 `OrderStatus`를 참조하므로 컴파일 오류로 실패한다. 그 실패를 본 뒤 T096을 한다 (services/order-service/src/test/java/com/example/msa/order/domain/OrderStatusTest.java `[제안]`)
   - 처리중(`PENDING`)에서는 확정(`CONFIRMED`), 거절(`REJECTED`), 실패(`FAILED`)로 갈 수 있다.
   - 확정과 거절에서는 다른 상태로 가지 않는다.
   - 실패에서는 실패로만 간다(해제 결과를 기록할 때).
   - 기대값의 출처: 도메인 분석 4절 "주문 상태"의 그림. 그림에 있는 전이만 허락하고 나머지는 막는다(2026-10-06 사용자 결정). `docs/standards/testing.md` 2절이 단위 테스트 대상에 "주문 상태 전이"를 넣는다.
-- [ ] T096 [P] 주문 상태와 사유 enum을 만든다. `OrderStatus`(`PENDING`, `CONFIRMED`, `REJECTED`, `FAILED`)에 `canMoveTo(...)`를 두고, data-model.md 4-1절 표대로 `PENDING`에서만 다른 상태로 갈 수 있게 한다. `OrderReason`(`OUT_OF_STOCK`, `PRODUCT_NOT_FOUND`, `RETRY_LATER`), `ReleaseStatus`(`NOT_REQUIRED`, `RELEASED`, `RELEASE_FAILED`)도 만든다 (services/order-service/src/main/java/com/example/msa/order/domain/OrderStatus.java, services/order-service/src/main/java/com/example/msa/order/domain/OrderReason.java, services/order-service/src/main/java/com/example/msa/order/domain/ReleaseStatus.java)
+- [x] T096 [P] 주문 상태와 사유 enum을 만든다. `OrderStatus`(`PENDING`, `CONFIRMED`, `REJECTED`, `FAILED`)에 `canMoveTo(...)`를 두고, data-model.md 4-1절 표대로 `PENDING`에서만 다른 상태로 갈 수 있게 한다. `OrderReason`(`OUT_OF_STOCK`, `PRODUCT_NOT_FOUND`, `RETRY_LATER`), `ReleaseStatus`(`NOT_REQUIRED`, `RELEASED`, `RELEASE_FAILED`)도 만든다 (services/order-service/src/main/java/com/example/msa/order/domain/OrderStatus.java, services/order-service/src/main/java/com/example/msa/order/domain/OrderReason.java, services/order-service/src/main/java/com/example/msa/order/domain/ReleaseStatus.java)
   - 근거: data-model.md 4-1절·4-2절, research.md 결정 13, `docs/standards/coding-conventions.md` 3-1절.
   - 상태 전이의 단위 테스트는 위 T095다.
-- [ ] T097 오류 응답 변환의 바탕을 만든다. 모두 Problem Details이고 `type`은 `urn:msa-example:problem:<코드>`, 확장 필드는 `code`와 `errors`다. 코드별 처리는 각 스토리에서 더한다 (services/order-service/src/main/java/com/example/msa/order/exception/ProblemDetailsHandler.java)
+- [x] T097 오류 응답 변환의 바탕을 만든다. 모두 Problem Details이고 `type`은 `urn:msa-example:problem:<코드>`, 확장 필드는 `code`와 `errors`다. 코드별 처리는 각 스토리에서 더한다 (services/order-service/src/main/java/com/example/msa/order/exception/ProblemDetailsHandler.java)
   - 근거: research.md 결정 13, `contracts/order-api.yaml`의 `Problem`.
-- [ ] T098 재고 호출 설정 클래스를 만든다. 주소, 연결 제한 시간, 요청 제한 시간을 받는 `@ConfigurationProperties` record다. 서킷 브레이커 값은 User Story 7(T144)에서, 재시도와 전체 한도 값은 Phase 3(T159)에서 더한다 (services/order-service/src/main/java/com/example/msa/order/config/InventoryClientProperties.java)
+- [x] T098 재고 호출 설정 클래스를 만든다. 주소, 연결 제한 시간, 요청 제한 시간을 받는 `@ConfigurationProperties` record다. 서킷 브레이커 값은 User Story 7(T144)에서, 재시도와 전체 한도 값은 Phase 3(T159)에서 더한다 (services/order-service/src/main/java/com/example/msa/order/config/InventoryClientProperties.java)
   - 근거: research.md 4절 "설정 클래스", data-model.md 7절.
 
 이 목록에서는 항목 ID를 쓰지 않았다.
@@ -947,17 +947,17 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 #### 인수 시나리오 테스트 (구현보다 먼저)
 
-- [ ] T099 [P] [US2] 시나리오 2.1의 주문 쪽 서비스 통합 테스트를 쓴다. WireMock 예약 스텁이 RESERVED를 돌려줄 때, C1이 상품 A 3개와 상품 B 2개를 주문한다. 응답(주문 번호, `CONFIRMED`), 저장된 주문(C1의 `sub`, 두 항목, `CONFIRMED`), WireMock이 받은 예약 요청(1번, 같은 주문 번호, A 3개와 B 2개)을 검사한다. 변형(상품 하나만 담은 주문)은 메서드를 따로 둔다. `@DisplayName`은 시나리오 2.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/PlaceOrderConfirmedIntegrationTest.java)
+- [x] T099 [P] [US2] 시나리오 2.1의 주문 쪽 서비스 통합 테스트를 쓴다. WireMock 예약 스텁이 RESERVED를 돌려줄 때, C1이 상품 A 3개와 상품 B 2개를 주문한다. 응답(주문 번호, `CONFIRMED`), 저장된 주문(C1의 `sub`, 두 항목, `CONFIRMED`), WireMock이 받은 예약 요청(1번, 같은 주문 번호, A 3개와 B 2개)을 검사한다. 변형(상품 하나만 담은 주문)은 메서드를 따로 둔다. `@DisplayName`은 시나리오 2.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/PlaceOrderConfirmedIntegrationTest.java)
   - 응답 코드 201은 테스트 케이스 문서의 공통 전제에 있다(PR #17). 헌법 "실제 조건에서 테스트 먼저" 원칙대로 그 문서에서 가져와 단언한다.
-- [ ] T100 [P] [US2] 소비자 계약 테스트에 RESERVED 스텁을 검사하는 메서드를 쓴다. 시나리오 2.1의 주문을 한 번 보내고, T094의 도우미로 스텁 응답과 받은 예약 요청을 검증한다. ID를 붙이지 않는다 (services/order-service/src/test/java/com/example/msa/order/contract/InventoryConsumerContractTest.java)
+- [x] T100 [P] [US2] 소비자 계약 테스트에 RESERVED 스텁을 검사하는 메서드를 쓴다. 시나리오 2.1의 주문을 한 번 보내고, T094의 도우미로 스텁 응답과 받은 예약 요청을 검증한다. ID를 붙이지 않는다 (services/order-service/src/test/java/com/example/msa/order/contract/InventoryConsumerContractTest.java)
   - 근거: plan.md 표의 시나리오 2.1 "계약" 칸 "소비자: 요청과 스텁 응답".
-- [ ] T101 [P] [US4] 주문의 주인이 토큰의 고객인지 보는 서비스 통합 테스트를 쓴다. C1의 토큰으로 올바른 주문을 보내면서, 요청 본문에 계약에 없는 필드 `customerId`와 헤더 `X-Customer-Id`를 넣고 두 값을 C2의 `sub`로 채운다 `[제안]`. 저장된 주문의 고객이 C1의 `sub`인지 검사한다. 인수 시나리오 테스트가 아니므로 테스트 케이스 ID를 붙이지 않는다 (services/order-service/src/test/java/com/example/msa/order/integration/CustomerIdentityIntegrationTest.java `[제안]`)
+- [x] T101 [P] [US4] 주문의 주인이 토큰의 고객인지 보는 서비스 통합 테스트를 쓴다. C1의 토큰으로 올바른 주문을 보내면서, 요청 본문에 계약에 없는 필드 `customerId`와 헤더 `X-Customer-Id`를 넣고 두 값을 C2의 `sub`로 채운다 `[제안]`. 저장된 주문의 고객이 C1의 `sub`인지 검사한다. 인수 시나리오 테스트가 아니므로 테스트 케이스 ID를 붙이지 않는다 (services/order-service/src/test/java/com/example/msa/order/integration/CustomerIdentityIntegrationTest.java `[제안]`)
   - 기대값은 유스케이스 6절 업무 규칙 "주문은 로그인한 고객 본인의 이름으로만 만든다"(`docs/requirements/uc-001-place-order.md`)다. research.md 결정 2(사용자 결정)의 표가 FR-014의 기대값을 이 규칙에서 가져온다고 적었다(2026-10-06 사용자 승인).
   - 이 동작은 User Story 2의 컨트롤러(T110)가 만든다. 그래서 테스트를 User Story 4 절이 아니라 이 절에 두어 구현보다 먼저 쓴다.
-- [ ] T102 [P] [US2] 시나리오 2.2(㉩ 주문 서비스는 재고 서비스 호출에 추적 정보를 넘긴다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. WireMock이 받은 예약 요청에 W3C `traceparent` 헤더가 있는지 검사한다. `@DisplayName`은 시나리오 2.2의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/TracePropagationIntegrationTest.java `[제안]`)
+- [x] T102 [P] [US2] 시나리오 2.2(㉩ 주문 서비스는 재고 서비스 호출에 추적 정보를 넘긴다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. WireMock이 받은 예약 요청에 W3C `traceparent` 헤더가 있는지 검사한다. `@DisplayName`은 시나리오 2.2의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/TracePropagationIntegrationTest.java `[제안]`)
   - 테스트 설정은 OTLP 내보내기만 끄고 추적 자체는 끄지 않는다(T089). 추적을 끄면 헤더도 붙지 않는다.
   - 근거: spec FR-038, 헌법 "관측 가능성" 원칙의 "서비스 사이 호출에 추적 정보를 넘긴다". 0-A(PR #17)에서 테스트 케이스로 더했다(2026-10-07 사용자 결정).
-- [ ] T103 [US2] 위 테스트가 실패하는 것을 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/PlaceOrderConfirmedIntegrationTest.java)
+- [x] T103 [US2] 위 테스트가 실패하는 것을 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/PlaceOrderConfirmedIntegrationTest.java)
   - 명령: `.\gradlew.bat :services:order-service:test --tests "com.example.msa.order.integration.PlaceOrderConfirmedIntegrationTest" --tests "com.example.msa.order.integration.CustomerIdentityIntegrationTest" --tests "com.example.msa.order.integration.TracePropagationIntegrationTest" --tests "com.example.msa.order.contract.*"`
   - 기대 결과: 종료 코드가 0이 아니고, 실패 이유가 주문 API가 없어서 생긴 단언 실패(예: 주문 API가 없어 404)다. 하나라도 통과하면 멈추고 사용자에게 묻는다.
 
@@ -978,23 +978,23 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 #### 구현
 
-- [ ] T104 [US2] 주문 Mapper 테스트를 쓴다. plan.md 표의 시나리오 2.1 "Mapper" 칸 "주문·항목 저장, `<collection>` 조회"다. 시퀀스로 주문 번호를 받아 주문과 두 항목(A 3개, B 2개)을 넣고, `OrderWithItems`로 한 번에 읽는지, 상태를 `CONFIRMED`로 바꾸는지 검사한다 (services/order-service/src/test/java/com/example/msa/order/mapper/OrderMapperTest.java)
-- [ ] T105 [P] [US2] DTO를 만든다. `PlaceOrderRequest`, `OrderItemRequest`, `OrderResponse`(`orderNo`, `status`, `reason`, `shortageProductIds`, `missingProductIds`)는 record이고, `OrderWithItems`는 `<collection>`으로 읽는 1:N 부모라서 Lombok 없는 일반 클래스다 (services/order-service/src/main/java/com/example/msa/order/dto/PlaceOrderRequest.java, services/order-service/src/main/java/com/example/msa/order/dto/OrderItemRequest.java, services/order-service/src/main/java/com/example/msa/order/dto/OrderResponse.java, services/order-service/src/main/java/com/example/msa/order/dto/OrderWithItems.java)
+- [x] T104 [US2] 주문 Mapper 테스트를 쓴다. plan.md 표의 시나리오 2.1 "Mapper" 칸 "주문·항목 저장, `<collection>` 조회"다. 시퀀스로 주문 번호를 받아 주문과 두 항목(A 3개, B 2개)을 넣고, `OrderWithItems`로 한 번에 읽는지, 상태를 `CONFIRMED`로 바꾸는지 검사한다 (services/order-service/src/test/java/com/example/msa/order/mapper/OrderMapperTest.java)
+- [x] T105 [P] [US2] DTO를 만든다. `PlaceOrderRequest`, `OrderItemRequest`, `OrderResponse`(`orderNo`, `status`, `reason`, `shortageProductIds`, `missingProductIds`)는 record이고, `OrderWithItems`는 `<collection>`으로 읽는 1:N 부모라서 Lombok 없는 일반 클래스다 (services/order-service/src/main/java/com/example/msa/order/dto/PlaceOrderRequest.java, services/order-service/src/main/java/com/example/msa/order/dto/OrderItemRequest.java, services/order-service/src/main/java/com/example/msa/order/dto/OrderResponse.java, services/order-service/src/main/java/com/example/msa/order/dto/OrderWithItems.java)
   - 근거: data-model.md 7절, `contracts/order-api.yaml`. 응답에 `releaseStatus`를 넣지 않는다(research.md 결정 13의 `[제안]` 세부).
-- [ ] T106 [US2] 주문 Mapper와 SQL을 만든다. 주문 번호는 `<selectKey order="BEFORE">`로 `ORDERS_SEQ`에서 받는다. 주문 삽입, 항목 삽입, 주문과 항목을 한 번에 읽는 `resultMap`(`<collection>`), 결과 저장(상태, 사유, `UPDATED_AT`)을 둔다 (services/order-service/src/main/java/com/example/msa/order/mapper/OrderMapper.java, services/order-service/src/main/resources/mapper/OrderMapper.xml)
+- [x] T106 [US2] 주문 Mapper와 SQL을 만든다. 주문 번호는 `<selectKey order="BEFORE">`로 `ORDERS_SEQ`에서 받는다. 주문 삽입, 항목 삽입, 주문과 항목을 한 번에 읽는 `resultMap`(`<collection>`), 결과 저장(상태, 사유, `UPDATED_AT`)을 둔다 (services/order-service/src/main/java/com/example/msa/order/mapper/OrderMapper.java, services/order-service/src/main/resources/mapper/OrderMapper.xml)
   - 근거: `docs/standards/coding-conventions.md` 3-2절.
-- [ ] T107 [US2] 재고 예약 호출을 만든다. `InventoryClient.reserve(orderNo, items)`가 `PUT /reservations/{orderNo}`를 부르고 200 응답을 `ReservationResult`로 바꾼다. `RestClient`는 Spring Boot가 주는 `RestClient.Builder`로 만들고 `[제안]`, 요청 팩토리는 `JdkClientHttpRequestFactory`에 연결·요청 제한 시간을 `InventoryClientProperties`에서 넣는다 `[제안]` (services/order-service/src/main/java/com/example/msa/order/client/InventoryClient.java, services/order-service/src/main/java/com/example/msa/order/client/ReservationResult.java, services/order-service/src/main/java/com/example/msa/order/config/InventoryClientConfig.java)
+- [x] T107 [US2] 재고 예약 호출을 만든다. `InventoryClient.reserve(orderNo, items)`가 `PUT /reservations/{orderNo}`를 부르고 200 응답을 `ReservationResult`로 바꾼다. `RestClient`는 Spring Boot가 주는 `RestClient.Builder`로 만들고 `[제안]`, 요청 팩토리는 `JdkClientHttpRequestFactory`에 연결·요청 제한 시간을 `InventoryClientProperties`에서 넣는다 `[제안]` (services/order-service/src/main/java/com/example/msa/order/client/InventoryClient.java, services/order-service/src/main/java/com/example/msa/order/client/ReservationResult.java, services/order-service/src/main/java/com/example/msa/order/config/InventoryClientConfig.java)
   - 근거: research.md 결정 6과 그 `[제안]` 세부. `RestClient.Builder`로 만들어야 추적 정보(`traceparent`)가 붙는다. `RestClient.builder()`를 직접 부르지 않는다.
-- [ ] T108 [US2] 트랜잭션 서비스를 만든다. `savePending()`(트랜잭션 1)이 `PENDING` 주문과 항목을 넣고, `applyResult()`(트랜잭션 2)가 RESERVED면 `CONFIRMED`로 바꾼다. 상태를 바꿀 때 `OrderStatus.canMoveTo(...)`로 확인한다 (services/order-service/src/main/java/com/example/msa/order/service/OrderTxService.java)
+- [x] T108 [US2] 트랜잭션 서비스를 만든다. `savePending()`(트랜잭션 1)이 `PENDING` 주문과 항목을 넣고, `applyResult()`(트랜잭션 2)가 RESERVED면 `CONFIRMED`로 바꾼다. 상태를 바꿀 때 `OrderStatus.canMoveTo(...)`로 확인한다 (services/order-service/src/main/java/com/example/msa/order/service/OrderTxService.java)
   - 근거: data-model.md 6-1절 2번·4번, `docs/standards/coding-conventions.md` 3-1절.
-- [ ] T109 [US2] 주문 흐름 서비스를 만든다. `place()`에는 `@Transactional`을 붙이지 않는다. `savePending()` → `InventoryClient.reserve()`(트랜잭션 밖) → `applyResult()` 순서다 (services/order-service/src/main/java/com/example/msa/order/service/OrderService.java)
+- [x] T109 [US2] 주문 흐름 서비스를 만든다. `place()`에는 `@Transactional`을 붙이지 않는다. `savePending()` → `InventoryClient.reserve()`(트랜잭션 밖) → `applyResult()` 순서다 (services/order-service/src/main/java/com/example/msa/order/service/OrderService.java)
   - 근거: data-model.md 6-1절, `docs/standards/architecture-rules.md` 2절 "서비스 사이 호출"의 트랜잭션 밖 원격 호출 규칙.
-- [ ] T110 [US2] 주문 컨트롤러를 만든다. `POST /orders`가 JWT의 `sub`, `Idempotency-Key` 헤더, 본문을 받아 `OrderService.place()`를 부르고 201과 `OrderResponse`를 돌려준다. 고객 ID는 `sub`에서만 얻고 본문이나 다른 헤더의 사용자 정보를 쓰지 않는다 (services/order-service/src/main/java/com/example/msa/order/controller/OrderController.java)
+- [x] T110 [US2] 주문 컨트롤러를 만든다. `POST /orders`가 JWT의 `sub`, `Idempotency-Key` 헤더, 본문을 받아 `OrderService.place()`를 부르고 201과 `OrderResponse`를 돌려준다. 고객 ID는 `sub`에서만 얻고 본문이나 다른 헤더의 사용자 정보를 쓰지 않는다 (services/order-service/src/main/java/com/example/msa/order/controller/OrderController.java)
   - 근거: `contracts/order-api.yaml`, research.md 결정 13, `docs/standards/architecture-rules.md` 5절 "보안"의 JWT 규칙.
-- [ ] T111 [US2] 이 절의 테스트가 모두 통과하는지 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/PlaceOrderConfirmedIntegrationTest.java)
+- [x] T111 [US2] 이 절의 테스트가 모두 통과하는지 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/PlaceOrderConfirmedIntegrationTest.java)
   - 명령: `.\gradlew.bat :services:order-service:test`
   - 기대 결과: 종료 코드 0. 통과·실패 수를 보고에 적는다.
-- [ ] T112 [US2] research.md 6절 "WireMock 3.13.2의 `WireMockExtension`이 JUnit Jupiter 6.0.3에서 도는지"를 확인한다. T111에서 T099가 `WireMockExtension`으로 돌았는지 테스트 로그에서 보고 결과를 보고에 적는다. 돌지 않으면 멈추고 오류를 보고한다. 다른 방식(예: `WireMockServer`를 직접 띄우기)으로 바꾸는 일은 research.md 4절의 `[제안]`을 바꾸는 일이라 사용자에게 묻는다 (services/order-service/src/test/java/com/example/msa/order/integration/InventoryWireMock.java)
+- [x] T112 [US2] research.md 6절 "WireMock 3.13.2의 `WireMockExtension`이 JUnit Jupiter 6.0.3에서 도는지"를 확인한다. T111에서 T099가 `WireMockExtension`으로 돌았는지 테스트 로그에서 보고 결과를 보고에 적는다. 돌지 않으면 멈추고 오류를 보고한다. 다른 방식(예: `WireMockServer`를 직접 띄우기)으로 바꾸는 일은 research.md 4절의 `[제안]`을 바꾸는 일이라 사용자에게 묻는다 (services/order-service/src/test/java/com/example/msa/order/integration/InventoryWireMock.java)
 
 이 목록에서는 항목 ID를 쓰지 않았다.
 
@@ -1008,12 +1008,12 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 #### 인수 시나리오 테스트 (구현보다 먼저)
 
-- [ ] T113 [P] [US3] 시나리오 3.1의 주문 쪽 서비스 통합 테스트를 쓴다. WireMock이 REJECTED(`OUT_OF_STOCK`, 부족한 상품 B)를 돌려줄 때 C1이 A 3개와 B 2개를 주문한다. 응답, 저장된 주문(`REJECTED`), 받은 예약 요청 내용을 검사한다. "C1이 조회할 수 있다"는 티켓 002에서 검증하므로 넣지 않는다(spec 시나리오 3.1). `@DisplayName`은 시나리오 3.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/PlaceOrderRejectedIntegrationTest.java)
-- [ ] T114 [P] [US3] 시나리오 3.2의 서비스 통합 테스트를 쓴다. WireMock이 REJECTED(`OUT_OF_STOCK`)를 돌려줄 때 C1이 A 3개를 주문하고, 예약 요청이 정확히 1번 갔는지 검사한다. P3에서 재시도가 들어와도 이 테스트를 고치지 않고 통과해야 한다(spec 시나리오 3.2 아래 문단). 이 테스트는 P2에서 실패할 수 없다. 재시도가 없어 요청은 언제나 1번이기 때문이다. 실패 확인은 Phase 3의 T167에서 한다(이 문서 머리의 "테스트는 필수다"). `@DisplayName`은 시나리오 3.2의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/NoRetryOnOutOfStockIntegrationTest.java)
-- [ ] T115 [P] [US3] 시나리오 3.3의 주문 쪽 서비스 통합 테스트를 쓴다. 본 흐름(없는 상품 Z)과 변형(없는 상품 Z와 부족한 상품 B)을 메서드 두 개로 나눈다. 응답의 사유와 두 목록, 저장된 주문, 예약 요청이 정확히 1번 갔는지 검사한다. `@DisplayName`은 시나리오 3.3의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/PlaceOrderProductNotFoundIntegrationTest.java)
-- [ ] T116 [US3] 소비자 계약 테스트에 REJECTED 스텁 두 가지(`OUT_OF_STOCK`, `PRODUCT_NOT_FOUND`)를 검사하는 메서드를 더한다. ID를 붙이지 않는다 (services/order-service/src/test/java/com/example/msa/order/contract/InventoryConsumerContractTest.java)
+- [x] T113 [P] [US3] 시나리오 3.1의 주문 쪽 서비스 통합 테스트를 쓴다. WireMock이 REJECTED(`OUT_OF_STOCK`, 부족한 상품 B)를 돌려줄 때 C1이 A 3개와 B 2개를 주문한다. 응답, 저장된 주문(`REJECTED`), 받은 예약 요청 내용을 검사한다. "C1이 조회할 수 있다"는 티켓 002에서 검증하므로 넣지 않는다(spec 시나리오 3.1). `@DisplayName`은 시나리오 3.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/PlaceOrderRejectedIntegrationTest.java)
+- [x] T114 [P] [US3] 시나리오 3.2의 서비스 통합 테스트를 쓴다. WireMock이 REJECTED(`OUT_OF_STOCK`)를 돌려줄 때 C1이 A 3개를 주문하고, 예약 요청이 정확히 1번 갔는지 검사한다. P3에서 재시도가 들어와도 이 테스트를 고치지 않고 통과해야 한다(spec 시나리오 3.2 아래 문단). 이 테스트는 P2에서 실패할 수 없다. 재시도가 없어 요청은 언제나 1번이기 때문이다. 실패 확인은 Phase 3의 T167에서 한다(이 문서 머리의 "테스트는 필수다"). `@DisplayName`은 시나리오 3.2의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/NoRetryOnOutOfStockIntegrationTest.java)
+- [x] T115 [P] [US3] 시나리오 3.3의 주문 쪽 서비스 통합 테스트를 쓴다. 본 흐름(없는 상품 Z)과 변형(없는 상품 Z와 부족한 상품 B)을 메서드 두 개로 나눈다. 응답의 사유와 두 목록, 저장된 주문, 예약 요청이 정확히 1번 갔는지 검사한다. `@DisplayName`은 시나리오 3.3의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/PlaceOrderProductNotFoundIntegrationTest.java)
+- [x] T116 [US3] 소비자 계약 테스트에 REJECTED 스텁 두 가지(`OUT_OF_STOCK`, `PRODUCT_NOT_FOUND`)를 검사하는 메서드를 더한다. ID를 붙이지 않는다 (services/order-service/src/test/java/com/example/msa/order/contract/InventoryConsumerContractTest.java)
   - 근거: plan.md 표의 시나리오 3.1, 3.3 "계약" 칸 "소비자".
-- [ ] T117 [US3] 위 테스트가 실패하는 것을 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/PlaceOrderRejectedIntegrationTest.java)
+- [x] T117 [US3] 위 테스트가 실패하는 것을 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/PlaceOrderRejectedIntegrationTest.java)
   - 명령: `.\gradlew.bat :services:order-service:test --tests "com.example.msa.order.integration.*" --tests "com.example.msa.order.contract.*"`
   - 기대 결과: 종료 코드가 0이 아니다. T113, T115, T116이 실패한다(거절 처리가 없어 상태나 목록이 다르다). 이 가운데 하나라도 통과하면 멈추고 사용자에게 묻는다. T114는 이 단계에서 통과하는 것이 맞다(T114의 설명). T114의 실패 확인은 Phase 3의 T167에서 한다.
 
@@ -1042,12 +1042,12 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 #### 구현
 
-- [ ] T118 [US3] 주문 Mapper 테스트에 "항목별 거절 사유 저장"을 검사하는 메서드를 더한다. 시나리오 3.3 변형의 값으로 Z는 `PRODUCT_NOT_FOUND`, B는 `OUT_OF_STOCK`, A는 빈 값으로 저장되는지 본다 (services/order-service/src/test/java/com/example/msa/order/mapper/OrderMapperTest.java)
+- [x] T118 [US3] 주문 Mapper 테스트에 "항목별 거절 사유 저장"을 검사하는 메서드를 더한다. 시나리오 3.3 변형의 값으로 Z는 `PRODUCT_NOT_FOUND`, B는 `OUT_OF_STOCK`, A는 빈 값으로 저장되는지 본다 (services/order-service/src/test/java/com/example/msa/order/mapper/OrderMapperTest.java)
   - 근거: plan.md 표의 시나리오 3.1 "Mapper" 칸.
-- [ ] T119 [US3] 거절 처리를 만든다. `InventoryClient`가 REJECTED 응답의 사유와 두 목록을 읽는다. `applyResult()`가 `REJECTED`, 사유, 항목별 `REJECT_REASON`을 저장한다. `OrderResponse`의 `shortageProductIds`와 `missingProductIds`는 `REJECT_REASON`에서 상품 ID 순으로 만든다 (services/order-service/src/main/java/com/example/msa/order/service/OrderTxService.java, services/order-service/src/main/resources/mapper/OrderMapper.xml)
+- [x] T119 [US3] 거절 처리를 만든다. `InventoryClient`가 REJECTED 응답의 사유와 두 목록을 읽는다. `applyResult()`가 `REJECTED`, 사유, 항목별 `REJECT_REASON`을 저장한다. `OrderResponse`의 `shortageProductIds`와 `missingProductIds`는 `REJECT_REASON`에서 상품 ID 순으로 만든다 (services/order-service/src/main/java/com/example/msa/order/service/OrderTxService.java, services/order-service/src/main/resources/mapper/OrderMapper.xml)
   - 근거: data-model.md 6-1절 4번, 2-3절 마지막 문단("그래서 같은 키로 다시 보내도 처음과 같은 목록이 나온다").
   - REJECTED에는 다시 요청하지 않는다(FR-026).
-- [ ] T120 [US3] 이 절의 테스트와 앞 절의 테스트가 모두 통과하는지 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/PlaceOrderRejectedIntegrationTest.java)
+- [x] T120 [US3] 이 절의 테스트와 앞 절의 테스트가 모두 통과하는지 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/PlaceOrderRejectedIntegrationTest.java)
   - 명령: `.\gradlew.bat :services:order-service:test`
   - 기대 결과: 종료 코드 0.
 
@@ -1063,13 +1063,13 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 #### 인수 시나리오 테스트 (구현보다 먼저)
 
-- [ ] T121 [US4] 시나리오 4.1의 서비스 통합 테스트를 쓴다. spec 시나리오 4.1이 "이 스토리에서 검증하는 줄"로 고른 첫 When/Then만 검증한다. 토큰 없이 올바른 주문을 보내고 401, 주문 기록이 없음, WireMock이 요청을 받지 않았음을 검사한다. 조회 부분은 티켓 002에서 검증한다. `@DisplayName`은 시나리오 4.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/UnauthenticatedOrderIntegrationTest.java)
+- [x] T121 [US4] 시나리오 4.1의 서비스 통합 테스트를 쓴다. spec 시나리오 4.1이 "이 스토리에서 검증하는 줄"로 고른 첫 When/Then만 검증한다. 토큰 없이 올바른 주문을 보내고 401, 주문 기록이 없음, WireMock이 요청을 받지 않았음을 검사한다. 조회 부분은 티켓 002에서 검증한다. `@DisplayName`은 시나리오 4.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/UnauthenticatedOrderIntegrationTest.java)
   - 응답 본문이 Problem Details이고 `code`가 `UNAUTHORIZED`인지도 단언한다. 이 기대값은 테스트 케이스 문서의 공통 전제에 있다(PR #17).
-- [ ] T122 [P] [US4] 시나리오 4.2(㉦ 서명이 틀리거나 만료된 토큰으로는 주문할 수 없다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. `@DisplayName`은 시나리오 4.2의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/InvalidTokenIntegrationTest.java `[제안]`)
+- [x] T122 [P] [US4] 시나리오 4.2(㉦ 서명이 틀리거나 만료된 토큰으로는 주문할 수 없다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. `@DisplayName`은 시나리오 4.2의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/InvalidTokenIntegrationTest.java `[제안]`)
   - Spring Security Test의 `jwt()`는 토큰 검증을 건너뛰므로 이 테스트에는 쓰지 않는다. 테스트용 RSA 키 쌍으로 서명이 틀린 토큰과 만료된 토큰을 만들고, 이 테스트에서만 주문 서비스가 테스트용 공개 키로 토큰을 검증하게 설정한다 `[제안]`.
   - Spring Boot의 리소스 서버 자동 설정(T085의 의존성, T087의 설정)이 보안 설정(T124) 전에도 401을 돌려줄 수 있다. T123에서 이 테스트가 통과하면 멈추고 사용자에게 묻는다(이 문서 머리의 "테스트는 필수다").
   - 근거: spec Edge Cases의 받아들인 제안 9번. 0-A에서 테스트 케이스로 더한다(2026-10-06 사용자 결정).
-- [ ] T123 [US4] 위 테스트가 실패하는 것을 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/UnauthenticatedOrderIntegrationTest.java)
+- [x] T123 [US4] 위 테스트가 실패하는 것을 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/UnauthenticatedOrderIntegrationTest.java)
   - 명령: `.\gradlew.bat :services:order-service:test --tests "com.example.msa.order.integration.UnauthenticatedOrderIntegrationTest" --tests "com.example.msa.order.integration.InvalidTokenIntegrationTest"`
   - 기대 결과: 종료 코드가 0이 아니다. Spring Boot 기본 보안 설정이 401을 돌려줄 수 있으므로, 실패 이유는 응답 본문이 Problem Details가 아니라는 단언 실패여야 한다. 테스트가 통과하면 다음 작업으로 넘어가지 않고 멈춰 사용자에게 묻는다.
 
@@ -1097,10 +1097,10 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 #### 구현
 
-- [ ] T124 [US4] 보안 설정을 만든다. OAuth2 리소스 서버로 JWT의 서명, 만료, 발급자를 검증하고 `POST /orders`는 인증된 사용자만 부른다. health 엔드포인트는 인증 없이 연다. 인증 실패는 `AuthenticationEntryPoint`가 401 Problem Details(`code` = `UNAUTHORIZED`)로 낸다. 역할과 관계없이 로그인한 사용자는 주문할 수 있다(spec Edge Cases, research.md 결정 1로 받아들인 제안 10번). 세션을 만들지 않는다 (services/order-service/src/main/java/com/example/msa/order/config/SecurityConfig.java, services/order-service/src/main/java/com/example/msa/order/exception/ProblemAuthenticationEntryPoint.java `[제안]`)
+- [x] T124 [US4] 보안 설정을 만든다. OAuth2 리소스 서버로 JWT의 서명, 만료, 발급자를 검증하고 `POST /orders`는 인증된 사용자만 부른다. health 엔드포인트는 인증 없이 연다. 인증 실패는 `AuthenticationEntryPoint`가 401 Problem Details(`code` = `UNAUTHORIZED`)로 낸다. 역할과 관계없이 로그인한 사용자는 주문할 수 있다(spec Edge Cases, research.md 결정 1로 받아들인 제안 10번). 세션을 만들지 않는다 (services/order-service/src/main/java/com/example/msa/order/config/SecurityConfig.java, services/order-service/src/main/java/com/example/msa/order/exception/ProblemAuthenticationEntryPoint.java `[제안]`)
   - 근거: data-model.md 5-1절 첫 줄, research.md 결정 13의 `[제안]` 세부(401도 Problem Details), `docs/standards/architecture-rules.md` 5절 "보안"의 JWT 규칙, 3절 "실행과 배포"의 남아야 하는 데이터 규칙(세션).
   - 토큰 전체를 로그에 남기지 않는다(헌법 "관측 가능성" 원칙).
-- [ ] T125 [US4] 이 스토리의 테스트와 앞 스토리의 테스트가 모두 통과하는지 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/UnauthenticatedOrderIntegrationTest.java)
+- [x] T125 [US4] 이 스토리의 테스트와 앞 스토리의 테스트가 모두 통과하는지 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/UnauthenticatedOrderIntegrationTest.java)
   - 명령: `.\gradlew.bat :services:order-service:test`
   - 기대 결과: 종료 코드 0.
 
@@ -1114,11 +1114,11 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 #### 인수 시나리오 테스트 (구현보다 먼저)
 
-- [ ] T126 [P] [US5] 시나리오 5.1의 서비스 통합 테스트를 쓴다. 다섯 경우를 매개변수 테스트 하나로 돌린다 `[제안]`. 경우마다 400, 주문 기록 없음, WireMock이 요청을 받지 않았음을 검사한다. `@DisplayName`은 시나리오 5.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/InvalidOrderItemsIntegrationTest.java)
-- [ ] T127 [P] [US5] 주문 항목 검사의 단위 테스트를 쓴다. plan.md 표의 시나리오 5.1 "단위" 칸 "주문 항목 검사 다섯 경우"다. 테스트 케이스의 다섯 경우가 모두 검사 실패이고, 올바른 항목(A 3개, B 2개)은 통과하는지 검사한다. 이 테스트는 아직 없는 `OrderItems`를 참조하므로 컴파일 오류로 실패한다 (services/order-service/src/test/java/com/example/msa/order/domain/OrderItemsTest.java)
-- [ ] T128 [P] [US5] 시나리오 5.2(㉧ 형식이 틀린 주문 항목은 기록되지 않는다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. 경우마다 400, 주문 기록 없음, WireMock이 요청을 받지 않았음을 검사한다. `@DisplayName`은 시나리오 5.2의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/MalformedOrderItemsIntegrationTest.java `[제안]`)
+- [x] T126 [P] [US5] 시나리오 5.1의 서비스 통합 테스트를 쓴다. 다섯 경우를 매개변수 테스트 하나로 돌린다 `[제안]`. 경우마다 400, 주문 기록 없음, WireMock이 요청을 받지 않았음을 검사한다. `@DisplayName`은 시나리오 5.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/InvalidOrderItemsIntegrationTest.java)
+- [x] T127 [P] [US5] 주문 항목 검사의 단위 테스트를 쓴다. plan.md 표의 시나리오 5.1 "단위" 칸 "주문 항목 검사 다섯 경우"다. 테스트 케이스의 다섯 경우가 모두 검사 실패이고, 올바른 항목(A 3개, B 2개)은 통과하는지 검사한다. 이 테스트는 아직 없는 `OrderItems`를 참조하므로 컴파일 오류로 실패한다 (services/order-service/src/test/java/com/example/msa/order/domain/OrderItemsTest.java)
+- [x] T128 [P] [US5] 시나리오 5.2(㉧ 형식이 틀린 주문 항목은 기록되지 않는다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. 경우마다 400, 주문 기록 없음, WireMock이 요청을 받지 않았음을 검사한다. `@DisplayName`은 시나리오 5.2의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/MalformedOrderItemsIntegrationTest.java `[제안]`)
   - 근거: spec Edge Cases의 받아들인 제안 11번. 0-A에서 테스트 케이스로 더한다(2026-10-06 사용자 결정).
-- [ ] T129 [US5] 위 테스트가 실패하는 것을 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/InvalidOrderItemsIntegrationTest.java)
+- [x] T129 [US5] 위 테스트가 실패하는 것을 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/InvalidOrderItemsIntegrationTest.java)
   - T126과 T128을 먼저 확인한다. 두 테스트 모두 항목 검사가 없어 주문이 기록되므로 실패해야 한다. T127을 아직 쓰지 않은 상태에서 `.\gradlew.bat :services:order-service:test --tests "com.example.msa.order.integration.InvalidOrderItemsIntegrationTest"`를 돌리면 종료 코드가 0이 아니고, 검사가 없어 201이 나오거나 주문이 기록된 단언 실패가 보인다. 그다음 T127을 쓰고 `compileTestJava`가 실패하는 것을 본다.
 
 **이 절의 시나리오 원문**
@@ -1135,7 +1135,7 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 #### 구현
 
-- [ ] T130 [US5] 주문 항목 검사를 만든다. `OrderItems.validate(...)`가 아래 규칙을 검사한다. 컨트롤러는 Bean Validation으로 형식(상품 ID 형식, 수량이 정수)을 검사한다. 실패하면 주문을 기록하지 않고 400 Problem Details(`code` = `INVALID_ORDER_ITEMS`, 필드별 `errors`)를 돌려준다 (services/order-service/src/main/java/com/example/msa/order/domain/OrderItems.java, services/order-service/src/main/java/com/example/msa/order/controller/OrderController.java, services/order-service/src/main/java/com/example/msa/order/exception/ProblemDetailsHandler.java)
+- [x] T130 [US5] 주문 항목 검사를 만든다. `OrderItems.validate(...)`가 아래 규칙을 검사한다. 컨트롤러는 Bean Validation으로 형식(상품 ID 형식, 수량이 정수)을 검사한다. 실패하면 주문을 기록하지 않고 400 Problem Details(`code` = `INVALID_ORDER_ITEMS`, 필드별 `errors`)를 돌려준다 (services/order-service/src/main/java/com/example/msa/order/domain/OrderItems.java, services/order-service/src/main/java/com/example/msa/order/controller/OrderController.java, services/order-service/src/main/java/com/example/msa/order/exception/ProblemDetailsHandler.java)
   - 검사 규칙은 data-model.md 5-1절 원문 그대로다:
 
     | 검사 | 실패하면 | 어디서 |
@@ -1145,7 +1145,7 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
   - `OrderItems`는 Spring과 MyBatis를 모르는 순수 Java다(`docs/standards/coding-conventions.md` 2절).
   - `code` 값은 `contracts/order-api.yaml`의 400 설명에서 가져온다.
-- [ ] T131 [US5] 이 스토리의 테스트와 앞 스토리의 테스트가 모두 통과하는지 확인한다 (services/order-service/src/test/java/com/example/msa/order/domain/OrderItemsTest.java)
+- [x] T131 [US5] 이 스토리의 테스트와 앞 스토리의 테스트가 모두 통과하는지 확인한다 (services/order-service/src/test/java/com/example/msa/order/domain/OrderItemsTest.java)
   - 명령: `.\gradlew.bat :services:order-service:test`
   - 기대 결과: 종료 코드 0.
 
@@ -1159,13 +1159,13 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 #### 인수 시나리오 테스트 (구현보다 먼저)
 
-- [ ] T132 [P] [US6] 시나리오 6.1의 주문 쪽 서비스 통합 테스트를 쓴다. 테스트 케이스의 When 일곱 개를 모두 검증한다(plan.md 표). K1·K2·K3은 테스트에서 만든 UUID다. 재고 수량 기대값(7개, 4개)은 주문 쪽에서는 WireMock이 받은 예약 요청의 횟수와 주문 번호로 본다. 첫 요청이 처리 중인 경우(K3)는 WireMock 예약 스텁에 지연을 넣고 둘째 요청을 다른 스레드에서 보낸다. `@DisplayName`은 시나리오 6.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/IdempotencyKeyIntegrationTest.java)
+- [x] T132 [P] [US6] 시나리오 6.1의 주문 쪽 서비스 통합 테스트를 쓴다. 테스트 케이스의 When 일곱 개를 모두 검증한다(plan.md 표). K1·K2·K3은 테스트에서 만든 UUID다. 재고 수량 기대값(7개, 4개)은 주문 쪽에서는 WireMock이 받은 예약 요청의 횟수와 주문 번호로 본다. 첫 요청이 처리 중인 경우(K3)는 WireMock 예약 스텁에 지연을 넣고 둘째 요청을 다른 스레드에서 보낸다. `@DisplayName`은 시나리오 6.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/IdempotencyKeyIntegrationTest.java)
   - 응답 코드(같은 키의 재요청 200, 새 주문 201)도 단언한다. 이 기대값은 테스트 케이스 문서의 공통 전제에 있다(PR #17).
   - K3 스텁의 지연은 시도당 제한 시간(테스트 설정 500ms)보다 짧게 둔다 `[제안]`. 길면 첫 요청이 시간 초과로 "실패"가 되어, 이 테스트가 보려는 "처리중"과 관계없는 동작이 섞인다.
-- [ ] T133 [P] [US6] 시나리오 6.2(㉨ 거부된 요청의 키는 남지 않고, 같은 키의 내용 비교는 항목 순서를 보지 않는다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. 두 경우를 메서드 두 개로 나눈다 `[제안]`. `@DisplayName`은 시나리오 6.2의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/IdempotencyKeyReuseIntegrationTest.java `[제안]`)
+- [x] T133 [P] [US6] 시나리오 6.2(㉨ 거부된 요청의 키는 남지 않고, 같은 키의 내용 비교는 항목 순서를 보지 않는다)의 서비스 통합 테스트를 쓴다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다. 두 경우를 메서드 두 개로 나눈다 `[제안]`. `@DisplayName`은 시나리오 6.2의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/IdempotencyKeyReuseIntegrationTest.java `[제안]`)
   - 첫째 경우(400으로 거부된 요청의 키를 다시 쓴다)는 User Story 5의 항목 검사(T130)가 주문을 저장하기 전에 거부하므로, 이 절에 오기 전에 이미 통과할 수 있다. T134에서 통과하면 멈추고 사용자에게 묻는다.
   - 근거: spec Edge Cases의 받아들인 제안 7번과 8번. 0-A에서 테스트 케이스로 더한다(2026-10-06 사용자 결정).
-- [ ] T134 [US6] 위 테스트가 실패하는 것을 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/IdempotencyKeyIntegrationTest.java)
+- [x] T134 [US6] 위 테스트가 실패하는 것을 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/IdempotencyKeyIntegrationTest.java)
   - 명령: `.\gradlew.bat :services:order-service:test --tests "com.example.msa.order.integration.IdempotencyKeyIntegrationTest" --tests "com.example.msa.order.integration.IdempotencyKeyReuseIntegrationTest"`
   - 기대 결과: 종료 코드가 0이 아니다. 같은 키의 둘째 요청이 고유 제약 위반으로 500이 되거나, 키 형식 검사가 없어 단언이 실패한다. 통과하면 멈추고 사용자에게 묻는다.
 
@@ -1199,13 +1199,13 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 #### 구현
 
-- [ ] T135 [US6] 주문 Mapper 테스트에 "고객·키 고유 제약"을 검사하는 메서드를 더한다. 같은 고객과 같은 키로 두 번 넣으면 고유 제약 위반 예외가 나고, 다른 고객의 같은 키는 들어가는지 본다. 고객과 키로 주문과 항목을 한 번에 읽는 조회도 검사한다 (services/order-service/src/test/java/com/example/msa/order/mapper/OrderMapperTest.java)
+- [x] T135 [US6] 주문 Mapper 테스트에 "고객·키 고유 제약"을 검사하는 메서드를 더한다. 같은 고객과 같은 키로 두 번 넣으면 고유 제약 위반 예외가 나고, 다른 고객의 같은 키는 들어가는지 본다. 고객과 키로 주문과 항목을 한 번에 읽는 조회도 검사한다 (services/order-service/src/test/java/com/example/msa/order/mapper/OrderMapperTest.java)
   - 근거: plan.md 표의 시나리오 6.1 "Mapper" 칸. 기대값의 출처는 도메인 분석 7절("서버는 (고객, 키)가 같으면 새 주문을 만들지 않고 이미 있는 주문을 돌려준다", "같은 고객 안에서만 비교한다")과 설계 6절 표의 `UNIQUE(CUSTOMER_ID, REQUEST_KEY)`다.
-- [ ] T136 [US6] 같은 키의 재요청 처리를 만든다 (services/order-service/src/main/java/com/example/msa/order/service/OrderService.java, services/order-service/src/main/java/com/example/msa/order/service/OrderTxService.java, services/order-service/src/main/java/com/example/msa/order/domain/OrderItems.java, services/order-service/src/main/resources/mapper/OrderMapper.xml, services/order-service/src/main/java/com/example/msa/order/controller/OrderController.java)
+- [x] T136 [US6] 같은 키의 재요청 처리를 만든다 (services/order-service/src/main/java/com/example/msa/order/service/OrderService.java, services/order-service/src/main/java/com/example/msa/order/service/OrderTxService.java, services/order-service/src/main/java/com/example/msa/order/domain/OrderItems.java, services/order-service/src/main/resources/mapper/OrderMapper.xml, services/order-service/src/main/java/com/example/msa/order/controller/OrderController.java)
   - 컨트롤러: `Idempotency-Key` 헤더가 없거나 UUID 문자열(36자)이 아니면 400 Problem Details(`code` = `INVALID_IDEMPOTENCY_KEY`)다(data-model.md 5-1절 둘째 줄, `contracts/order-api.yaml`).
   - `savePending()`이 `UK_ORDERS_CUSTOMER_KEY`에 걸리면 이미 있는 주문을 항목과 함께 읽는다. `OrderItems`로 상품 ID 순 정렬 비교를 해서 같으면 그 주문의 지금 상태로 200, 다르면 422 Problem Details(`code` = `IDEMPOTENCY_KEY_CONFLICT`)다. 재고 서비스는 부르지 않는다.
   - 근거: data-model.md 6-1절 2번("다른 요청이 같은 키로 아직 커밋하지 않았으면 Oracle이 그 커밋까지 기다린 뒤 제약 위반을 낸다"), spec Edge Cases의 받아들인 제안 7번(거부된 요청의 키는 남지 않는다)과 8번(항목 순서는 보지 않는다).
-- [ ] T137 [US6] 이 스토리의 테스트와 앞 스토리의 테스트가 모두 통과하는지 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/IdempotencyKeyIntegrationTest.java)
+- [x] T137 [US6] 이 스토리의 테스트와 앞 스토리의 테스트가 모두 통과하는지 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/IdempotencyKeyIntegrationTest.java)
   - 명령: `.\gradlew.bat :services:order-service:test`
   - 기대 결과: 종료 코드 0.
 
@@ -1219,22 +1219,22 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 #### 인수 시나리오 테스트 (구현보다 먼저)
 
-- [ ] T138 [P] [US7] 시나리오 7.1의 서비스 통합 테스트를 쓴다. WireMock이 모든 예약 요청과 해제 요청에 503을 돌려준다. 서킷이 열릴 때까지 주문을 연달아 보내고(서킷이 열린 뒤의 첫 주문을 "WireMock이 받은 예약 요청 수가 늘지 않은 주문"으로 알아본다), 그 뒤 주문의 응답 시간이 1초 안인지, `FAILED`·`RETRY_LATER`·`NOT_REQUIRED`로 기록되고 해제 요청이 가지 않는지, 서킷이 열리기 전 주문이 `FAILED`·`RELEASE_FAILED`로 기록되는지 검사한다. 그다음 WireMock을 정상(RESERVED)으로 바꾸고 열림 시간(테스트 설정 2초)이 지난 뒤 새 주문이 `CONFIRMED`인지 본다. `@DisplayName`은 시나리오 7.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/CircuitBreakerIntegrationTest.java)
+- [x] T138 [P] [US7] 시나리오 7.1의 서비스 통합 테스트를 쓴다. WireMock이 모든 예약 요청과 해제 요청에 503을 돌려준다. 서킷이 열릴 때까지 주문을 연달아 보내고(서킷이 열린 뒤의 첫 주문을 "WireMock이 받은 예약 요청 수가 늘지 않은 주문"으로 알아본다), 그 뒤 주문의 응답 시간이 1초 안인지, `FAILED`·`RETRY_LATER`·`NOT_REQUIRED`로 기록되고 해제 요청이 가지 않는지, 서킷이 열리기 전 주문이 `FAILED`·`RELEASE_FAILED`로 기록되는지 검사한다. 그다음 WireMock을 정상(RESERVED)으로 바꾸고 열림 시간(테스트 설정 2초)이 지난 뒤 새 주문이 `CONFIRMED`인지 본다. `@DisplayName`은 시나리오 7.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/CircuitBreakerIntegrationTest.java)
   - **P3에서 재시도가 들어와도 이 테스트를 고치지 않고 통과해야 한다.** 그래서 테스트 케이스 문장에 있는 것만 단언한다. 주문마다 예약 요청이 몇 번 갔는지, 몇 번째 주문에서 서킷이 열리는지는 단언하지 않는다 `[제안]`. research.md 결정 2가 "P2 단계의 임시 동작"에 전용 테스트를 두지 않고 이 시나리오가 P2와 P3 모두에서 지나가게 한 이유다.
   - "해제 실패"는 해제가 비동기라서 바로 기록되지 않는다. 정해진 시간까지 저장된 주문을 다시 읽는 방식으로 기다린다 `[제안]`. 기다리는 한도는 테스트 케이스에 값이 없어 단언하지 않고, 테스트가 끝없이 돌지 않게 하는 안전장치로만 둔다(10초) `[제안]`.
   - 열리는 조건과 열림 시간은 테스트 케이스가 가리키는 설계 4절의 값이다. 시간 값은 1/5로 줄인 테스트 설정(T089)을 쓴다 `[제안]`. "1초 안에"는 줄이지 않는다 `[제안]`.
-- [ ] T139 [P] [US7] 시나리오 7.2의 서비스 통합 테스트를 쓴다. spec 시나리오 7.2가 "이 스토리에서 검증하는 줄"로 고른 줄만 검증한다. WireMock이 예약 요청에 409 Problem Details(`code` = `RESERVATION_CONFLICT`)를 돌려줄 때(spec 받아들인 제안 5번) 예약 요청이 정확히 1번 갔는지, 주문이 `FAILED`로 기록되는지, 고객 응답 뒤 해제 요청(`DELETE /reservations/{orderNo}`)이 가는지 검사한다. `@DisplayName`은 시나리오 7.2의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/ReservationConflictOrderIntegrationTest.java)
-- [ ] T140 [P] [US7] 재고 서비스가 500을 돌려줄 때의 서비스 통합 테스트를 쓴다. WireMock이 예약 요청에 500 Problem Details(`code` = `INTERNAL_ERROR`)를 돌려줄 때 예약 요청이 정확히 1번 갔는지, 주문이 `FAILED`로 기록되는지, 고객 응답 뒤 해제 요청(`DELETE /reservations/{orderNo}`)이 가는지 검사한다. 인수 시나리오 테스트가 아니므로 테스트 케이스 ID를 붙이지 않는다 (services/order-service/src/test/java/com/example/msa/order/integration/InventoryServerErrorIntegrationTest.java `[제안]`)
+- [x] T139 [P] [US7] 시나리오 7.2의 서비스 통합 테스트를 쓴다. spec 시나리오 7.2가 "이 스토리에서 검증하는 줄"로 고른 줄만 검증한다. WireMock이 예약 요청에 409 Problem Details(`code` = `RESERVATION_CONFLICT`)를 돌려줄 때(spec 받아들인 제안 5번) 예약 요청이 정확히 1번 갔는지, 주문이 `FAILED`로 기록되는지, 고객 응답 뒤 해제 요청(`DELETE /reservations/{orderNo}`)이 가는지 검사한다. `@DisplayName`은 시나리오 7.2의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/ReservationConflictOrderIntegrationTest.java)
+- [x] T140 [P] [US7] 재고 서비스가 500을 돌려줄 때의 서비스 통합 테스트를 쓴다. WireMock이 예약 요청에 500 Problem Details(`code` = `INTERNAL_ERROR`)를 돌려줄 때 예약 요청이 정확히 1번 갔는지, 주문이 `FAILED`로 기록되는지, 고객 응답 뒤 해제 요청(`DELETE /reservations/{orderNo}`)이 가는지 검사한다. 인수 시나리오 테스트가 아니므로 테스트 케이스 ID를 붙이지 않는다 (services/order-service/src/test/java/com/example/msa/order/integration/InventoryServerErrorIntegrationTest.java `[제안]`)
   - 기대값은 테스트 케이스 문서 공통 전제의 일곱째 줄이다: "재고 서비스가 409나 500을 돌려주면 주문 서비스는 재시도하지 않는다. 주문을 "실패"로 기록하고 재고 서비스에 해제를 요청한다." research.md 결정 2(사용자 결정)의 표가 FR-027의 500 쪽 기대값을 이 줄에서 가져온다고 적었다(2026-10-06 사용자 승인).
   - 스텁의 `code` 값은 재고 서비스 계약(`contracts/inventory-api.yaml`)의 500 응답이다. 기대값이 아니라 스텁을 만드는 값이다.
   - P3에서 재시도가 들어와도 이 테스트를 고치지 않고 통과해야 한다. 실패 확인은 이 절의 T143에서 하고, 재시도가 생긴 뒤에는 Phase 3의 T167에서 한 번 더 한다.
-- [ ] T141 [US7] 소비자 계약 테스트에 409 스텁과, 시나리오 7.1의 회복 뒤 RESERVED 스텁·해제 스텁을 검사하는 메서드를 더한다. 503 스텁의 응답은 계약에 없는 응답이라 검증하지 않고 받은 요청만 검증한다(T094) (services/order-service/src/test/java/com/example/msa/order/contract/InventoryConsumerContractTest.java)
+- [x] T141 [US7] 소비자 계약 테스트에 409 스텁과, 시나리오 7.1의 회복 뒤 RESERVED 스텁·해제 스텁을 검사하는 메서드를 더한다. 503 스텁의 응답은 계약에 없는 응답이라 검증하지 않고 받은 요청만 검증한다(T094) (services/order-service/src/test/java/com/example/msa/order/contract/InventoryConsumerContractTest.java)
   - 근거: plan.md 표의 시나리오 7.1 "계약" 칸 "소비자", 시나리오 7.2 "계약" 칸 "소비자: 409 스텁".
-- [ ] T142 [P] [US7] 재고 호출 설정의 기본값 단위 테스트를 쓴다. 설정 파일을 덮어쓰지 않은 기본값이 시도당 제한 시간(연결·요청) 2.5초인지, 서킷 브레이커의 숫자 값이 설계 4절 표의 값(최근 10번, 최소 10번 기록, 실패율 50%, 열려 있는 시간 10초, 시험 호출 3번)인지 검사한다 (services/order-service/src/test/java/com/example/msa/order/config/InventoryClientPropertiesTest.java `[제안]`)
+- [x] T142 [P] [US7] 재고 호출 설정의 기본값 단위 테스트를 쓴다. 설정 파일을 덮어쓰지 않은 기본값이 시도당 제한 시간(연결·요청) 2.5초인지, 서킷 브레이커의 숫자 값이 설계 4절 표의 값(최근 10번, 최소 10번 기록, 실패율 50%, 열려 있는 시간 10초, 시험 호출 3번)인지 검사한다 (services/order-service/src/test/java/com/example/msa/order/config/InventoryClientPropertiesTest.java `[제안]`)
   - 근거: `docs/standards/testing.md` 3절 "시간"("기본값이 설정에 맞게 들어갔는지는 단위 테스트로 따로 확인한다"). 2.5초는 비기능 요구사항 문서(`docs/requirements/non-functional.md`)의 "장애 전파 차단" 목표값("재시도 포함 전체 30초, 시도당 2.5초, 재시도 최대 5회(즉시, 1, 2, 4, 8초 뒤). 서킷이 열린 뒤에는 1초 안에 실패 응답")의 "시도당 2.5초"다. 서킷 브레이커 값은 시나리오 7.1의 테스트 케이스가 "서킷의 열림 조건(design 4절)"으로 가리키는 값이다.
   - `slidingWindowType=COUNT_BASED`와 반쯤 열린 상태의 실패율 기준은 단언하지 않는다. 이 두 값은 설계 4절에 없고, research.md 결정 8의 `[제안]` 대응표에서 왔기 때문이다(2026-10-06 사용자 승인). 숫자 값은 사용자가 확정한 설계 문서에 있으므로 받치는 테스트의 기대값으로 쓴다(이 문서 머리의 "받치는 테스트의 기대값 출처", 2026-10-06 사용자 결정).
   - 위치는 `config/` 테스트 패키지다 `[제안]`. plan.md 트리에 더했다(2026-10-07 사용자 결정).
-- [ ] T143 [US7] 위 테스트가 실패하는 것을 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/CircuitBreakerIntegrationTest.java)
+- [x] T143 [US7] 위 테스트가 실패하는 것을 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/CircuitBreakerIntegrationTest.java)
   - 명령: `.\gradlew.bat :services:order-service:test --tests "com.example.msa.order.integration.CircuitBreakerIntegrationTest" --tests "com.example.msa.order.integration.ReservationConflictOrderIntegrationTest" --tests "com.example.msa.order.integration.InventoryServerErrorIntegrationTest"`
   - 기대 결과: 종료 코드가 0이 아니다. 503·409·500 처리와 서킷이 없어 500이 나오거나 상태가 다른 단언 실패다. T142는 서킷 값 필드가 없어 컴파일 오류로 실패한다. 하나라도 통과하면 멈추고 사용자에게 묻는다.
 
@@ -1261,21 +1261,21 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 #### 구현
 
-- [ ] T144 [US7] 서킷 브레이커를 만든다. `InventoryClientProperties`에 서킷 값을 더하고, `InventoryClientConfig`에 Resilience4j `CircuitBreaker` 인스턴스 하나(`inventory`)를 만들어 예약과 해제가 함께 쓰게 한다. 실패로 세는 것은 연결 실패, 시도 제한 시간 초과, 5xx이고, 업무 결과(RESERVED·REJECTED·RELEASED)와 4xx는 성공으로 센다 (services/order-service/src/main/java/com/example/msa/order/config/InventoryClientProperties.java, services/order-service/src/main/java/com/example/msa/order/config/InventoryClientConfig.java)
+- [x] T144 [US7] 서킷 브레이커를 만든다. `InventoryClientProperties`에 서킷 값을 더하고, `InventoryClientConfig`에 Resilience4j `CircuitBreaker` 인스턴스 하나(`inventory`)를 만들어 예약과 해제가 함께 쓰게 한다. 실패로 세는 것은 연결 실패, 시도 제한 시간 초과, 5xx이고, 업무 결과(RESERVED·REJECTED·RELEASED)와 4xx는 성공으로 센다 (services/order-service/src/main/java/com/example/msa/order/config/InventoryClientProperties.java, services/order-service/src/main/java/com/example/msa/order/config/InventoryClientConfig.java)
   - 근거: research.md 결정 8의 표("설계 4절 값과 Resilience4j 설정의 대응", research.md에서 `[제안]`), `docs/standards/architecture-rules.md` 2절 "서비스 사이 호출"의 서킷 브레이커 규칙.
-- [ ] T145 [US7] 재고 호출의 실패 처리를 만든다. `InventoryClient`가 409·500·연결 실패·시간 초과·502·503·504·서킷 열림을 `InventoryCallFailure`로 알린다. 호출 문맥 `InventoryCallContext`가 서킷이 허가해 실제로 보낸 시도 수를 센다. 서킷 상태를 미리 따로 묻지 않는다 (services/order-service/src/main/java/com/example/msa/order/client/InventoryClient.java, services/order-service/src/main/java/com/example/msa/order/client/InventoryCallFailure.java, services/order-service/src/main/java/com/example/msa/order/client/InventoryCallContext.java)
+- [x] T145 [US7] 재고 호출의 실패 처리를 만든다. `InventoryClient`가 409·500·연결 실패·시간 초과·502·503·504·서킷 열림을 `InventoryCallFailure`로 알린다. 호출 문맥 `InventoryCallContext`가 서킷이 허가해 실제로 보낸 시도 수를 센다. 서킷 상태를 미리 따로 묻지 않는다 (services/order-service/src/main/java/com/example/msa/order/client/InventoryClient.java, services/order-service/src/main/java/com/example/msa/order/client/InventoryCallFailure.java, services/order-service/src/main/java/com/example/msa/order/client/InventoryCallContext.java)
   - 근거: data-model.md 6-1절 마지막 문단, research.md 결정 6("상태 코드별 처리도 같은 클래스에 둔다").
   - 재고 호출 로그에 몇 번째 시도인지와 서킷 상태를 남긴다(`docs/standards/coding-conventions.md` 3-6절).
-- [ ] T146 [US7] 실패 주문의 저장과 해제를 만든다. `applyResult()`가 그 밖의 결과에 `FAILED`와 `RETRY_LATER`를 저장하고, 예약 요청을 한 번도 보내지 않았으면 `RELEASE_STATUS`에 `NOT_REQUIRED`도 함께 저장한다. 예약 요청을 보낸 적이 있으면 `OrderService`가 `ReservationReleaser`에 해제를 맡기고 바로 201로 응답한다. 해제 작업은 `InventoryClient.release(orderNo)`를 한 번 부르고, 결과가 RELEASED나 REJECTED면 `RELEASED`, 끝내 실패하면 `RELEASE_FAILED`를 새 트랜잭션으로 저장하고 오류 로그를 남긴다 (services/order-service/src/main/java/com/example/msa/order/service/OrderService.java, services/order-service/src/main/java/com/example/msa/order/service/OrderTxService.java, services/order-service/src/main/java/com/example/msa/order/service/ReservationReleaser.java, services/order-service/src/main/java/com/example/msa/order/config/ReleaseExecutorConfig.java, services/order-service/src/main/java/com/example/msa/order/config/ReleaseExecutorProperties.java)
+- [x] T146 [US7] 실패 주문의 저장과 해제를 만든다. `applyResult()`가 그 밖의 결과에 `FAILED`와 `RETRY_LATER`를 저장하고, 예약 요청을 한 번도 보내지 않았으면 `RELEASE_STATUS`에 `NOT_REQUIRED`도 함께 저장한다. 예약 요청을 보낸 적이 있으면 `OrderService`가 `ReservationReleaser`에 해제를 맡기고 바로 201로 응답한다. 해제 작업은 `InventoryClient.release(orderNo)`를 한 번 부르고, 결과가 RELEASED나 REJECTED면 `RELEASED`, 끝내 실패하면 `RELEASE_FAILED`를 새 트랜잭션으로 저장하고 오류 로그를 남긴다 (services/order-service/src/main/java/com/example/msa/order/service/OrderService.java, services/order-service/src/main/java/com/example/msa/order/service/OrderTxService.java, services/order-service/src/main/java/com/example/msa/order/service/ReservationReleaser.java, services/order-service/src/main/java/com/example/msa/order/config/ReleaseExecutorConfig.java, services/order-service/src/main/java/com/example/msa/order/config/ReleaseExecutorProperties.java)
   - 근거: data-model.md 6-1절 4~6번, 4-2절 표, research.md 4절 "해제를 고객 응답 뒤에 비동기로 돌리는 방식"(`releaseExecutor` 빈, 종료할 때 실행 중인 해제를 기다린다).
   - 예약 결과 RELEASED를 받으면 실패로 둔다(data-model.md 4-1절의 `[제안]`).
-- [ ] T147 [US7] 이 스토리의 테스트와 앞 스토리의 테스트가 모두 통과하는지 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/CircuitBreakerIntegrationTest.java)
+- [x] T147 [US7] 이 스토리의 테스트와 앞 스토리의 테스트가 모두 통과하는지 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/CircuitBreakerIntegrationTest.java)
   - 명령: `.\gradlew.bat :services:order-service:test`
   - 기대 결과: 종료 코드 0. 시나리오 7.1의 "1초 안에" 응답 시간을 테스트 로그에서 읽어 보고에 적는다.
-- [ ] T148 [US7] research.md 6절 "JDK HttpClient의 요청 제한 시간이 연결 시간까지 포함해 시도당 2.5초를 지키는지"를 확인한다. 받치는 테스트 두 개를 쓴다. 하나는 WireMock 예약 스텁에 3초 지연을 1/5로 줄인 600ms를 넣고 한 시도가 테스트 설정의 500ms 근처에서 시간 초과로 끝나는지 본다. 다른 하나는 응답하지 않는 주소로 연결하는 단위 테스트다. 응답하지 않는 주소를 만드는 방법은 구현할 때 고르고 보고에 적는다 `[제안]` (services/order-service/src/test/java/com/example/msa/order/integration/InventoryClientTimeoutIntegrationTest.java `[제안]`)
+- [x] T148 [US7] research.md 6절 "JDK HttpClient의 요청 제한 시간이 연결 시간까지 포함해 시도당 2.5초를 지키는지"를 확인한다. 받치는 테스트 두 개를 쓴다. 하나는 WireMock 예약 스텁에 3초 지연을 1/5로 줄인 600ms를 넣고 한 시도가 테스트 설정의 500ms 근처에서 시간 초과로 끝나는지 본다. 다른 하나는 응답하지 않는 주소로 연결하는 단위 테스트다. 응답하지 않는 주소를 만드는 방법은 구현할 때 고르고 보고에 적는다 `[제안]` (services/order-service/src/test/java/com/example/msa/order/integration/InventoryClientTimeoutIntegrationTest.java `[제안]`)
   - 기대값은 비기능 요구사항 문서(`docs/requirements/non-functional.md`)의 "장애 전파 차단" 목표값("재시도 포함 전체 30초, 시도당 2.5초, 재시도 최대 5회(즉시, 1, 2, 4, 8초 뒤). 서킷이 열린 뒤에는 1초 안에 실패 응답")의 "시도당 2.5초"(테스트 설정 500ms `[제안]`)다. 인수 시나리오 테스트가 아니므로 ID를 붙이지 않는다.
   - 연결 시간이 포함되지 않아 2.5초를 넘기면 멈추고 보고한다. 해결 방법(예: 전체 시도 시간을 따로 재서 끊기)은 research.md 결정 6을 바꾸는 일이라 사용자에게 묻는다.
-- [ ] T149 [US7] research.md 6절 "Resilience4j 2.4.0 핵심 모듈이 Spring Boot 4.1.1 앱 안에서 문제없이 도는지"를 확인한다. T147에서 시나리오 7.1이 통과했고, 테스트 로그에 의존성 충돌이나 클래스 로딩 경고가 없는지 본다. `.\gradlew.bat :services:order-service:dependencies --configuration runtimeClasspath`에서 Resilience4j가 끌어온 의존성 버전이 Spring Boot가 관리하는 버전과 부딪히는지도 본다 (services/order-service/build.gradle)
+- [x] T149 [US7] research.md 6절 "Resilience4j 2.4.0 핵심 모듈이 Spring Boot 4.1.1 앱 안에서 문제없이 도는지"를 확인한다. T147에서 시나리오 7.1이 통과했고, 테스트 로그에 의존성 충돌이나 클래스 로딩 경고가 없는지 본다. `.\gradlew.bat :services:order-service:dependencies --configuration runtimeClasspath`에서 Resilience4j가 끌어온 의존성 버전이 Spring Boot가 관리하는 버전과 부딪히는지도 본다 (services/order-service/build.gradle)
 
 이 목록에서는 항목 ID를 쓰지 않았다.
 
@@ -1283,19 +1283,19 @@ Phase 0에서는 항목 ID를 쓰지 않았다.
 
 ### 마무리와 확인
 
-- [ ] T150 주문 서비스의 아키텍처 테스트를 쓴다. `libs/archunit-rules`의 세 규칙(계층 의존, 애너테이션 SQL 금지, `@Transactional`에서 `client` 직접 호출 금지)을 `com.example.msa.order`에 적용한다 (services/order-service/src/test/java/com/example/msa/order/architecture/ArchitectureTest.java)
-- [ ] T151 주문 서비스에서 기계 검사와 아키텍처 테스트가 실제로 잡는지 확인한다. T077과 같은 방식으로 위반을 하나씩 넣고 `.\gradlew.bat :services:order-service:check`가 실패하는 것을 본 뒤 되돌린다. 특히 Phase 1에서 확인하지 못한 "`OrderTxService`의 `@Transactional` 메서드에서 `InventoryClient`를 직접 부른다" 위반을 넣어 T150이 잡는지 본다 (services/order-service/src/main/java/com/example/msa/order/service/OrderTxService.java)
+- [x] T150 주문 서비스의 아키텍처 테스트를 쓴다. `libs/archunit-rules`의 세 규칙(계층 의존, 애너테이션 SQL 금지, `@Transactional`에서 `client` 직접 호출 금지)을 `com.example.msa.order`에 적용한다 (services/order-service/src/test/java/com/example/msa/order/architecture/ArchitectureTest.java)
+- [x] T151 주문 서비스에서 기계 검사와 아키텍처 테스트가 실제로 잡는지 확인한다. T077과 같은 방식으로 위반을 하나씩 넣고 `.\gradlew.bat :services:order-service:check`가 실패하는 것을 본 뒤 되돌린다. 특히 Phase 1에서 확인하지 못한 "`OrderTxService`의 `@Transactional` 메서드에서 `InventoryClient`를 직접 부른다" 위반을 넣어 T150이 잡는지 본다 (services/order-service/src/main/java/com/example/msa/order/service/OrderTxService.java)
   - 끝나면 `git diff`로 위반이 모두 되돌려졌는지 본다.
-- [ ] T152 추적 정보 전달과 설정을 확인한다 (services/order-service/src/main/java/com/example/msa/order/config/InventoryClientConfig.java)
+- [x] T152 추적 정보 전달과 설정을 확인한다 (services/order-service/src/main/java/com/example/msa/order/config/InventoryClientConfig.java)
   - 명령: `Get-ChildItem services/order-service/src/main/java -Recurse -Filter *.java | Select-String 'RestClient\.builder\('` → 0줄. `RestClient`를 Spring Boot가 주는 `RestClient.Builder`로만 만든다는 뜻이다(research.md 결정 6).
   - 실제로 `traceparent` 헤더가 넘어가는지는 T102(㉩)가 검증한다. 여러 서비스의 로그를 추적 번호 하나로 찾는 요청 추적은 티켓 003의 운영 테스트에서 확인한다.
   - `Select-String -Path services/order-service/src/main/resources/application.yml -Pattern 'shutdown: graceful','timeout-per-shutdown-phase: 35s','probes','structured'` → 네 가지가 모두 나온다.
-- [ ] T153 이 단계의 기준을 확인한다. 이 단계 머리의 "끝났다고 보는 기준" 표에서 GitHub Actions를 뺀 네 줄을 차례로 실행한다 (gradle.properties)
+- [x] T153 이 단계의 기준을 확인한다. 이 단계 머리의 "끝났다고 보는 기준" 표에서 GitHub Actions를 뺀 네 줄을 차례로 실행한다 (gradle.properties)
   - 기대 결과: `msa.stage=P2` 한 줄, `.\gradlew.bat build` 종료 코드 0, 두 서비스의 테스트 종료 코드 0, 재고 서비스 파일이 바뀌지 않음. 실행한 명령과 종료 코드, 테스트 통과·실패 수를 보고에 적는다.
   - quickstart.md 3절 P2 줄과 대조해, 시나리오 2.1, 3.1, 3.2, 3.3, 4.1, 5.1, 6.1, 7.1, 7.2의 테스트, ㉦·㉧·㉨·㉩의 테스트, T101과 T140의 테스트가 모두 보고서에 있는지 하나씩 적는다.
 - [ ] T154 사용자가 push한 뒤 GitHub Actions 결과를 확인한다. push 전이면 "실행하지 않았다"로 보고한다 (.github/workflows/build.yml)
   - 명령: `gh run list --branch feat/001-place-order-p2 --limit 1` → 결론이 `success`.
-- [ ] T155 사용자에게 보고하고 멈춘다. 만들거나 고친 파일, 각 확인 작업의 명령과 결과, spec 시나리오 2.1, 3.1, 3.2, 3.3, 4.1, 5.1, 6.1, 7.1, 7.2와 ㉦, ㉧, ㉨, ㉩을 하나씩 대조한 결과, research.md 6절에서 이 단계에 확인한 세 가지(T112, T148, T149)의 결과를 적는다. 커밋·push·PR은 사용자가 요청할 때 한다 (파일 없음, 대화창 보고)
+- [x] T155 사용자에게 보고하고 멈춘다. 만들거나 고친 파일, 각 확인 작업의 명령과 결과, spec 시나리오 2.1, 3.1, 3.2, 3.3, 4.1, 5.1, 6.1, 7.1, 7.2와 ㉦, ㉧, ㉨, ㉩을 하나씩 대조한 결과, research.md 6절에서 이 단계에 확인한 세 가지(T112, T148, T149)의 결과를 적는다. 커밋·push·PR은 사용자가 요청할 때 한다 (파일 없음, 대화창 보고)
 
 이 목록에서는 항목 ID를 쓰지 않았다.
 
