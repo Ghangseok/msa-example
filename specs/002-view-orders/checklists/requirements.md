@@ -27,7 +27,7 @@
 - [x] Success criteria are technology-agnostic (no implementation details)
   - SC의 401, 403, 404는 테스트 케이스의 기대값이라 예외 1에 해당한다.
 - [x] All acceptance scenarios are defined
-  - 티켓 001 spec이 이 티켓으로 넘긴 조회 줄과 이번에 더해진 케이스 10개를 모두 시나리오 15개로 옮겼다. 조회와 관련된 테스트 케이스 12개가 모두 들어 있다.
+  - 티켓 001 spec이 이 티켓으로 넘긴 조회 줄과 이번에 더해진 케이스 10개를 모두 시나리오 15개로 옮겼다. 2026-10-12에 더해진 정렬·쪽 지정 케이스는 시나리오 2.6으로 옮겨 모두 16개다. 조회와 관련된 테스트 케이스 13개가 모두 들어 있다.
 - [x] Edge cases are identified
 - [x] Scope is clearly bounded
   - "범위 밖" 절에 유스케이스 문서 4절, 경로·필드·쿼리 매개변수, 티켓 003, 자동 복구를 적었다.
