@@ -7,21 +7,22 @@
 주문 서비스는 고객이 부르는 외부 API를 제공하고, 재고는 재고 서비스의 내부 API로 예약한다.
 
 - `POST /orders`: 로그인한 고객의 주문을 "처리중"으로 기록하고, 재고를 예약해서 결과(확정, 거절, 실패)를 돌려준다.
+- `GET /orders`, `GET /orders/{orderNo}`: 로그인한 고객 본인의 주문 목록과 주문 하나를 돌려준다. 목록은 주문 번호가 큰 순서이고 `page`, `size`로 쪽을 나눈다. 다른 고객의 주문, 없는 주문, 숫자가 아닌 주문 번호는 모두 같은 404(`ORDER_NOT_FOUND`)다.
 
-API의 기준은 `specs/001-place-order/contracts/order-api.yaml`이다. 재고 서비스 API의 기준은 저장소 루트 `contracts/inventory-api.yaml`이다. 이 서비스는 재고 서비스를 `InventoryClient`로만 부른다.
+API의 기준은 `specs/001-place-order/contracts/order-api.yaml`(주문 생성)과 `specs/002-view-orders/contracts/order-query-api.yaml`(주문 조회)이다. 재고 서비스 API의 기준은 저장소 루트 `contracts/inventory-api.yaml`이다. 이 서비스는 재고 서비스를 `InventoryClient`로만 부른다.
 
 ## 패키지 구조
 
 ```text
 services/order-service/src/main/java/com/example/msa/order/
 ├── OrderServiceApplication.java
-├── controller/   # OrderController. 요청 형식 검사와 응답 변환만 한다
-├── service/      # OrderService(트랜잭션 없음, 흐름), OrderTxService(트랜잭션), ReservationReleaser(해제를 따로 돌림)
+├── controller/   # OrderController(주문 생성), OrderQueryController(주문 조회). 요청 형식 검사와 응답 변환만 한다
+├── service/      # OrderService(트랜잭션 없음, 흐름), OrderTxService(트랜잭션), ReservationReleaser(해제를 따로 돌림), OrderQueryService(읽기 전용 조회)
 ├── mapper/       # OrderMapper
 ├── client/       # InventoryClient. 재고 서비스를 부르는 유일한 곳이다
-├── domain/       # OrderStatus, OrderReason, ReleaseStatus, OrderItems. Spring과 MyBatis를 모른다
-├── dto/          # PlaceOrderRequest, OrderItemRequest, OrderResponse, OrderWithItems
-├── exception/    # Problem Details 변환, 401 처리
+├── domain/       # OrderStatus, OrderReason, ReleaseStatus, OrderItems, OrderNumbers, PageRequest, InvalidQueryException. Spring과 MyBatis를 모른다
+├── dto/          # PlaceOrderRequest, OrderItemRequest, OrderResponse, OrderWithItems, OrderDetailResponse, OrderPage
+├── exception/    # Problem Details 변환(조회의 404·400 포함), 401 처리
 └── config/       # SecurityConfig, InventoryClientConfig, ReleaseExecutorConfig, ObservabilityConfig, 설정 클래스
 
 services/order-service/src/main/resources/

@@ -1,0 +1,52 @@
+package com.example.msa.order.dto;
+
+import com.example.msa.order.domain.OrderReason;
+import com.example.msa.order.domain.OrderStatus;
+import java.time.LocalDateTime;
+import java.util.List;
+
+/**
+ * 조회한 주문 하나의 응답이다. specs/002-view-orders/contracts/order-query-api.yaml의 OrderDetail과 같다.
+ * 고객 ID와 주문 요청 키는 담지 않는다.
+ *
+ * @param reason 거절이면 재고 부족이나 상품 없음, 실패이면 잠시 후 다시 시도다. 그 밖에는 null이다
+ * @param shortageProductIds 재고가 부족한 상품 ID. 상품 ID 순. 없으면 빈 목록
+ * @param missingProductIds 재고 데이터에 없는 상품 ID. 상품 ID 순. 없으면 빈 목록
+ * @param items 주문 항목. 상품 ID 순
+ * @param createdAt 주문 시각. 시각대 없이 DB가 저장한 값 그대로다
+ */
+public record OrderDetailResponse(
+        long orderNo,
+        OrderStatus status,
+        OrderReason reason,
+        List<String> shortageProductIds,
+        List<String> missingProductIds,
+        List<Line> items,
+        LocalDateTime createdAt) {
+
+    /** 주문 항목 한 줄이다. */
+    public record Line(String productId, int quantity) {}
+
+    /** 저장된 주문에서 응답을 만든다. 부족한 상품과 없는 상품 목록은 항목별 거절 사유에서 만든다. */
+    public static OrderDetailResponse from(OrderWithItems order) {
+        List<String> shortage = order.getItems().stream()
+                .filter(item -> item.rejectReason() == OrderReason.OUT_OF_STOCK)
+                .map(OrderWithItems.StoredItem::productId)
+                .toList();
+        List<String> missing = order.getItems().stream()
+                .filter(item -> item.rejectReason() == OrderReason.PRODUCT_NOT_FOUND)
+                .map(OrderWithItems.StoredItem::productId)
+                .toList();
+        List<Line> lines = order.getItems().stream()
+                .map(item -> new Line(item.productId(), item.quantity()))
+                .toList();
+        return new OrderDetailResponse(
+                order.getOrderNo(),
+                order.getStatus(),
+                order.getReason(),
+                shortage,
+                missing,
+                lines,
+                order.getCreatedAt());
+    }
+}

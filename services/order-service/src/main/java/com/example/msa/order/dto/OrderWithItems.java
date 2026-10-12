@@ -3,6 +3,7 @@ package com.example.msa.order.dto;
 import com.example.msa.order.domain.OrderReason;
 import com.example.msa.order.domain.OrderStatus;
 import com.example.msa.order.domain.ReleaseStatus;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,6 +26,7 @@ public class OrderWithItems {
     private OrderStatus status;
     private OrderReason reason;
     private ReleaseStatus releaseStatus;
+    private LocalDateTime createdAt;
     private List<StoredItem> items = new ArrayList<>();
 
     public long getOrderNo() {
@@ -73,6 +75,14 @@ public class OrderWithItems {
 
     public void setReleaseStatus(ReleaseStatus releaseStatus) {
         this.releaseStatus = releaseStatus;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     public List<StoredItem> getItems() {

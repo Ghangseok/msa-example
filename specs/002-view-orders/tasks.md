@@ -114,7 +114,7 @@ description: "주문 조회(티켓 002)의 작업 목록. 단계(Phase)마다 PR
 
 **⚠️ T001에서 사용자 승인을 받기 전에는 T002~T004를 하지 않는다.** 세 곳은 모두 기계 검사를 바꾸는 설정이다.
 
-- [ ] T001 설정 세 곳의 변경 내용을 사용자에게 보여 주고 승인을 받는다. 사용자 확인 필요 (파일 없음, 대화창 보고)
+- [x] T001 설정 세 곳의 변경 내용을 사용자에게 보여 주고 승인을 받는다. 사용자 확인 필요 (파일 없음, 대화창 보고)
   - 보여 줄 것: 곳마다 지금 글, 고칠 글, 이유. 이유의 근거는 plan.md "PR 단계"의 "설정 변경" 항과 research.md 항목 13이다.
   - **테스트 케이스 단계 표**: 지금 단계가 `T002`인 줄 13개를 `T002-P1`과 `T002-P2`로 나눈다. 시나리오 1.2, 2.1(1단계)과 시나리오 4.1, 4.2(2단계)가 같은 테스트 케이스 번호를 쓰므로, 그 번호는 줄을 둘로 나눈다 `[제안]`. 표에는 같은 번호가 같은 서비스에 단계만 달리 두 줄 있는 전례가 이미 있다. 이유는 맨 끝 "자동으로 고른 것" 3번에 있다.
   - **단계 순서 목록(`STAGE_ORDER`)**: 지금 `['P1', 'P2', 'P3']`다. 뒤에 `'T002-P1'`, `'T002-P2'`를 더한다 `[제안]`. 순서를 001의 세 단계 뒤에 두는 이유는, 이 티켓의 단계에서도 001의 모든 테스트가 계속 있어야 하기 때문이다. 검사를 끄는 변경이 아니라 검사 범위를 넓히는 변경이다. 검사 논리(단계가 지금 단계 이하인 줄마다 테스트가 있는가)는 그대로다. 지금은 단계가 `T002`인 줄이 순서에 없어서 검사에서 건너뛴다. 이름이 순서에 들어가면 그 줄들이 검사 대상이 된다.
@@ -122,7 +122,7 @@ description: "주문 조회(티켓 002)의 작업 목록. 단계(Phase)마다 PR
   - **고치는 단계**: 세 곳 모두 1단계 PR에서 고친다. 2단계 PR에서는 `msa.stage`만 올린다(T050). 001이 단계 표의 모든 줄을 첫 단계에서 넣은 방식과 같고, 단계 표 검사의 첫째 항목(문서의 모든 테스트 케이스 ID가 표에 있는가)이 첫 단계부터 표 전체를 요구한다. plan.md도 단계 순서 목록을 1단계 PR에서 더하는 것이 자연스럽다고 제안했다.
   - 같이 물을 것: 코딩 규약 문서 3-8절 표의 "테스트 케이스 ID 검사" 행의 끝에서 둘째 문장이 단계 값 `T002`를 설명한다. 단계 이름이 바뀌면 그 문장이 맞지 않게 된다. 이 문서를 고치는 일은 이 PR에 넣지 않고 별도 docs PR로 한다. 고칠 문장은 맨 끝 "사용자 확인 필요" 2번에 있다.
   - 승인받은 내용과 다르게 고치지 않는다. 사용자가 이름이나 값을 바꾸면 이 문서의 해당 작업을 먼저 고친다.
-- [ ] T002 [P] 테스트 케이스 단계 표에서 단계가 `T002`인 줄 13개의 단계 값을 아래 표대로 바꾸고, 시나리오 4.1·4.2용 줄 하나를 더한다. 다른 줄은 한 글자도 바꾸지 않는다. 사용자 확인 필요 (config/quality/test-case-stages.csv)
+- [x] T002 [P] 테스트 케이스 단계 표에서 단계가 `T002`인 줄 13개의 단계 값을 아래 표대로 바꾸고, 시나리오 4.1·4.2용 줄 하나를 더한다. 다른 줄은 한 글자도 바꾸지 않는다. 사용자 확인 필요 (config/quality/test-case-stages.csv)
   - 줄 순서는 바꾸지 않는다. 시나리오 1.2·2.1용 줄(`T002-P1`) 바로 아래에 시나리오 4.1·4.2용 줄(`T002-P2`)을 끼워 넣는다. 검사는 줄 순서를 보지 않는다.
   - 단계는 plan.md "인수 시나리오와 테스트 층" 표의 "단계 (Y안)" 칸을 따른다. 서비스 칸은 모두 `order`다.
   - 시나리오와 줄의 짝(머리 줄 `tc_id,service,stage`는 세지 않는다): 시나리오 1.1은 첫째 줄, 1.2·2.1은 둘째 줄, 4.1·4.2는 셋째 줄, 3.1은 넷째 줄, 1.3은 다섯째 줄, 4.3은 여섯째 줄, 2.3은 일곱째 줄, 2.2는 여덟째 줄, 2.5는 아홉째 줄, 1.4는 열째 줄, 4.4는 열한째 줄, 2.4는 열두째 줄, 1.5는 열셋째 줄, 2.6은 열넷째 줄이다.
@@ -265,13 +265,13 @@ description: "주문 조회(티켓 002)의 작업 목록. 단계(Phase)마다 PR
 > - **When** C1이 `size=101`로 조회한다
 > - **Then** 400을 받는다
 
-- [ ] T003 [P] 단계 순서 목록에 `T002-P1`, `T002-P2`를 더하고, 이 목록을 설명하는 클래스 주석을 맞춘다. 사용자 확인 필요 (build-logic/src/main/groovy/msa/quality/TestCaseIdCheck.groovy)
+- [x] T003 [P] 단계 순서 목록에 `T002-P1`, `T002-P2`를 더하고, 이 목록을 설명하는 클래스 주석을 맞춘다. 사용자 확인 필요 (build-logic/src/main/groovy/msa/quality/TestCaseIdCheck.groovy)
   - `STAGE_ORDER`를 `['P1', 'P2', 'P3', 'T002-P1', 'T002-P2'].asImmutable()`로 바꾼다.
   - 클래스 주석에서 단계가 `T002`인 줄을 "단계 순서에 들지 않아 건너뛴다"고 설명한 문장만 새 단계 이름에 맞게 고친다. 검사 코드(`check()`, `testCaseStageRows()`)는 한 줄도 바꾸지 않는다.
   - 이 변경만으로는 지금 단계(`P3`)의 검사 결과가 바뀌지 않는다. 지금 단계보다 순서가 뒤인 줄은 검사하지 않기 때문이다.
-- [ ] T004 [P] 단계 표시를 `msa.stage=T002-P1`로 바꾼다. 사용자 확인 필요 (gradle.properties)
+- [x] T004 [P] 단계 표시를 `msa.stage=T002-P1`로 바꾼다. 사용자 확인 필요 (gradle.properties)
   - 근거: 001 tasks.md의 T082도 단계 표시를 해당 단계의 준비 작업에서 올렸다.
-- [ ] T005 세 설정이 승인받은 내용과 같은지 확인한다 (config/quality/test-case-stages.csv, build-logic/src/main/groovy/msa/quality/TestCaseIdCheck.groovy, gradle.properties)
+- [x] T005 세 설정이 승인받은 내용과 같은지 확인한다 (config/quality/test-case-stages.csv, build-logic/src/main/groovy/msa/quality/TestCaseIdCheck.groovy, gradle.properties)
   - 명령: `Select-String -Path config/quality/test-case-stages.csv -Pattern ',T002$'` → 0줄
   - 명령: `Select-String -Path config/quality/test-case-stages.csv -Pattern ',T002-P1$'` → 11줄, `-Pattern ',T002-P2$'` → 3줄
   - 명령: `git diff --stat` → 바뀐 파일이 위 세 파일뿐이다.
@@ -282,7 +282,7 @@ description: "주문 조회(티켓 002)의 작업 목록. 단계(Phase)마다 PR
 
 **⚠️ 이 절이 끝나기 전에는 User Story 1을 시작하지 않는다.**
 
-- [ ] T006 서비스 통합 테스트의 도우미 `ViewTestSupport`를 만든다. `IntegrationTestSupport`를 상속한다 (services/order-service/src/test/java/com/example/msa/order/integration/ViewTestSupport.java)
+- [x] T006 서비스 통합 테스트의 도우미 `ViewTestSupport`를 만든다. `IntegrationTestSupport`를 상속한다 (services/order-service/src/test/java/com/example/msa/order/integration/ViewTestSupport.java)
   - 근거: plan.md Source Code 트리, research.md 항목 12(주문을 `OrderMapper`로 직접 저장한다)와 항목 13(WireMock 없이 `IntegrationTestSupport`를 상속한다). `IntegrationTestSupport`는 고치지 않는다.
   - 고객 C1, C2의 `sub`는 `IntegrationTestSupport`에 이미 있는 `C1`, `C2`를 쓴다. 관리자 M1의 `sub` 값 `admin-m1`과 상수 `M1`은 이 클래스에 둔다 `[제안]`.
   - **관리자 흉내**: `admin(String sub)`가 `jwt()`에 `sub`를 주고 권한 `ROLE_ADMIN`을 준다 `[제안]`. Spring Security Test의 `jwt()`는 이 티켓이 만드는 역할 변환기를 거치지 않으므로 권한을 직접 준다(research.md 항목 9의 "테스트 때 알아 둘 것"). 고객은 `customer(sub)`를 그대로 쓴다.
@@ -303,16 +303,16 @@ description: "주문 조회(티켓 002)의 작업 목록. 단계(Phase)마다 PR
 
 테스트 다섯 개는 한 클래스 `ViewOrderIntegrationTest`에 모은다(plan.md 표). 같은 파일에 메서드를 더하므로 `[P]`를 붙이지 않았다. 아래 응답 필드 이름(`orderNo`, `status`, `reason`, `shortageProductIds`, `missingProductIds`, `items`, `createdAt`)과 값(`REJECTED`, `OUT_OF_STOCK` 같은 영어 이름)은 계약 파일 `specs/002-view-orders/contracts/order-query-api.yaml`이 정한 것이다. 테스트 케이스 문서는 한국어 개념만 적었다(맨 끝 "사용자 확인 필요" 5번).
 
-- [ ] T007 [US1] 시나리오 1.1의 서비스 통합 테스트를 쓴다. 이 시나리오는 "그 주문이 거절 상태로 기록되어 있고 C1이 조회할 수 있다" 줄만 검증한다. 상품 A 3개, 상품 B 2개(B는 재고 부족)로 거절된 C1의 주문을 `seed`로 준비하고, C1이 `GET /orders/{주문 번호}`로 조회한다. 상태 200, `status`가 `REJECTED`, `reason`이 `OUT_OF_STOCK`, `shortageProductIds`가 `["B"]`, `items`가 A 3개와 B 2개인 것을 단언한다. `@DisplayName`은 시나리오 1.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/ViewOrderIntegrationTest.java)
+- [x] T007 [US1] 시나리오 1.1의 서비스 통합 테스트를 쓴다. 이 시나리오는 "그 주문이 거절 상태로 기록되어 있고 C1이 조회할 수 있다" 줄만 검증한다. 상품 A 3개, 상품 B 2개(B는 재고 부족)로 거절된 C1의 주문을 `seed`로 준비하고, C1이 `GET /orders/{주문 번호}`로 조회한다. 상태 200, `status`가 `REJECTED`, `reason`이 `OUT_OF_STOCK`, `shortageProductIds`가 `["B"]`, `items`가 A 3개와 B 2개인 것을 단언한다. `@DisplayName`은 시나리오 1.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/ViewOrderIntegrationTest.java)
   - 재고 수량(A는 10개, B는 1개 그대로)은 주문을 만드는 단계의 기대값이고 001이 검증했다. 이 테스트는 확인하지 않는다(spec 시나리오 1.1).
-- [ ] T008 [US1] 시나리오 1.2의 서비스 통합 테스트를 같은 파일에 더한다. C1의 주문을 준비하고 C2가 그 번호로 조회하면 404를 받는지 본다. 응답 본문이 Problem Details 형식(`application/problem+json`)이고 `code`가 `ORDER_NOT_FOUND`인지도 단언한다(공통 전제의 조회 API 오류 응답 줄). `@DisplayName`은 시나리오 1.2의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/ViewOrderIntegrationTest.java)
-- [ ] T009 [US1] 시나리오 1.3의 서비스 통합 테스트를 같은 파일에 더한다. 주문 9999는 없다. C1이 `GET /orders/9999`로 조회하면 404를 받고, 이 응답이 "C2의 주문을 C1이 조회했을 때"의 응답과 같은지(`status`, `type`, `title`, `detail`, `code`가 모두 같다) 본다. C1이 `GET /orders/abc`로 조회해도 404이고 `code`가 `ORDER_NOT_FOUND`인지 본다. `@DisplayName`은 시나리오 1.3의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/ViewOrderIntegrationTest.java)
+- [x] T008 [US1] 시나리오 1.2의 서비스 통합 테스트를 같은 파일에 더한다. C1의 주문을 준비하고 C2가 그 번호로 조회하면 404를 받는지 본다. 응답 본문이 Problem Details 형식(`application/problem+json`)이고 `code`가 `ORDER_NOT_FOUND`인지도 단언한다(공통 전제의 조회 API 오류 응답 줄). `@DisplayName`은 시나리오 1.2의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/ViewOrderIntegrationTest.java)
+- [x] T009 [US1] 시나리오 1.3의 서비스 통합 테스트를 같은 파일에 더한다. 주문 9999는 없다. C1이 `GET /orders/9999`로 조회하면 404를 받고, 이 응답이 "C2의 주문을 C1이 조회했을 때"의 응답과 같은지(`status`, `type`, `title`, `detail`, `code`가 모두 같다) 본다. C1이 `GET /orders/abc`로 조회해도 404이고 `code`가 `ORDER_NOT_FOUND`인지 본다. `@DisplayName`은 시나리오 1.3의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/ViewOrderIntegrationTest.java)
   - 주문 번호 9999는 쓰지 않는 번호다. 시퀀스는 1부터 올라가고 테스트가 끝나면 주문 테이블을 비우므로 겹치지 않는다.
-- [ ] T010 [US1] 시나리오 1.4의 서비스 통합 테스트를 같은 파일에 더한다. 메서드 둘로 나눈다. 첫째는 A 3개와 B 2개(B 부족)로 거절된 주문을 조회해 상태 거절(`REJECTED`), 사유 재고 부족(`OUT_OF_STOCK`), 부족한 상품 B(`shortageProductIds`가 `["B"]`)를 단언한다. 둘째는 A 3개, Z 1개, B 2개(Z는 없는 상품, B 부족)로 거절된 주문을 조회해 상태 거절, 사유 상품 없음(`PRODUCT_NOT_FOUND`), `missingProductIds`가 `["Z"]`, `shortageProductIds`가 `["B"]`를 단언한다. `@DisplayName`은 시나리오 1.4의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/ViewOrderIntegrationTest.java)
-- [ ] T011 [US1] 시나리오 1.5의 서비스 통합 테스트를 같은 파일에 더한다. 상품 A 3개로 확정된 C1의 주문을 조회해 `orderNo`, `items`(상품 A, 수량 3), `status`가 `CONFIRMED`, `createdAt`이 있고 비어 있지 않은 것을 단언한다. `@DisplayName`은 시나리오 1.5의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/ViewOrderIntegrationTest.java)
+- [x] T010 [US1] 시나리오 1.4의 서비스 통합 테스트를 같은 파일에 더한다. 메서드 둘로 나눈다. 첫째는 A 3개와 B 2개(B 부족)로 거절된 주문을 조회해 상태 거절(`REJECTED`), 사유 재고 부족(`OUT_OF_STOCK`), 부족한 상품 B(`shortageProductIds`가 `["B"]`)를 단언한다. 둘째는 A 3개, Z 1개, B 2개(Z는 없는 상품, B 부족)로 거절된 주문을 조회해 상태 거절, 사유 상품 없음(`PRODUCT_NOT_FOUND`), `missingProductIds`가 `["Z"]`, `shortageProductIds`가 `["B"]`를 단언한다. `@DisplayName`은 시나리오 1.4의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/ViewOrderIntegrationTest.java)
+- [x] T011 [US1] 시나리오 1.5의 서비스 통합 테스트를 같은 파일에 더한다. 상품 A 3개로 확정된 C1의 주문을 조회해 `orderNo`, `items`(상품 A, 수량 3), `status`가 `CONFIRMED`, `createdAt`이 있고 비어 있지 않은 것을 단언한다. `@DisplayName`은 시나리오 1.5의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/ViewOrderIntegrationTest.java)
   - 주문 시각의 값은 단언하지 않는다. 문서가 "주문 시각이 나온다"까지만 정했고, `CREATED_AT`은 DB가 `SYSTIMESTAMP`로 넣어서 테스트가 값을 정할 수 없다(research.md 항목 12).
   - `createdAt`의 글자 모양을 보고에 적을 수 있도록 테스트 로그에 한 줄 남긴다(`log.info`) `[제안]`. 단언하지 않는다. T047이 이 값을 읽는다.
-- [ ] T012 [US1] 위 테스트가 실패하는 것을 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/ViewOrderIntegrationTest.java)
+- [x] T012 [US1] 위 테스트가 실패하는 것을 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/ViewOrderIntegrationTest.java)
   - 명령: `.\gradlew.bat :services:order-service:test --tests "com.example.msa.order.integration.ViewOrderIntegrationTest"`
   - 기대 결과: 종료 코드가 0이 아니고, 테스트 메서드 여섯 개(T007, T008, T009, T010 둘, T011)가 모두 실패한다. 실패 이유는 조회 API가 없어서 생긴 것이다(예: 주문 하나 조회가 404인데 응답 본문에 `code`가 없다). 하나라도 통과하면 멈추고 사용자에게 묻는다.
   - 컴파일 오류가 나면 도우미나 테스트를 고친다. **앱이 뜨지 못하면 멈추고 보고한다.** `IntegrationTestSupport`를 `InventoryWireMock` 없이 직접 상속한 테스트는 지금 없어서, 컨텍스트가 뜨는지 이 작업이 처음 확인한다(research.md 4절). 원인이 WireMock 없음이면 research.md 항목 13의 결정을 바꾸는 일이라 사용자에게 묻는다.
@@ -366,19 +366,19 @@ description: "주문 조회(티켓 002)의 작업 목록. 단계(Phase)마다 PR
 
 #### 구현
 
-- [ ] T013 [P] [US1] 주문 번호 변환의 단위 테스트를 쓴다. 이 테스트는 아직 없는 `OrderNumbers`를 참조하므로 컴파일 오류로 실패한다. 그 실패를 본 뒤 T015를 한다 (services/order-service/src/test/java/com/example/msa/order/domain/OrderNumbersTest.java)
+- [x] T013 [P] [US1] 주문 번호 변환의 단위 테스트를 쓴다. 이 테스트는 아직 없는 `OrderNumbers`를 참조하므로 컴파일 오류로 실패한다. 그 실패를 본 뒤 T015를 한다 (services/order-service/src/test/java/com/example/msa/order/domain/OrderNumbersTest.java)
   - 검사할 것: 글자 `abc`는 숫자가 아니라서 변환 결과가 비어 있다(시나리오 1.3의 "숫자가 아닌 주문 번호"). 글자 `9999`는 숫자 9999로 바뀐다.
   - `long`에 담기지 않는 아주 큰 숫자와 앞뒤 공백, 음수는 단언하지 않는다. 문서에 기대값이 없다(맨 끝 "사용자 확인 필요" 4번).
-- [ ] T014 [US1] 조회 Mapper 테스트를 쓴다. plan.md 표의 시나리오 1.1, 1.2, 1.4, 1.5 "Mapper" 칸이다. 이 테스트는 아직 없는 Mapper 메서드를 참조하므로 컴파일 오류로 실패한다. 그 실패를 본 뒤 T016과 T017을 한다 (services/order-service/src/test/java/com/example/msa/order/mapper/OrderQueryMapperTest.java)
+- [x] T014 [US1] 조회 Mapper 테스트를 쓴다. plan.md 표의 시나리오 1.1, 1.2, 1.4, 1.5 "Mapper" 칸이다. 이 테스트는 아직 없는 Mapper 메서드를 참조하므로 컴파일 오류로 실패한다. 그 실패를 본 뒤 T016과 T017을 한다 (services/order-service/src/test/java/com/example/msa/order/mapper/OrderQueryMapperTest.java)
   - `@MybatisTest`, `@AutoConfigureTestDatabase(replace = NONE)`, `@ImportTestcontainers(OracleTestContainer.class)`, `@ActiveProfiles("test")`로 기존 `OrderMapperTest`와 같은 방식으로 쓴다. `OrderMapperTest`는 고치지 않는다.
   - 거절 주문의 상태, 사유, 항목별 거절 사유(`OUT_OF_STOCK`, `PRODUCT_NOT_FOUND`)를 읽는다(시나리오 1.1, 1.4의 값: A 3개, Z 1개, B 2개). **항목의 순서는 단언하지 않는다.** 순서 없는 비교(`containsExactlyInAnyOrder`)를 쓴다 `[제안]`. 조회 결과의 항목 순서를 정한 기준 문서가 없다(맨 끝 "사용자 확인 필요" 4번).
   - 주문 번호와 고객이 모두 맞아야 읽힌다. 고객이 다르면 결과가 없다(시나리오 1.2).
   - `CREATED_AT`을 읽으면 `createdAt`이 비어 있지 않다(시나리오 1.5).
   - 새 Mapper 메서드 이름은 `selectCustomerOrder(orderNo, customerId)`로 한다 `[제안]`.
-- [ ] T015 [US1] 주문 번호 변환을 만든다. 순수 Java 클래스 `OrderNumbers`의 `parse(글자)`가 숫자면 주문 번호를, 숫자가 아니거나 `long`에 담기지 않으면 빈 값(`OptionalLong`)을 돌려준다 `[제안]`. 예외를 던지지 않는다 (services/order-service/src/main/java/com/example/msa/order/domain/OrderNumbers.java)
+- [x] T015 [US1] 주문 번호 변환을 만든다. 순수 Java 클래스 `OrderNumbers`의 `parse(글자)`가 숫자면 주문 번호를, 숫자가 아니거나 `long`에 담기지 않으면 빈 값(`OptionalLong`)을 돌려준다 `[제안]`. 예외를 던지지 않는다 (services/order-service/src/main/java/com/example/msa/order/domain/OrderNumbers.java)
   - 근거: research.md 항목 11. 숫자 타입으로 받으면 `abc`에 Spring이 400을 낸다. 시나리오 1.3은 404를 요구한다.
   - `domain` 패키지는 Spring과 MyBatis를 모른다. ArchUnit 규칙이 검사한다.
-- [ ] T016 [P] [US1] 조회 응답 DTO를 만들고 `OrderWithItems`에 주문 시각 필드를 더한다 (services/order-service/src/main/java/com/example/msa/order/dto/OrderDetailResponse.java, services/order-service/src/main/java/com/example/msa/order/dto/OrderWithItems.java)
+- [x] T016 [P] [US1] 조회 응답 DTO를 만들고 `OrderWithItems`에 주문 시각 필드를 더한다 (services/order-service/src/main/java/com/example/msa/order/dto/OrderDetailResponse.java, services/order-service/src/main/java/com/example/msa/order/dto/OrderWithItems.java)
   - `OrderDetailResponse`는 record다. 필드는 `orderNo`, `status`, `reason`, `shortageProductIds`, `missingProductIds`, `items`, `createdAt`이고, 저장된 주문에서 만드는 `from(OrderWithItems)`가 있다. 부족한 상품과 없는 상품 목록은 기존 `OrderResponse.from`과 같은 방식으로 항목별 거절 사유에서 만든다. `items`의 각 줄은 `productId`, `quantity`다.
   - 필드 규칙은 data-model.md 2절의 원문을 따른다.
     - `reason`: 「글자 또는 `null`」. 「거절이면 `OUT_OF_STOCK`(재고 부족) 또는 `PRODUCT_NOT_FOUND`(상품 없음). 실패이면 `RETRY_LATER`(잠시 후 다시 시도). 그 밖에는 `null`」
@@ -388,23 +388,23 @@ description: "주문 조회(티켓 002)의 작업 목록. 단계(Phase)마다 PR
     - 「필드는 빠지지 않는다. 값이 없는 필드(`reason`, `releaseStatus`)는 `null`로 낸다.」
     - 「`ORDERS.CUSTOMER_ID`와 `ORDERS.REQUEST_KEY`는 응답에 내지 않는다.」
   - `OrderWithItems`에 `LocalDateTime createdAt`과 getter, setter를 더한다. 기존 필드와 기존 쓰기 흐름은 이 필드를 쓰지 않으므로 바꾸지 않는다(data-model.md 6절).
-- [ ] T017 [US1] 주문 하나 조회 SQL을 만든다. 새 `resultMap` `orderViewMap`과 `select` 하나, Mapper 메서드 하나를 더한다 (services/order-service/src/main/resources/mapper/OrderMapper.xml, services/order-service/src/main/java/com/example/msa/order/mapper/OrderMapper.java)
+- [x] T017 [US1] 주문 하나 조회 SQL을 만든다. 새 `resultMap` `orderViewMap`과 `select` 하나, Mapper 메서드 하나를 더한다 (services/order-service/src/main/resources/mapper/OrderMapper.xml, services/order-service/src/main/java/com/example/msa/order/mapper/OrderMapper.java)
   - `orderViewMap`은 기존 `orderWithItemsMap`을 `extends`로 이어받고 `CREATED_AT`을 `createdAt`에 짝짓는 `result` 하나만 더한다. 기존 `resultMap`과 기존 `select`는 바꾸지 않는다.
   - `selectCustomerOrder`: `WHERE o.ORDER_NO = #{orderNo} AND o.CUSTOMER_ID = #{customerId}`, 항목은 `ORDER BY i.PRODUCT_ID`. 주문과 항목은 `LEFT JOIN`으로 `<collection>` 한 번에 읽는다. 고객 조건을 SQL에 넣어서 다른 고객의 주문이 없는 주문과 같은 빈 결과가 된다(research.md 항목 11).
   - 값은 `#{}`로만 넣고 `SELECT *`를 쓰지 않는다. SQL은 Oracle 19c에서 도는 것만 쓴다(`docs/standards/coding-conventions.md` 3-2절, 3-3절). 기계 검사가 `${`와 `SELECT *`, 19c 이후 키워드를 찾는다.
   - 이 작업이 끝나면 T014의 Mapper 테스트가 통과한다.
-- [ ] T018 [P] [US1] "없음" 응답 본문을 만든다. `orderNotFound()`(이름 `[제안]`)가 404 Problem Details를 돌려준다 (services/order-service/src/main/java/com/example/msa/order/exception/ProblemDetailsHandler.java)
+- [x] T018 [P] [US1] "없음" 응답 본문을 만든다. `orderNotFound()`(이름 `[제안]`)가 404 Problem Details를 돌려준다 (services/order-service/src/main/java/com/example/msa/order/exception/ProblemDetailsHandler.java)
   - `code`는 `ORDER_NOT_FOUND`, `type`은 `urn:msa-example:problem:ORDER_NOT_FOUND`다. 기존 `problem(...)` 메서드를 쓴다.
   - 한 가지 `title`과 한 가지 `detail` 글만 쓴다. `detail`에 요청한 주문 번호를 담지 않는다. 담으면 경우마다 글이 달라져서 그 주문이 있는지 알 수 있게 된다. 기준은 `docs/requirements/uc-002-view-orders.md` 3절 "업무 규칙"의 규칙 칸이다: 「고객은 다른 고객의 주문을 볼 수 없다. 다른 고객의 주문 번호로 조회하면 "없음"으로 응답해, 그 주문이 있는지도 알 수 없게 한다」(research.md 항목 11).
-- [ ] T019 [US1] 조회 서비스를 만든다. `findMine(고객 ID, 주문 번호 글자)`(이름 `[제안]`)가 `OrderNumbers.parse`로 글자를 숫자로 바꾸고, 숫자가 아니면 DB를 부르지 않고 빈 값을 돌려준다. 숫자면 `selectCustomerOrder`를 부르고 `OrderDetailResponse`로 바꿔 돌려준다 (services/order-service/src/main/java/com/example/msa/order/service/OrderQueryService.java)
+- [x] T019 [US1] 조회 서비스를 만든다. `findMine(고객 ID, 주문 번호 글자)`(이름 `[제안]`)가 `OrderNumbers.parse`로 글자를 숫자로 바꾸고, 숫자가 아니면 DB를 부르지 않고 빈 값을 돌려준다. 숫자면 `selectCustomerOrder`를 부르고 `OrderDetailResponse`로 바꿔 돌려준다 (services/order-service/src/main/java/com/example/msa/order/service/OrderQueryService.java)
   - 읽기 전용 트랜잭션을 메서드마다 붙인다(`@Transactional(readOnly = true)`) `[제안]`. 클래스에는 붙이지 않는다. `ArchitectureTest`의 주석이 "`@Transactional`을 클래스가 아니라 메서드에 붙인다"고 설명하고 있어서, 그 설명이 계속 맞게 하려는 것이다.
   - 이 서비스는 `client` 패키지를 부르지 않는다. 재고 서비스를 부르지 않는다.
   - 반환 형식은 `Optional<OrderDetailResponse>`로 한다 `[제안]`. 빈 값이면 컨트롤러가 404로 바꾼다. 서비스가 웹 예외를 던지지 않는다.
-- [ ] T020 [US1] 조회 컨트롤러를 만든다. `GET /orders/{orderNo}`가 `@AuthenticationPrincipal Jwt`의 `getSubject()`와 경로의 글자를 서비스에 넘기고, 결과가 있으면 200과 본문을, 없으면 `ErrorResponseException`으로 404(`orderNotFound()`)를 낸다 (services/order-service/src/main/java/com/example/msa/order/controller/OrderQueryController.java)
+- [x] T020 [US1] 조회 컨트롤러를 만든다. `GET /orders/{orderNo}`가 `@AuthenticationPrincipal Jwt`의 `getSubject()`와 경로의 글자를 서비스에 넘기고, 결과가 있으면 200과 본문을, 없으면 `ErrorResponseException`으로 404(`orderNotFound()`)를 낸다 (services/order-service/src/main/java/com/example/msa/order/controller/OrderQueryController.java)
   - **클래스에 `@RequestMapping`을 두지 않고 메서드마다 경로를 쓴다** `[제안]`. plan.md가 tasks.md에 넘긴 결정이다. 2단계에서 `/admin/orders`가 더해져도 클래스 하나가 두 경로 접두사를 가지지 않는다. 001의 `OrderController`는 고치지 않는다.
   - `{orderNo}`는 `String`으로 받는다. 업무 판단(숫자 변환)은 서비스가 한다.
   - 고객 ID는 토큰의 `sub`에서만 얻는다. 쿼리 매개변수나 헤더로 받은 고객 ID는 쓰지 않는다. `SecurityConfig`는 이 단계에서 바꾸지 않는다. `anyRequest().authenticated()`가 이 경로를 이미 막는다.
-- [ ] T021 [US1] 이 절의 테스트가 모두 통과하는지 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/ViewOrderIntegrationTest.java)
+- [x] T021 [US1] 이 절의 테스트가 모두 통과하는지 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/ViewOrderIntegrationTest.java)
   - 명령: `.\gradlew.bat :services:order-service:test --tests "com.example.msa.order.integration.ViewOrderIntegrationTest" --tests "com.example.msa.order.domain.OrderNumbersTest" --tests "com.example.msa.order.mapper.OrderQueryMapperTest"`
   - 기대 결과: 종료 코드 0. 통과·실패 수를 보고에 적는다.
   - Mapper 테스트가 통과하면 인라인 뷰 없는 단일 조회 SQL이 실제 Oracle에서 도는 것이 확인된다. 쪽 지정 SQL은 T031, T034에서 확인한다.
@@ -423,15 +423,15 @@ description: "주문 조회(티켓 002)의 작업 목록. 단계(Phase)마다 PR
 
 테스트 여섯 개는 한 클래스 `ListOrdersIntegrationTest`에 모은다(plan.md 표). 같은 파일에 메서드를 더하므로 `[P]`를 붙이지 않았다. 목록 응답의 모양(`orders`, `page`, `size`, `hasNext`)은 계약 파일이 정했다.
 
-- [ ] T022 [US2] 시나리오 2.1의 서비스 통합 테스트를 쓴다. C1의 주문을 준비하고 C1이 `GET /orders`로 조회하면 상태 200이고 `orders`에 그 주문만 있는지 단언한다. `@DisplayName`은 시나리오 2.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/ListOrdersIntegrationTest.java)
-- [ ] T023 [US2] 시나리오 2.2의 서비스 통합 테스트를 같은 파일에 더한다. C1의 주문과 C2의 주문을 준비한다. C1이 조회하면 C1의 주문만 나오고 C2의 주문은 나오지 않는다. C2가 조회하면 C2의 주문만 나오고 C1의 주문은 나오지 않는다. `@DisplayName`은 시나리오 2.2의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/ListOrdersIntegrationTest.java)
-- [ ] T024 [US2] 시나리오 2.3의 서비스 통합 테스트를 같은 파일에 더한다. C2의 주문이 하나도 없는 상태에서 C2가 조회하면 상태 200이고 `orders`가 빈 배열인지 단언한다(공통 전제의 "주문이 하나도 없는 목록도 200이다"). `@DisplayName`은 시나리오 2.3의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/ListOrdersIntegrationTest.java)
-- [ ] T025 [US2] 시나리오 2.4의 서비스 통합 테스트를 같은 파일에 더한다. C1의 처리중 주문과 실패 주문(사유 `RETRY_LATER`)을 준비한다. 처리중 주문을 조회하면 `status`가 `PENDING`이다. 실패 주문을 조회하면 `status`가 `FAILED`, `reason`이 `RETRY_LATER`다. C1이 목록을 조회하면 두 주문이 모두 나온다. `@DisplayName`은 시나리오 2.4의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/ListOrdersIntegrationTest.java)
-- [ ] T026 [US2] 시나리오 2.5의 서비스 통합 테스트를 같은 파일에 더한다. 관리자 M1(`admin(M1)`)의 주문과 C1의 주문을 준비한다. M1이 `GET /orders`로 조회하면 M1의 주문만 나온다. M1이 자기 주문을 조회하면 그 주문을 받는다. M1이 C1의 주문을 조회하면 404를 받는다. `@DisplayName`은 시나리오 2.5의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/ListOrdersIntegrationTest.java)
-- [ ] T027 [US2] 시나리오 2.6의 서비스 통합 테스트를 같은 파일에 더한다. C1에게 주문 25개를 준비하고 저장 결과의 주문 번호를 순서대로 기억한다. 쪽 지정 없이 조회하면 상태 200, `orders`가 20개, 주문 번호가 큰 순서로 가장 최근 20개, `hasNext`가 true다. `page=1`로 조회하면 나머지 5개(가장 오래된 5개를 큰 순서로)와 `hasNext`가 false다. `size=101`로 조회하면 상태 400이고 `code`가 `INVALID_QUERY_PARAMETER`다. `@DisplayName`은 시나리오 2.6의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/ListOrdersIntegrationTest.java)
-- [ ] T028 [P] [US2] 쿼리의 고객 ID를 무시하는지 보는 서비스 통합 테스트를 쓴다. C1의 주문과 C2의 주문을 준비하고, C1의 토큰으로 `GET /orders?customerId=` 뒤에 C2의 `sub`를 붙여 부른다. 결과에 C1의 주문만 있는지 단언한다. 인수 시나리오 테스트가 아니므로 테스트 케이스 ID를 붙이지 않는다 (services/order-service/src/test/java/com/example/msa/order/integration/OrderOwnerQueryIntegrationTest.java)
+- [x] T022 [US2] 시나리오 2.1의 서비스 통합 테스트를 쓴다. C1의 주문을 준비하고 C1이 `GET /orders`로 조회하면 상태 200이고 `orders`에 그 주문만 있는지 단언한다. `@DisplayName`은 시나리오 2.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/ListOrdersIntegrationTest.java)
+- [x] T023 [US2] 시나리오 2.2의 서비스 통합 테스트를 같은 파일에 더한다. C1의 주문과 C2의 주문을 준비한다. C1이 조회하면 C1의 주문만 나오고 C2의 주문은 나오지 않는다. C2가 조회하면 C2의 주문만 나오고 C1의 주문은 나오지 않는다. `@DisplayName`은 시나리오 2.2의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/ListOrdersIntegrationTest.java)
+- [x] T024 [US2] 시나리오 2.3의 서비스 통합 테스트를 같은 파일에 더한다. C2의 주문이 하나도 없는 상태에서 C2가 조회하면 상태 200이고 `orders`가 빈 배열인지 단언한다(공통 전제의 "주문이 하나도 없는 목록도 200이다"). `@DisplayName`은 시나리오 2.3의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/ListOrdersIntegrationTest.java)
+- [x] T025 [US2] 시나리오 2.4의 서비스 통합 테스트를 같은 파일에 더한다. C1의 처리중 주문과 실패 주문(사유 `RETRY_LATER`)을 준비한다. 처리중 주문을 조회하면 `status`가 `PENDING`이다. 실패 주문을 조회하면 `status`가 `FAILED`, `reason`이 `RETRY_LATER`다. C1이 목록을 조회하면 두 주문이 모두 나온다. `@DisplayName`은 시나리오 2.4의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/ListOrdersIntegrationTest.java)
+- [x] T026 [US2] 시나리오 2.5의 서비스 통합 테스트를 같은 파일에 더한다. 관리자 M1(`admin(M1)`)의 주문과 C1의 주문을 준비한다. M1이 `GET /orders`로 조회하면 M1의 주문만 나온다. M1이 자기 주문을 조회하면 그 주문을 받는다. M1이 C1의 주문을 조회하면 404를 받는다. `@DisplayName`은 시나리오 2.5의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/ListOrdersIntegrationTest.java)
+- [x] T027 [US2] 시나리오 2.6의 서비스 통합 테스트를 같은 파일에 더한다. C1에게 주문 25개를 준비하고 저장 결과의 주문 번호를 순서대로 기억한다. 쪽 지정 없이 조회하면 상태 200, `orders`가 20개, 주문 번호가 큰 순서로 가장 최근 20개, `hasNext`가 true다. `page=1`로 조회하면 나머지 5개(가장 오래된 5개를 큰 순서로)와 `hasNext`가 false다. `size=101`로 조회하면 상태 400이고 `code`가 `INVALID_QUERY_PARAMETER`다. `@DisplayName`은 시나리오 2.6의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/ListOrdersIntegrationTest.java)
+- [x] T028 [P] [US2] 쿼리의 고객 ID를 무시하는지 보는 서비스 통합 테스트를 쓴다. C1의 주문과 C2의 주문을 준비하고, C1의 토큰으로 `GET /orders?customerId=` 뒤에 C2의 `sub`를 붙여 부른다. 결과에 C1의 주문만 있는지 단언한다. 인수 시나리오 테스트가 아니므로 테스트 케이스 ID를 붙이지 않는다 (services/order-service/src/test/java/com/example/msa/order/integration/OrderOwnerQueryIntegrationTest.java)
   - 기대값은 `docs/requirements/uc-002-view-orders.md` 3절 "업무 규칙"의 첫 문장이다: 「고객은 다른 고객의 주문을 볼 수 없다.」
-- [ ] T029 [US2] 위 테스트가 실패하는 것을 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/ListOrdersIntegrationTest.java)
+- [x] T029 [US2] 위 테스트가 실패하는 것을 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/ListOrdersIntegrationTest.java)
   - 명령: `.\gradlew.bat :services:order-service:test --tests "com.example.msa.order.integration.ListOrdersIntegrationTest" --tests "com.example.msa.order.integration.OrderOwnerQueryIntegrationTest"`
   - 기대 결과: 종료 코드가 0이 아니고, T022~T028의 테스트가 모두 실패한다. 실패 이유는 `GET /orders`가 없어서 생긴 것이다(지금 `/orders`에는 POST만 있어서 405가 나온다). T025는 처리중·실패 주문 하나씩을 조회하는 부분이 T020의 주문 하나 조회로 이미 통과하더라도 목록 부분에서 실패해야 한다. 하나라도 통과하면 멈추고 사용자에게 묻는다.
 
@@ -494,32 +494,32 @@ description: "주문 조회(티켓 002)의 작업 목록. 단계(Phase)마다 PR
 
 #### 구현
 
-- [ ] T030 [P] [US2] 쪽 지정의 단위 테스트를 쓴다. 이 테스트는 아직 없는 `PageRequest`를 참조하므로 컴파일 오류로 실패한다. 그 실패를 본 뒤 T032를 한다 (services/order-service/src/test/java/com/example/msa/order/domain/PageRequestTest.java)
+- [x] T030 [P] [US2] 쪽 지정의 단위 테스트를 쓴다. 이 테스트는 아직 없는 `PageRequest`를 참조하므로 컴파일 오류로 실패한다. 그 실패를 본 뒤 T032를 한다 (services/order-service/src/test/java/com/example/msa/order/domain/PageRequestTest.java)
   - 검사할 것: `page`와 `size`를 주지 않으면 `page`는 0, `size`는 20이다(공통 전제: `page`는 0부터, `size`는 기본 20). `size=100`은 맞고 `size=101`은 틀리다(공통 전제: 최대 100, 범위 밖은 400). `page=-1`은 틀리다(`page`는 0부터). `page=1`, `size=20`이면 건너뛸 줄 수(offset)는 20이다(시나리오 2.6: 둘째 쪽은 앞의 20개 다음부터).
   - `size=0`, 음수 `size`, 정수가 아닌 `page`·`size`는 단언하지 않는다. 문서에 기대값이 없다(맨 끝 "사용자 확인 필요" 4번).
-- [ ] T031 [US2] 조회 Mapper 테스트에 목록 SQL을 검사하는 메서드를 더한다. plan.md 표의 시나리오 2.1~2.4, 2.6 "Mapper" 칸이다. 아직 없는 Mapper 메서드를 참조하므로 컴파일 오류로 실패한다. 그 실패를 본 뒤 T034를 한다 (services/order-service/src/test/java/com/example/msa/order/mapper/OrderQueryMapperTest.java)
+- [x] T031 [US2] 조회 Mapper 테스트에 목록 SQL을 검사하는 메서드를 더한다. plan.md 표의 시나리오 2.1~2.4, 2.6 "Mapper" 칸이다. 아직 없는 Mapper 메서드를 참조하므로 컴파일 오류로 실패한다. 그 실패를 본 뒤 T034를 한다 (services/order-service/src/test/java/com/example/msa/order/mapper/OrderQueryMapperTest.java)
   - 고객 조건으로 목록을 읽는다. 두 고객의 주문이 있을 때 자기 주문만 읽는다. 주문이 없는 고객은 빈 결과다. 처리중 주문과 실패 주문을 읽는다.
   - 정렬은 주문 번호가 큰 순서다(공통 전제). 항목이 여러 개인 주문이 쪽 경계에서 잘리지 않고 주문 단위로 묶여 나온다(예: 항목 2개짜리 주문 3개를 `limit` 2로 읽으면 주문 2개와 각 항목이 온다). `size + 1`개를 읽으면 다음 쪽이 있는지 알 수 있다(시나리오 2.6). 쪽 경계에서 `offset`만큼 건너뛴다.
   - 새 Mapper 메서드 이름은 `selectCustomerOrders(customerId, offset, limit)`로 한다 `[제안]`.
-- [ ] T032 [US2] 쪽 지정과 조회 조건 예외를 만든다. 순수 Java다 (services/order-service/src/main/java/com/example/msa/order/domain/PageRequest.java, services/order-service/src/main/java/com/example/msa/order/domain/InvalidQueryException.java)
+- [x] T032 [US2] 쪽 지정과 조회 조건 예외를 만든다. 순수 Java다 (services/order-service/src/main/java/com/example/msa/order/domain/PageRequest.java, services/order-service/src/main/java/com/example/msa/order/domain/InvalidQueryException.java)
   - `PageRequest`는 record `(int page, int size)`다 `[제안]`. `of(글자 page, 글자 size)`가 값을 검사해서 만든다. 상수 `DEFAULT_SIZE = 20`, `MAX_SIZE = 100`은 설정값이 아니라 `domain`의 상수다(research.md 항목 3). `offset()`(page × size)과 `fetchSize()`(size + 1)를 둔다.
   - `InvalidQueryException`은 틀린 매개변수 이름과 이유의 목록(`field`, `message`)을 담는 업무 예외다. 기존 `OrderItems.Violation`과 같은 방식으로 쓴다 `[제안]`.
   - 규칙은 data-model.md 4절의 원문을 따른다. `page`의 규칙은 「0 이상의 정수. 없으면 0」이고 `size`의 규칙은 「1 이상 100 이하의 정수. 없으면 20」이다. 틀리면 400이다.
-- [ ] T033 [US2] 목록 응답 봉투를 만든다. record `OrderPage<T>`가 `orders`, `page`, `size`, `hasNext`를 담는다 `[제안]`. 관리자 목록도 같은 봉투를 쓰도록 형식 매개변수 `T`로 만든다. 정적 메서드 `of(읽은 줄 목록, PageRequest)`가 `size + 1`개를 읽은 목록에서 `hasNext`를 정하고 `size`개로 자른다 (services/order-service/src/main/java/com/example/msa/order/dto/OrderPage.java)
+- [x] T033 [US2] 목록 응답 봉투를 만든다. record `OrderPage<T>`가 `orders`, `page`, `size`, `hasNext`를 담는다 `[제안]`. 관리자 목록도 같은 봉투를 쓰도록 형식 매개변수 `T`로 만든다. 정적 메서드 `of(읽은 줄 목록, PageRequest)`가 `size + 1`개를 읽은 목록에서 `hasNext`를 정하고 `size`개로 자른다 (services/order-service/src/main/java/com/example/msa/order/dto/OrderPage.java)
   - plan.md 트리의 `OrderPage` 이름 그대로다. 형식 매개변수는 이 tasks.md가 더한 것이다. 계약 파일은 `OrderPage`와 `AdminOrderPage`를 따로 적었지만 JSON 모양이 같다.
   - 「주문이 하나도 없으면 `orders`는 빈 배열이다. `hasNext`는 `false`다.」
-- [ ] T034 [US2] 고객 목록 조회 SQL을 만든다 (services/order-service/src/main/resources/mapper/OrderMapper.xml, services/order-service/src/main/java/com/example/msa/order/mapper/OrderMapper.java)
+- [x] T034 [US2] 고객 목록 조회 SQL을 만든다 (services/order-service/src/main/resources/mapper/OrderMapper.xml, services/order-service/src/main/java/com/example/msa/order/mapper/OrderMapper.java)
   - `selectCustomerOrders`: `ORDERS`에서 `CUSTOMER_ID = #{customerId}`인 주문을 `ORDER BY ORDER_NO DESC OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY`로 자른 안쪽 SELECT(인라인 뷰)를 만들고, 그 결과에 `ORDER_ITEMS`를 `LEFT JOIN`한다. 바깥에서 `ORDER BY o.ORDER_NO DESC, i.PRODUCT_ID`로 정렬한다. `orderViewMap`을 쓴다.
   - 근거: data-model.md 3절. 주문과 항목을 합친 뒤에 자르면 주문 하나가 쪽 사이에서 잘린다.
   - 이 작업이 끝나면 T031의 테스트가 통과한다. 인라인 뷰로 자른 뒤 항목을 합치는 SQL이 실제 Oracle에서 도는지는 research.md 4절의 확인하지 못한 것이다. 이 테스트가 처음 확인한다. 돌지 않으면 멈추고 사용자에게 묻는다.
-- [ ] T035 [US2] 조회 조건이 틀렸을 때의 400 응답을 만든다. `invalidQueryParameter(오류 목록)`(이름 `[제안]`)이 400 Problem Details를 돌려주고, `InvalidQueryException`을 받는 `@ExceptionHandler`가 이를 응답으로 바꾼다 (services/order-service/src/main/java/com/example/msa/order/exception/ProblemDetailsHandler.java)
+- [x] T035 [US2] 조회 조건이 틀렸을 때의 400 응답을 만든다. `invalidQueryParameter(오류 목록)`(이름 `[제안]`)이 400 Problem Details를 돌려주고, `InvalidQueryException`을 받는 `@ExceptionHandler`가 이를 응답으로 바꾼다 (services/order-service/src/main/java/com/example/msa/order/exception/ProblemDetailsHandler.java)
   - `code`는 `INVALID_QUERY_PARAMETER`, `type`은 `urn:msa-example:problem:INVALID_QUERY_PARAMETER`다. 틀린 매개변수 이름과 이유를 기존 `errors`(`field`, `message`)에 담는다.
   - 기존 `handleMethodArgumentNotValid`, `handleHttpMessageNotReadable`은 고치지 않는다.
-- [ ] T036 [US2] 조회 서비스에 목록 메서드를 더한다. `listMine(고객 ID, PageRequest)`(이름 `[제안]`)가 `selectCustomerOrders(고객 ID, offset, fetchSize)`를 부르고 `OrderPage.of`로 봉투를 만든다. 메서드에 `@Transactional(readOnly = true)`를 붙인다 (services/order-service/src/main/java/com/example/msa/order/service/OrderQueryService.java)
-- [ ] T037 [US2] 조회 컨트롤러에 `GET /orders`를 더한다. `page`와 `size`를 선택 쿼리 매개변수 글자로 받아 `[제안]` `PageRequest.of`에 넘기고, 서비스를 불러 200과 `OrderPage`를 돌려준다 (services/order-service/src/main/java/com/example/msa/order/controller/OrderQueryController.java)
+- [x] T036 [US2] 조회 서비스에 목록 메서드를 더한다. `listMine(고객 ID, PageRequest)`(이름 `[제안]`)가 `selectCustomerOrders(고객 ID, offset, fetchSize)`를 부르고 `OrderPage.of`로 봉투를 만든다. 메서드에 `@Transactional(readOnly = true)`를 붙인다 (services/order-service/src/main/java/com/example/msa/order/service/OrderQueryService.java)
+- [x] T037 [US2] 조회 컨트롤러에 `GET /orders`를 더한다. `page`와 `size`를 선택 쿼리 매개변수 글자로 받아 `[제안]` `PageRequest.of`에 넘기고, 서비스를 불러 200과 `OrderPage`를 돌려준다 (services/order-service/src/main/java/com/example/msa/order/controller/OrderQueryController.java)
   - 고객 ID는 토큰의 `sub`에서만 얻는다. 알 수 없는 쿼리 매개변수(`customerId` 등)는 받지 않으므로 무시된다.
   - 틀린 값은 `InvalidQueryException`이 되고, T035의 처리기가 400으로 바꾼다.
-- [ ] T038 [US2] 이 절의 테스트와 앞 절의 테스트가 모두 통과하는지 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/ListOrdersIntegrationTest.java)
+- [x] T038 [US2] 이 절의 테스트와 앞 절의 테스트가 모두 통과하는지 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/ListOrdersIntegrationTest.java)
   - 명령: `.\gradlew.bat :services:order-service:test --tests "com.example.msa.order.integration.ViewOrderIntegrationTest" --tests "com.example.msa.order.integration.ListOrdersIntegrationTest" --tests "com.example.msa.order.integration.OrderOwnerQueryIntegrationTest" --tests "com.example.msa.order.domain.*" --tests "com.example.msa.order.mapper.OrderQueryMapperTest"`
   - 기대 결과: 종료 코드 0. 통과·실패 수를 보고에 적는다.
 
@@ -537,13 +537,13 @@ description: "주문 조회(티켓 002)의 작업 목록. 단계(Phase)마다 PR
 
 #### 인수 시나리오 테스트
 
-- [ ] T039 [US3] 시나리오 3.1의 서비스 통합 테스트를 쓴다. 토큰 없이 `GET /orders`, `GET /orders/{임의의 번호}`, `GET /admin/orders`를 부르면 각각 401이다. 서명이 틀린 토큰과 만료된 토큰으로 `GET /orders`를 부르면 각각 401이다. `@DisplayName`은 시나리오 3.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/UnauthenticatedViewIntegrationTest.java)
+- [x] T039 [US3] 시나리오 3.1의 서비스 통합 테스트를 쓴다. 토큰 없이 `GET /orders`, `GET /orders/{임의의 번호}`, `GET /admin/orders`를 부르면 각각 401이다. 서명이 틀린 토큰과 만료된 토큰으로 `GET /orders`를 부르면 각각 401이다. `@DisplayName`은 시나리오 3.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/UnauthenticatedViewIntegrationTest.java)
   - 틀린 토큰과 만료된 토큰은 001의 `InvalidTokenIntegrationTest`와 같은 방법으로 만든다. 이 클래스 안에 테스트용 RSA 키 쌍, 토큰을 만드는 메서드, 테스트용 `JwtDecoder`를 세우는 `@TestConfiguration`을 둔다 `[제안]`. `InvalidTokenIntegrationTest`는 고치지 않는다. 그 클래스의 도우미가 `private`이라서 가져다 쓸 수 없다. Spring Security Test의 `jwt()`는 토큰 검증을 건너뛰므로 이 테스트에는 쓰지 않는다.
   - 401 응답 본문이 Problem Details(`application/problem+json`)이고 토큰이 없으면 `code`가 `UNAUTHORIZED`인지 단언한다(공통 전제의 주문 API 오류 응답 본문 줄, 001이 이미 만든 동작이다).
-- [ ] T040 [US3] 위 테스트가 **통과하는 것**을 확인한다. 이것이 미리 정한 예외다 (services/order-service/src/test/java/com/example/msa/order/integration/UnauthenticatedViewIntegrationTest.java)
+- [x] T040 [US3] 위 테스트가 **통과하는 것**을 확인한다. 이것이 미리 정한 예외다 (services/order-service/src/test/java/com/example/msa/order/integration/UnauthenticatedViewIntegrationTest.java)
   - 명령: `.\gradlew.bat :services:order-service:test --tests "com.example.msa.order.integration.UnauthenticatedViewIntegrationTest"`
   - 기대 결과: 종료 코드 0. 구현 없이 통과하는 이유는 위 "이 스토리에는 구현 작업이 없다"에 적었다. 실패하면 멈추고 보고한다. 001의 인증 동작이나 이 테스트에 문제가 있다는 뜻이다.
-- [ ] T041 [US3] 이 테스트가 결함을 잡는지 되돌려 확인한다 (services/order-service/src/main/java/com/example/msa/order/config/SecurityConfig.java)
+- [x] T041 [US3] 이 테스트가 결함을 잡는지 되돌려 확인한다 (services/order-service/src/main/java/com/example/msa/order/config/SecurityConfig.java)
   - 1단계: `SecurityConfig`에서 `anyRequest().authenticated()`를 `anyRequest().permitAll()`로 잠시 바꾼다.
   - 2단계: T040의 명령을 다시 실행한다. 토큰 없는 요청이 401이 아니게 되어 테스트가 실패해야 한다. 실패를 보지 못하면 멈추고 사용자에게 묻는다.
   - 3단계: 바꾼 줄을 되돌린다. `git diff -- services/order-service/src/main/java/com/example/msa/order/config/SecurityConfig.java`의 출력이 없어야 한다.
@@ -567,32 +567,32 @@ description: "주문 조회(티켓 002)의 작업 목록. 단계(Phase)마다 PR
 
 ### 마무리와 확인
 
-- [ ] T042 주문 서비스의 아키텍처 테스트가 새 클래스에도 통과하는지 확인한다 (services/order-service/src/test/java/com/example/msa/order/architecture/ArchitectureTest.java)
+- [x] T042 주문 서비스의 아키텍처 테스트가 새 클래스에도 통과하는지 확인한다 (services/order-service/src/test/java/com/example/msa/order/architecture/ArchitectureTest.java)
   - 명령: `.\gradlew.bat :services:order-service:test --tests "com.example.msa.order.architecture.ArchitectureTest"`
   - 기대 결과: 종료 코드 0. `ArchitectureTest`는 고치지 않는다. 규칙 다섯 개(controller는 mapper·client를 직접 부르지 않는다, mapper·client·domain은 service·controller를 모른다, domain은 Spring·MyBatis를 모른다, 애너테이션 SQL 금지, 트랜잭션 안 `client` 호출 금지)가 새 `OrderQueryController`, `OrderQueryService`, `domain`의 새 클래스, `dto`의 새 클래스에도 적용되어 통과해야 한다.
   - 실패하면 규칙을 고치지 않고 새 코드를 고친다. 규칙 예외나 검사를 끄는 표시를 사용자 승인 없이 넣지 않는다(저장소 루트 `CLAUDE.md` 7절).
-- [ ] T043 주문 서비스 규칙 문서의 "하는 일"과 "패키지 구조"에 고객 조회를 적는다. 1단계와 2단계로 나눠 고친다 `[제안]` (services/order-service/CLAUDE.md)
+- [x] T043 주문 서비스 규칙 문서의 "하는 일"과 "패키지 구조"에 고객 조회를 적는다. 1단계와 2단계로 나눠 고친다 `[제안]` (services/order-service/CLAUDE.md)
   - "하는 일" 목록에 `GET /orders`와 `GET /orders/{orderNo}`를 더한다. 로그인한 고객 본인의 주문만 돌려주고, 다른 고객의 주문과 없는 주문과 숫자가 아닌 주문 번호는 같은 404라는 것을 적는다. API 기준 문서로 `specs/002-view-orders/contracts/order-query-api.yaml`을 더한다.
   - "패키지 구조"의 `controller/`, `service/`, `mapper/`, `domain/`, `dto/`, `exception/` 줄에 이 단계의 새 클래스를 더한다. 관리자 조회에 해당하는 클래스(`ProblemAccessDeniedHandler`, `RealmRoleJwtConverter`, `AdminOrderResponse`)는 2단계 PR(T070)에서 더한다.
   - 그 밖의 부분(지킬 규칙, 테스트, DB, 용어)은 바꾸지 않는다. plan.md가 고치라고 한 곳은 "하는 일"과 패키지 구조뿐이다.
-- [ ] T044 이 단계의 기준을 확인한다. 이 단계 머리의 "끝났다고 보는 기준" 표에서 GitHub Actions를 뺀 네 줄을 차례로 실행한다 (gradle.properties)
+- [x] T044 이 단계의 기준을 확인한다. 이 단계 머리의 "끝났다고 보는 기준" 표에서 GitHub Actions를 뺀 네 줄을 차례로 실행한다 (gradle.properties)
   - 먼저 `docker ps`로 로컬 인프라가 켜져 있는지 보고, 켜져 있으면 내릴지 사용자에게 묻는다 `[제안]`.
   - 기대 결과: `msa.stage=T002-P1` 한 줄, `.\gradlew.bat build` 종료 코드 0, 이 단계 인수 시나리오 테스트 네 클래스의 종료 코드 0, 재고 서비스 파일이 바뀌지 않음. 실행한 명령과 종료 코드, 테스트 통과·실패 수를 보고에 적는다.
   - `build`에서 `checkTestCaseIds`가 통과하는 것을 본다. T005에서 실패했던 아홉 개 번호가 통과로 바뀐 것이 이 단계의 기계 검사 결과다.
   - Spotless가 서식 위반으로 실패하면 `.\gradlew.bat spotlessApply`로 서식만 맞추고 다시 실행한다 `[제안]`. `git diff --stat`으로 이 단계가 만든 파일 밖이 바뀌지 않았는지 본다.
-- [ ] T045 사용자가 push한 뒤 GitHub Actions 결과를 확인한다. push 전이면 "실행하지 않았다"로 보고한다 (.github/workflows/build.yml)
+- [x] T045 사용자가 push한 뒤 GitHub Actions 결과를 확인한다. push 전이면 "실행하지 않았다"로 보고한다 (.github/workflows/build.yml)
   - 명령: `gh run list --branch feat/002-view-orders-p1 --limit 1` → 결론이 `success`.
-- [ ] T046 시나리오 1.1~1.5, 2.1~2.6, 3.1을 하나씩 대조한다. quickstart.md 5절의 방법이다 (파일 없음, 대화창 보고)
+- [x] T046 시나리오 1.1~1.5, 2.1~2.6, 3.1을 하나씩 대조한다. quickstart.md 5절의 방법이다 (파일 없음, 대화창 보고)
   - 시나리오마다: (1) `docs/test-cases/order-placement.md`의 해당 절을 읽는다. (2) 테스트의 `@DisplayName`이 그 절의 번호로 시작하는지 본다. 명령: `Get-ChildItem services/order-service/src/test/java -Recurse -Filter *.java | Select-String -Pattern '@DisplayName\("TC-'`. 나온 줄의 번호를 이 단계의 "이 절의 시나리오 원문" 블록 첫 줄의 번호와 하나씩 맞춰 본다. (3) 테스트가 단언하는 값이 그 절의 Then과 같은지 본다. (4) 문서에 없는 값을 단언한 테스트가 없는지 본다.
   - **001의 테스트와 번호가 같은 시나리오**: 시나리오 1.1, 1.2, 2.1이 쓰는 번호는 001의 테스트도 같은 번호로 시작한다. 그래서 위 `Select-String` 결과만으로는 이 티켓의 테스트가 있는지 알 수 없고, 기계 검사도 이를 잡지 못한다("검사의 한계"). 시나리오 1.1, 1.2는 `ViewOrderIntegrationTest` 안에서, 시나리오 2.1은 `ListOrdersIntegrationTest` 안에서 "이 절의 시나리오 원문" 블록 첫 줄의 번호로 시작하는 `@DisplayName`이 있는지 따로 본다.
   - **계약 대조**: 테스트가 단언하는 응답 필드 이름과 값이 `specs/002-view-orders/contracts/order-query-api.yaml`과 같은지 눈으로 대조한다. 계약을 검증하는 도구는 만들지 않는다. 외부 API의 계약 테스트 층이 없다(맨 끝 "사용자 확인 필요" 6번).
   - 결과를 시나리오 12개 × (테스트 클래스와 메서드, `@DisplayName` 시작, 단언한 값, 문서와 같은가) 표로 보고에 적는다.
-- [ ] T047 research.md 4절의 "확인하지 못한 것" 가운데 이 단계에서 확인할 수 있는 것의 결과를 적는다 (파일 없음, 대화창 보고)
+- [x] T047 research.md 4절의 "확인하지 못한 것" 가운데 이 단계에서 확인할 수 있는 것의 결과를 적는다 (파일 없음, 대화창 보고)
   - 인라인 뷰로 자른 뒤 항목을 합치는 SQL이 Oracle 21c XE에서 도는지: T031, T034의 결과.
   - `IntegrationTestSupport`를 직접 상속한 테스트의 컨텍스트가 뜨는지: T012의 결과.
   - `LocalDateTime`으로 읽은 주문 시각과 JSON 글자 모양: T011이 남긴 로그의 `createdAt` 값을 적는다. 시각대(Oracle 컨테이너의 시각대, `SYSTIMESTAMP`와의 일치)는 비교하지 않았다. 단언할 기대값이 문서에 없다. 비교하지 못했으면 "확인하지 못했다"로 적는다.
   - 쪽 지정 매개변수가 정수가 아닐 때 400이 나오는 구현: 구현했지만 문서에 기대값이 없어서 단언하지 않았다. "테스트하지 않았다"로 적는다.
-- [ ] T048 사용자에게 보고하고 멈춘다. 만들거나 고친 파일, 각 확인 작업의 명령과 결과, 시나리오 1.1~1.5, 2.1~2.6, 3.1을 하나씩 대조한 결과, T041의 되돌려 확인한 결과, T047의 결과를 적는다. 커밋·push·PR은 사용자가 요청할 때 한다 (파일 없음, 대화창 보고)
+- [x] T048 사용자에게 보고하고 멈춘다. 만들거나 고친 파일, 각 확인 작업의 명령과 결과, 시나리오 1.1~1.5, 2.1~2.6, 3.1을 하나씩 대조한 결과, T041의 되돌려 확인한 결과, T047의 결과를 적는다. 커밋·push·PR은 사용자가 요청할 때 한다 (파일 없음, 대화창 보고)
 
 이 목록에서는 항목 ID를 쓰지 않았다.
 

@@ -20,11 +20,11 @@ import java.util.regex.Pattern
  * 두 가지를 본다.
  * 첫째, docs/test-cases/order-placement.md의 모든 테스트 케이스 ID가 단계 표(config/quality/test-case-stages.csv)에 있는가.
  * 둘째, 단계가 지금 단계(gradle.properties의 msa.stage) 이하인 줄마다, 그 서비스의 테스트 소스에 @DisplayName이 그 ID로 시작하는 테스트가 하나 이상 있는가.
- * 단계가 T002인 줄(티켓 002로 넘긴 부분)은 단계 순서에 들지 않아 둘째 검사에서 건너뛴다. 운영 테스트는 대상이 아니다.
+ * 단계가 T002-P1, T002-P2인 줄(티켓 002의 부분)은 단계 순서에서 001의 세 단계 뒤에 든다. 지금 단계보다 뒤인 줄은 둘째 검사에서 건너뛴다. 운영 테스트는 대상이 아니다.
  */
 abstract class TestCaseIdCheck extends DefaultTask {
 
-    static final List<String> STAGE_ORDER = ['P1', 'P2', 'P3'].asImmutable()
+    static final List<String> STAGE_ORDER = ['P1', 'P2', 'P3', 'T002-P1', 'T002-P2'].asImmutable()
     static final Pattern TEST_CASE_HEADING = Pattern.compile('(?m)^##\\s+(TC-\\d{3})\\s')
 
     @InputFile
