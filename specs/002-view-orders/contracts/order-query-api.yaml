@@ -168,7 +168,7 @@ components:
           format: int32
     OrderDetail:
       type: object
-      required: [orderNo, status, shortageProductIds, missingProductIds, items, createdAt]
+      required: [orderNo, status, reason, shortageProductIds, missingProductIds, items, createdAt]
       properties:
         orderNo:
           type: integer
