@@ -25,6 +25,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
  *   <li>400 INVALID_ORDER_ITEMS: 주문 항목이 잘못됐다. 필드별 오류를 errors에 담는다.
  *   <li>400 INVALID_IDEMPOTENCY_KEY: 주문 요청 키가 없거나 UUID 형식이 아니다.
  *   <li>422 IDEMPOTENCY_KEY_CONFLICT: 같은 요청 키에 다른 내용이 왔다.
+ *   <li>403 FORBIDDEN: 권한이 없다. 필터에서 나므로 {@link ProblemAccessDeniedHandler}가 같은 모양으로 쓴다.
  * </ul>
  *
  * 401(UNAUTHORIZED)은 필터에서 나므로 {@link ProblemAuthenticationEntryPoint}가 같은 모양으로 만든다.
@@ -70,6 +71,11 @@ public class ProblemDetailsHandler extends ResponseEntityExceptionHandler {
      */
     public static ProblemDetail orderNotFound() {
         return problem(HttpStatus.NOT_FOUND, "ORDER_NOT_FOUND", "주문을 찾을 수 없다", "요청한 주문이 없다");
+    }
+
+    /** 로그인은 했지만 이 요청을 할 권한이 없다(403 FORBIDDEN). 예: ADMIN 역할이 없는 사람의 관리자 조회. */
+    public static ProblemDetail forbidden() {
+        return problem(HttpStatus.FORBIDDEN, "FORBIDDEN", "권한이 없다", "이 요청을 할 권한이 없다");
     }
 
     /** 조회 조건(쿼리 매개변수)이 규칙에 맞지 않는다(400 INVALID_QUERY_PARAMETER). 틀린 매개변수 이름과 이유를 errors에 담는다. */

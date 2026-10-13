@@ -88,6 +88,26 @@
          ORDER BY o.ORDER_NO DESC, i.PRODUCT_ID
     </select>
 
+    <!-- 관리자 조회다. selectCustomerOrders와 같은 인라인 뷰이고 고객 조건 대신 상태·해제 결과 조건을 값이 있을 때만 붙인다. -->
+    <select id="selectAdminOrders" resultMap="orderViewMap">
+        SELECT o.ORDER_NO, o.CUSTOMER_ID, o.REQUEST_KEY, o.STATUS, o.REASON, o.RELEASE_STATUS, o.CREATED_AT,
+               i.PRODUCT_ID, i.QUANTITY, i.REJECT_REASON
+          FROM (SELECT ORDER_NO, CUSTOMER_ID, REQUEST_KEY, STATUS, REASON, RELEASE_STATUS, CREATED_AT
+                  FROM ORDERS
+                <where>
+                    <if test="status != null">
+                        STATUS = #{status}
+                    </if>
+                    <if test="releaseStatus != null">
+                        AND RELEASE_STATUS = #{releaseStatus}
+                    </if>
+                </where>
+                 ORDER BY ORDER_NO DESC
+                OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY) o
+          LEFT JOIN ORDER_ITEMS i ON i.ORDER_NO = o.ORDER_NO
+         ORDER BY o.ORDER_NO DESC, i.PRODUCT_ID
+    </select>
+
     <update id="updateItemRejectReason">
         UPDATE ORDER_ITEMS
            SET REJECT_REASON = #{rejectReason}

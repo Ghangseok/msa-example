@@ -1,10 +1,10 @@
 package com.example.msa.order.config;
 
+import com.example.msa.order.exception.ProblemAccessDeniedHandler;
 import com.example.msa.order.exception.ProblemAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -16,6 +16,8 @@ import org.springframework.security.web.SecurityFilterChain;
  *
  * <ul>
  *   <li>{@code POST /orders}는 인증된 사용자만 부른다. 역할과 관계없이 로그인한 사용자는 주문할 수 있다.
+ *   <li>{@code /admin/} 아래 전체는 {@code ADMIN} 역할만 부른다. 역할은 {@link RealmRoleJwtConverter}가 토큰의 realm 역할에서 만든다.
+ *       로그인했지만 역할이 없으면 {@link ProblemAccessDeniedHandler}가 403 Problem Details(code = FORBIDDEN)로 낸다.
  *   <li>health 엔드포인트는 인증 없이 연다. 쿠버네티스 프로브가 토큰 없이 부르기 때문이다.
  *   <li>인증에 실패하면 {@link ProblemAuthenticationEntryPoint}가 401 Problem Details(code = UNAUTHORIZED)로 낸다.
  *   <li>세션을 만들지 않는다. 남아야 하는 데이터를 Pod 메모리에 두지 않기 위해서다. 토큰으로만 요청을 확인하므로 CSRF 보호도 끈다.
@@ -25,18 +27,26 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http, ProblemAuthenticationEntryPoint entryPoint) {
+    SecurityFilterChain securityFilterChain(
+            HttpSecurity http,
+            ProblemAuthenticationEntryPoint entryPoint,
+            ProblemAccessDeniedHandler accessDeniedHandler) {
         http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(requests -> requests.requestMatchers("/actuator/health", "/actuator/health/**")
                         .permitAll()
                         .requestMatchers(HttpMethod.POST, "/orders")
                         .authenticated()
+                        .requestMatchers("/admin/**")
+                        .hasRole("ADMIN")
                         .anyRequest()
                         .authenticated())
-                .oauth2ResourceServer(resourceServer ->
-                        resourceServer.jwt(Customizer.withDefaults()).authenticationEntryPoint(entryPoint))
-                .exceptionHandling(exceptions -> exceptions.authenticationEntryPoint(entryPoint));
+                .oauth2ResourceServer(resourceServer -> resourceServer
+                        .jwt(jwt -> jwt.jwtAuthenticationConverter(new RealmRoleJwtConverter()))
+                        .authenticationEntryPoint(entryPoint)
+                        .accessDeniedHandler(accessDeniedHandler))
+                .exceptionHandling(exceptions ->
+                        exceptions.authenticationEntryPoint(entryPoint).accessDeniedHandler(accessDeniedHandler));
         try {
             return http.build();
         } catch (Exception e) {

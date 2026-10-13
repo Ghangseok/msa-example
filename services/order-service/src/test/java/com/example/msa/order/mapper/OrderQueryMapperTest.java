@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.tuple;
 import com.example.msa.order.OracleTestContainer;
 import com.example.msa.order.domain.OrderReason;
 import com.example.msa.order.domain.OrderStatus;
+import com.example.msa.order.domain.ReleaseStatus;
 import com.example.msa.order.dto.OrderWithItems;
 import java.util.List;
 import java.util.UUID;
@@ -146,6 +147,57 @@ class OrderQueryMapperTest {
         assertThat(orderMapper.selectCustomerOrders(C1, 2, 3))
                 .extracting(OrderWithItems::getOrderNo)
                 .containsExactly(first);
+    }
+
+    @Test
+    @DisplayName("관리자 조회는 조건이 없으면 모든 고객의 주문을 읽는다")
+    void adminReadsAllCustomersOrdersWithoutConditions() {
+        long c1Confirmed = insertResult(C1, OrderStatus.CONFIRMED, null, null);
+        long c1Failed = insertResult(C1, OrderStatus.FAILED, OrderReason.RETRY_LATER, ReleaseStatus.RELEASED);
+        long c2Failed = insertResult(C2, OrderStatus.FAILED, OrderReason.RETRY_LATER, ReleaseStatus.RELEASE_FAILED);
+
+        assertThat(orderMapper.selectAdminOrders(null, null, 0, 20))
+                .extracting(OrderWithItems::getOrderNo)
+                .containsExactly(c2Failed, c1Failed, c1Confirmed);
+    }
+
+    @Test
+    @DisplayName("관리자 조회는 상태 조건, 해제 결과 조건, 둘 다 준 조건에 맞는 주문만 읽는다")
+    void adminReadsOnlyOrdersMatchingConditions() {
+        insertResult(C1, OrderStatus.CONFIRMED, null, null);
+        long c1Failed = insertResult(C1, OrderStatus.FAILED, OrderReason.RETRY_LATER, ReleaseStatus.RELEASED);
+        long c2Failed = insertResult(C2, OrderStatus.FAILED, OrderReason.RETRY_LATER, ReleaseStatus.RELEASE_FAILED);
+
+        assertThat(orderMapper.selectAdminOrders(OrderStatus.FAILED, null, 0, 20))
+                .extracting(OrderWithItems::getOrderNo)
+                .containsExactly(c2Failed, c1Failed);
+        assertThat(orderMapper.selectAdminOrders(null, ReleaseStatus.RELEASE_FAILED, 0, 20))
+                .extracting(OrderWithItems::getOrderNo)
+                .containsExactly(c2Failed);
+        assertThat(orderMapper.selectAdminOrders(OrderStatus.FAILED, ReleaseStatus.RELEASE_FAILED, 0, 20))
+                .extracting(OrderWithItems::getOrderNo)
+                .containsExactly(c2Failed);
+        assertThat(orderMapper.selectAdminOrders(OrderStatus.CONFIRMED, ReleaseStatus.RELEASE_FAILED, 0, 20))
+                .isEmpty();
+    }
+
+    @Test
+    @DisplayName("관리자 조회는 해제 결과가 비어 있는 주문의 releaseStatus를 null로 읽는다")
+    void adminReadsEmptyReleaseStatusAsNull() {
+        long noRelease = insertResult(C2, OrderStatus.FAILED, OrderReason.RETRY_LATER, null);
+
+        List<OrderWithItems> read = orderMapper.selectAdminOrders(OrderStatus.FAILED, null, 0, 20);
+
+        assertThat(read).extracting(OrderWithItems::getOrderNo).containsExactly(noRelease);
+        assertThat(read.get(0).getReleaseStatus()).isNull();
+    }
+
+    /** 항목 하나가 있는 주문을 넣고 결과(상태, 사유, 해제 결과)를 저장한다. */
+    private long insertResult(String customerId, OrderStatus status, OrderReason reason, ReleaseStatus releaseStatus) {
+        long orderNo = insertOrder(customerId);
+        orderMapper.insertOrderItem(orderNo, "A", 1);
+        orderMapper.updateOrderResult(orderNo, status, reason, releaseStatus);
+        return orderNo;
     }
 
     private long insertOrderWithTwoItems() {

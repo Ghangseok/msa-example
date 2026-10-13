@@ -622,11 +622,11 @@ description: "주문 조회(티켓 002)의 작업 목록. 단계(Phase)마다 PR
 
 ### 준비
 
-- [ ] T049 단계 표시를 올리는 변경을 사용자에게 보여 주고 승인을 받는다. 사용자 확인 필요 (파일 없음, 대화창 보고)
+- [x] T049 단계 표시를 올리는 변경을 사용자에게 보여 주고 승인을 받는다. 사용자 확인 필요 (파일 없음, 대화창 보고)
   - 보여 줄 것: `gradle.properties`의 `msa.stage`를 `T002-P1`에서 `T002-P2`로 올린다. 이유는 2단계 PR에서 단계가 `T002-P2`인 줄(시나리오 4.1, 4.2, 4.3, 4.4의 테스트 케이스)이 검사 대상이 되어, 이 PR의 테스트가 있어야 빌드가 통과하게 하려는 것이다.
   - 단계 표(`test-case-stages.csv`)와 단계 순서 목록(`STAGE_ORDER`)은 1단계 PR에서 이미 고쳤으므로 이 단계에서는 바꾸지 않는다. 1단계 PR에서 바뀐 내용이 승인받은 대로 main에 있는지도 함께 보인다.
-- [ ] T050 단계 표시를 `msa.stage=T002-P2`로 바꾼다. 사용자 확인 필요 (gradle.properties)
-- [ ] T051 단계 표시가 승인받은 내용과 같고, 2단계 테스트가 아직 없음을 기계 검사가 잡는지 확인한다 (gradle.properties)
+- [x] T050 단계 표시를 `msa.stage=T002-P2`로 바꾼다. 사용자 확인 필요 (gradle.properties)
+- [x] T051 단계 표시가 승인받은 내용과 같고, 2단계 테스트가 아직 없음을 기계 검사가 잡는지 확인한다 (gradle.properties)
   - 명령: `git diff --stat` → 바뀐 파일이 `gradle.properties` 하나다.
   - 명령: `.\gradlew.bat :services:order-service:checkTestCaseIds` → **실패해야 한다**. 실패 메시지에 나오는 번호는 시나리오 4.3, 4.4의 테스트 케이스 번호 둘이다. 시나리오 4.1, 4.2의 번호는 001의 테스트가 이미 있어서 나오지 않는다(위 "검사의 한계"). 이 둘이 T071에서 통과로 바뀐다. 통과하거나 다른 번호가 나오면 멈추고 사용자에게 묻는다.
   - 명령: `.\gradlew.bat :services:inventory-service:checkTestCaseIds` → 종료 코드 0.
@@ -641,13 +641,13 @@ description: "주문 조회(티켓 002)의 작업 목록. 단계(Phase)마다 PR
 
 테스트 네 개는 한 클래스 `AdminOrderSearchIntegrationTest`에 모은다(plan.md 표). 같은 파일에 메서드를 더하므로 `[P]`를 붙이지 않았다. 관리자 흉내는 `ViewTestSupport`의 `admin(M1)`이다. 이 흉내는 역할 변환기를 거치지 않는다. 변환기가 `realm_access.roles`를 읽는지는 T057이 확인한다.
 
-- [ ] T052 [US4] 시나리오 4.1의 서비스 통합 테스트를 쓴다. 이 시나리오는 "C1이 관리자 조회를 요청한다 → 403을 받는다" 줄만 검증한다. 일반 고객 C1(`customer(C1)`, 관리자 권한 없음)이 `GET /admin/orders`를 부르면 상태 403이고, 응답 본문이 Problem Details(`application/problem+json`)이며 `code`가 `FORBIDDEN`인지 단언한다(공통 전제의 조회 API 오류 응답 줄). `@DisplayName`은 시나리오 4.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/AdminOrderSearchIntegrationTest.java)
-- [ ] T053 [US4] 시나리오 4.2의 서비스 통합 테스트를 같은 파일에 더한다. C1과 C2에게 각각 실패 주문(해제 결과는 서로 다른 값으로 준다)을 준비한다. M1(`admin(M1)`)이 `GET /admin/orders?status=FAILED`로 조회하면 상태 200이고 두 주문이 모두 나오며, 각 주문에 준비한 `releaseStatus` 값이 함께 있는지 단언한다. `@DisplayName`은 시나리오 4.2의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/AdminOrderSearchIntegrationTest.java)
+- [x] T052 [US4] 시나리오 4.1의 서비스 통합 테스트를 쓴다. 이 시나리오는 "C1이 관리자 조회를 요청한다 → 403을 받는다" 줄만 검증한다. 일반 고객 C1(`customer(C1)`, 관리자 권한 없음)이 `GET /admin/orders`를 부르면 상태 403이고, 응답 본문이 Problem Details(`application/problem+json`)이며 `code`가 `FORBIDDEN`인지 단언한다(공통 전제의 조회 API 오류 응답 줄). `@DisplayName`은 시나리오 4.1의 테스트 케이스 ID로 시작한다. 기대값은 `docs/test-cases/order-placement.md`에서 그대로 가져온다 (services/order-service/src/test/java/com/example/msa/order/integration/AdminOrderSearchIntegrationTest.java)
+- [x] T053 [US4] 시나리오 4.2의 서비스 통합 테스트를 같은 파일에 더한다. C1과 C2에게 각각 실패 주문(해제 결과는 서로 다른 값으로 준다)을 준비한다. M1(`admin(M1)`)이 `GET /admin/orders?status=FAILED`로 조회하면 상태 200이고 두 주문이 모두 나오며, 각 주문에 준비한 `releaseStatus` 값이 함께 있는지 단언한다. `@DisplayName`은 시나리오 4.2의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/AdminOrderSearchIntegrationTest.java)
   - 응답에 주문한 고객의 ID가 있는지는 단언하지 않는다(문서에 없다. 맨 끝 "사용자 확인 필요" 4번).
-- [ ] T054 [US4] 시나리오 4.3의 서비스 통합 테스트를 같은 파일에 더한다. C1의 확정 주문, C1의 실패 주문(해제 결과 해제 완료 `RELEASED`), C2의 실패 주문(해제 결과 해제 실패 `RELEASE_FAILED`)을 준비한다. M1이 조건 없이 조회하면 세 주문이 모두 나온다. `status=FAILED&releaseStatus=RELEASE_FAILED`로 조회하면 C2의 실패 주문만 나온다. `releaseStatus=RELEASE_FAILED`만 주면 C2의 실패 주문만 나온다. 없는 상태 이름 `status=UNKNOWN`은 400이고 없는 해제 결과 값 `releaseStatus=UNKNOWN`도 400이며 `code`가 `INVALID_QUERY_PARAMETER`다. `@DisplayName`은 시나리오 4.3의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/AdminOrderSearchIntegrationTest.java)
+- [x] T054 [US4] 시나리오 4.3의 서비스 통합 테스트를 같은 파일에 더한다. C1의 확정 주문, C1의 실패 주문(해제 결과 해제 완료 `RELEASED`), C2의 실패 주문(해제 결과 해제 실패 `RELEASE_FAILED`)을 준비한다. M1이 조건 없이 조회하면 세 주문이 모두 나온다. `status=FAILED&releaseStatus=RELEASE_FAILED`로 조회하면 C2의 실패 주문만 나온다. `releaseStatus=RELEASE_FAILED`만 주면 C2의 실패 주문만 나온다. 없는 상태 이름 `status=UNKNOWN`은 400이고 없는 해제 결과 값 `releaseStatus=UNKNOWN`도 400이며 `code`가 `INVALID_QUERY_PARAMETER`다. `@DisplayName`은 시나리오 4.3의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/AdminOrderSearchIntegrationTest.java)
   - 값 `UNKNOWN`은 테스트가 고른 "없는 이름"이다 `[제안]`. 대소문자 구분과 빈 값(`status=`)은 단언하지 않는다(문서에 없다. 맨 끝 "사용자 확인 필요" 4번).
-- [ ] T055 [US4] 시나리오 4.4의 서비스 통합 테스트를 같은 파일에 더한다. C1의 실패 주문(해제 실패), C2의 실패 주문(해제 완료), C2의 실패 주문(해제 결과 비어 있음), C1의 처리중 주문을 준비한다. `releaseStatus=RELEASE_FAILED`로 조회하면 C1의 해제 실패 주문만 나온다. `status=FAILED`로 조회하면 실패 주문 세 개가 나오고 해제 결과가 비어 있는 주문의 `releaseStatus`는 필드가 있고 값이 `null`이다. `status=PENDING`으로 조회하면 C1의 처리중 주문만 나온다. `@DisplayName`은 시나리오 4.4의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/AdminOrderSearchIntegrationTest.java)
-- [ ] T056 [US4] 위 테스트가 실패하는 것을 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/AdminOrderSearchIntegrationTest.java)
+- [x] T055 [US4] 시나리오 4.4의 서비스 통합 테스트를 같은 파일에 더한다. C1의 실패 주문(해제 실패), C2의 실패 주문(해제 완료), C2의 실패 주문(해제 결과 비어 있음), C1의 처리중 주문을 준비한다. `releaseStatus=RELEASE_FAILED`로 조회하면 C1의 해제 실패 주문만 나온다. `status=FAILED`로 조회하면 실패 주문 세 개가 나오고 해제 결과가 비어 있는 주문의 `releaseStatus`는 필드가 있고 값이 `null`이다. `status=PENDING`으로 조회하면 C1의 처리중 주문만 나온다. `@DisplayName`은 시나리오 4.4의 테스트 케이스 ID로 시작한다 (services/order-service/src/test/java/com/example/msa/order/integration/AdminOrderSearchIntegrationTest.java)
+- [x] T056 [US4] 위 테스트가 실패하는 것을 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/AdminOrderSearchIntegrationTest.java)
   - 명령: `.\gradlew.bat :services:order-service:test --tests "com.example.msa.order.integration.AdminOrderSearchIntegrationTest"`
   - 기대 결과: 종료 코드가 0이 아니고, T052~T055의 테스트가 모두 실패한다. 실패 이유는 관리자 조회 API가 없어서 생긴 것이다(`/admin/orders`가 404). 하나라도 통과하면 멈추고 사용자에게 묻는다.
 
@@ -693,43 +693,43 @@ description: "주문 조회(티켓 002)의 작업 목록. 단계(Phase)마다 PR
 
 #### 구현
 
-- [ ] T057 [P] [US4] 역할 변환기의 단위 테스트를 쓴다. 이 테스트는 아직 없는 `RealmRoleJwtConverter`를 참조하므로 컴파일 오류로 실패한다. 그 실패를 본 뒤 T060을 한다 (services/order-service/src/test/java/com/example/msa/order/config/RealmRoleJwtConverterTest.java)
+- [x] T057 [P] [US4] 역할 변환기의 단위 테스트를 쓴다. 이 테스트는 아직 없는 `RealmRoleJwtConverter`를 참조하므로 컴파일 오류로 실패한다. 그 실패를 본 뒤 T060을 한다 (services/order-service/src/test/java/com/example/msa/order/config/RealmRoleJwtConverterTest.java)
   - 검사할 것: 변환한 인증 정보가 Spring Security의 `hasRole("ADMIN")` 판정을 통과하는지 본다 `[제안]`. 판정은 `AuthorityAuthorizationManager.hasRole("ADMIN")`으로 한다 `[제안]`. 이 API가 Spring Security 7.1.1에 맞는지는 컴파일하지 않아서 확인하지 못했다. 토큰의 `realm_access.roles`에 `ADMIN`이 있으면 통과한다. `CUSTOMER`만 있으면 통과하지 못한다. `realm_access` 클레임이 없는 토큰도 통과하지 못한다.
   - **권한 이름 글자(`ROLE_` 접두어)는 단언하지 않는다.** 사용자가 2026-10-13에 정했다(맨 끝 "사용자 확인 필요" 4번). `AuthorityAuthorizationManager.hasRole`이 접두어를 붙여 찾는 것은 Spring Security 쪽의 일이다.
   - 기대값 출처: `docs/design/architecture.md` 7절의 「역할은 Keycloak realm 역할(`CUSTOMER`, `ADMIN`)을 Spring Security 권한으로 바꿔 쓴다.」. `ADMIN`만 관리자 판정을 통과한다는 기대값은 시나리오 4.1의 "관리자가 아닌 사람은 403"에서 나온다. 토큰의 `realm_access.roles` 클레임 모양은 어떤 기준 문서에도 없다. 이 테스트는 그 모양을 입력으로만 쓴다. 실제 Keycloak 토큰이 이 모양인지는 티켓 003의 E2E에서 확인한다.
   - 실제 Keycloak 토큰의 `realm_access.roles` 구조는 이 환경에서 확인하지 못했다. 티켓 003의 E2E에서 확인한다(research.md 4절).
-- [ ] T058 [P] [US4] 관리자 조회 조건의 단위 테스트를 쓴다. 이 테스트는 아직 없는 `OrderSearch`를 참조하므로 컴파일 오류로 실패한다. 그 실패를 본 뒤 T061을 한다 (services/order-service/src/test/java/com/example/msa/order/domain/OrderSearchTest.java)
+- [x] T058 [P] [US4] 관리자 조회 조건의 단위 테스트를 쓴다. 이 테스트는 아직 없는 `OrderSearch`를 참조하므로 컴파일 오류로 실패한다. 그 실패를 본 뒤 T061을 한다 (services/order-service/src/test/java/com/example/msa/order/domain/OrderSearchTest.java)
   - 검사할 것: 조건이 둘 다 없으면 조건 없음이다. 상태 `FAILED`와 해제 결과 `RELEASE_FAILED`는 각각 맞는 값이다. 상태 `UNKNOWN`은 틀리고 해제 결과 `UNKNOWN`도 틀리다(시나리오 4.3). 상태 네 개(`PENDING`, `CONFIRMED`, `REJECTED`, `FAILED`)와 해제 결과 세 개(`NOT_REQUIRED`, `RELEASED`, `RELEASE_FAILED`)가 모두 맞는 값이다. 이 이름들은 001이 만든 `OrderStatus`, `ReleaseStatus`의 값이다.
   - 소문자 이름과 빈 글자는 단언하지 않는다(문서에 없다).
-- [ ] T059 [US4] 조회 Mapper 테스트에 관리자 조회 SQL을 검사하는 메서드를 더한다. plan.md 표의 시나리오 4.3, 4.4 "Mapper" 칸이다. 아직 없는 Mapper 메서드를 참조하므로 컴파일 오류로 실패한다. 그 실패를 본 뒤 T063을 한다 (services/order-service/src/test/java/com/example/msa/order/mapper/OrderQueryMapperTest.java)
+- [x] T059 [US4] 조회 Mapper 테스트에 관리자 조회 SQL을 검사하는 메서드를 더한다. plan.md 표의 시나리오 4.3, 4.4 "Mapper" 칸이다. 아직 없는 Mapper 메서드를 참조하므로 컴파일 오류로 실패한다. 그 실패를 본 뒤 T063을 한다 (services/order-service/src/test/java/com/example/msa/order/mapper/OrderQueryMapperTest.java)
   - 상태 조건, 해제 결과 조건, 둘 다 준 조건, 조건 없음이 각각 맞는 주문만 읽는다(시나리오 4.3의 값). 모든 고객의 주문이 나온다.
   - 해제 결과가 비어 있는 주문의 `releaseStatus`를 `null`로 읽는다(시나리오 4.4).
   - 새 Mapper 메서드 이름은 `selectAdminOrders(status, releaseStatus, offset, limit)`로 한다 `[제안]`.
-- [ ] T060 [US4] 역할 변환기를 만든다. 검증한 JWT를 인증 정보로 바꾸는 `RealmRoleJwtConverter`다. 토큰의 `realm_access.roles` 목록의 이름마다 `ROLE_` 접두어를 붙여 권한으로 만든다(`ADMIN` → `ROLE_ADMIN`). `realm_access`나 `roles`가 없으면 권한이 없다 (services/order-service/src/main/java/com/example/msa/order/config/RealmRoleJwtConverter.java)
+- [x] T060 [US4] 역할 변환기를 만든다. 검증한 JWT를 인증 정보로 바꾸는 `RealmRoleJwtConverter`다. 토큰의 `realm_access.roles` 목록의 이름마다 `ROLE_` 접두어를 붙여 권한으로 만든다(`ADMIN` → `ROLE_ADMIN`). `realm_access`나 `roles`가 없으면 권한이 없다 (services/order-service/src/main/java/com/example/msa/order/config/RealmRoleJwtConverter.java)
   - 근거: research.md 항목 9. Spring Security의 기본 변환기는 `scope` 값만 읽어서 Keycloak의 realm 역할을 권한으로 바꾸지 못한다.
   - Spring Security 7.1.1의 변환기 API가 맞는지는 컴파일하지 않아서 확인하지 못했다(research.md 4절). T057이 통과하면 확인된다. 맞지 않으면 멈추고 사용자에게 묻는다.
-- [ ] T061 [US4] 관리자 조회 조건을 만든다. 순수 Java 값 객체 `OrderSearch`가 글자 `status`, `releaseStatus`를 검사해서 `[제안]` `OrderStatus`, `ReleaseStatus` 또는 없음으로 바꾼다. 틀린 값은 `InvalidQueryException`을 던진다 (services/order-service/src/main/java/com/example/msa/order/domain/OrderSearch.java)
+- [x] T061 [US4] 관리자 조회 조건을 만든다. 순수 Java 값 객체 `OrderSearch`가 글자 `status`, `releaseStatus`를 검사해서 `[제안]` `OrderStatus`, `ReleaseStatus` 또는 없음으로 바꾼다. 틀린 값은 `InvalidQueryException`을 던진다 (services/order-service/src/main/java/com/example/msa/order/domain/OrderSearch.java)
   - 규칙은 data-model.md 4절의 원문을 따른다. `status`의 규칙은 「`PENDING`, `CONFIRMED`, `REJECTED`, `FAILED` 가운데 하나. 없으면 조건 없음. 대소문자를 구분한다. 빈 값은 틀린 값이다」이고 `releaseStatus`의 규칙은 「`NOT_REQUIRED`, `RELEASED`, `RELEASE_FAILED` 가운데 하나. 없으면 조건 없음. 대소문자를 구분한다. 빈 값은 틀린 값이다」이다. 대소문자와 빈 값의 처리는 문서에 기대값이 없어서 단언하지 않는다. 구현은 data-model.md를 따른다.
   - 틀린 매개변수 이름(`status`, `releaseStatus`)을 `InvalidQueryException`의 `field`에 담는다.
-- [ ] T062 [P] [US4] 관리자용 응답 DTO를 만든다. record `AdminOrderResponse`가 `OrderDetailResponse`의 모든 필드에 `releaseStatus`를 더한 모양이다. `OrderWithItems`에서 만드는 `from(OrderWithItems)`가 있다 (services/order-service/src/main/java/com/example/msa/order/dto/AdminOrderResponse.java)
+- [x] T062 [P] [US4] 관리자용 응답 DTO를 만든다. record `AdminOrderResponse`가 `OrderDetailResponse`의 모든 필드에 `releaseStatus`를 더한 모양이다. `OrderWithItems`에서 만드는 `from(OrderWithItems)`가 있다 (services/order-service/src/main/java/com/example/msa/order/dto/AdminOrderResponse.java)
   - 필드 규칙은 data-model.md 2절의 원문을 따른다: `releaseStatus`는 「`NOT_REQUIRED`(해제 불필요), `RELEASED`(해제 완료), `RELEASE_FAILED`(해제 실패). 해제 요청 전이거나 "실패"가 아니면 `null`. 필드는 항상 있다」. 「고객용 응답(`OrderDetailResponse`)에는 `releaseStatus`가 없다.」
   - 주문한 고객의 ID(`customerId`)는 넣지 않는다. plan 그대로다 `[제안]`. 사용자는 2026-10-13에 이를 문서에 더하지 않고 테스트도 단언하지 않기로만 정했다(맨 끝 "사용자 확인 필요" 4번).
-- [ ] T063 [US4] 관리자 조회 SQL을 만든다 (services/order-service/src/main/resources/mapper/OrderMapper.xml, services/order-service/src/main/java/com/example/msa/order/mapper/OrderMapper.java)
+- [x] T063 [US4] 관리자 조회 SQL을 만든다 (services/order-service/src/main/resources/mapper/OrderMapper.xml, services/order-service/src/main/java/com/example/msa/order/mapper/OrderMapper.java)
   - `selectAdminOrders`: T034와 같은 인라인 뷰 모양이다. 안쪽 SELECT에 고객 조건은 없고, MyBatis 동적 SQL(`<where>`와 `<if>`)로 `status`가 있을 때만 `STATUS = #{status}`, `releaseStatus`가 있을 때만 `RELEASE_STATUS = #{releaseStatus}`를 붙인다. 둘 다 있으면 둘 다 맞는 주문만 나온다. `ORDER BY ORDER_NO DESC`, `OFFSET`, `FETCH NEXT`, 바깥 `LEFT JOIN`, `orderViewMap`은 T034와 같다.
   - 이 작업이 끝나면 T059의 테스트가 통과한다.
-- [ ] T064 [P] [US4] 403 응답을 만든다. `ProblemDetailsHandler`에 `forbidden()`(이름 `[제안]`)을 더하고, `ProblemAccessDeniedHandler`를 새로 만든다 (services/order-service/src/main/java/com/example/msa/order/exception/ProblemDetailsHandler.java, services/order-service/src/main/java/com/example/msa/order/exception/ProblemAccessDeniedHandler.java)
+- [x] T064 [P] [US4] 403 응답을 만든다. `ProblemDetailsHandler`에 `forbidden()`(이름 `[제안]`)을 더하고, `ProblemAccessDeniedHandler`를 새로 만든다 (services/order-service/src/main/java/com/example/msa/order/exception/ProblemDetailsHandler.java, services/order-service/src/main/java/com/example/msa/order/exception/ProblemAccessDeniedHandler.java)
   - `code`는 `FORBIDDEN`, `type`은 `urn:msa-example:problem:FORBIDDEN`이다.
   - `ProblemAccessDeniedHandler`는 Spring Security의 `AccessDeniedHandler`를 구현한 `@Component`다. 기존 `ProblemAuthenticationEntryPoint`와 같은 방식으로 `ProblemDetailsHandler.problem(...)`으로 본문을 만들어 `application/problem+json`으로 쓴다. 보안 필터에서 나는 오류라 컨트롤러 예외 처리기가 닿지 못하기 때문이다. 토큰 내용은 응답과 로그에 담지 않는다.
-- [ ] T065 [US4] 보안 설정을 바꾼다. 세 가지다 (services/order-service/src/main/java/com/example/msa/order/config/SecurityConfig.java)
+- [x] T065 [US4] 보안 설정을 바꾼다. 세 가지다 (services/order-service/src/main/java/com/example/msa/order/config/SecurityConfig.java)
   - `authorizeHttpRequests`에서 `anyRequest()` 앞에 `requestMatchers("/admin/**").hasRole("ADMIN")`을 더한다. `GET /admin/orders` 하나가 아니라 `/admin/` 아래 전체를 막는다. 토큰이 없으면 이 규칙보다 인증 실패가 먼저라서 403이 아니라 401이다(research.md 항목 9).
   - `oauth2ResourceServer`의 `jwt(...)` 설정에 `RealmRoleJwtConverter`를 연결한다. 지금은 `Customizer.withDefaults()`다.
   - `exceptionHandling`에 `accessDeniedHandler(ProblemAccessDeniedHandler)`를 연결한다. `securityFilterChain` 메서드의 매개변수에 `ProblemAccessDeniedHandler`가 더해진다.
   - 클래스 설명 주석에 `/admin/**` 규칙을 한 줄 더한다. 다른 줄과 `POST /orders`·health 규칙은 바꾸지 않는다.
   - `oauth2ResourceServer`가 자기 403 처리기를 따로 둘 수 있는지는 확인하지 못했다(research.md 4절). T052가 403 응답 본문이 `application/problem+json`이고 `code`가 `FORBIDDEN`인지 단언하므로 거기서 확인된다.
-- [ ] T066 [US4] 조회 서비스에 관리자 조회 메서드를 더한다. `searchAll(OrderSearch, PageRequest)`(이름 `[제안]`)가 `selectAdminOrders`를 부르고 `AdminOrderResponse`로 바꿔 `OrderPage.of`로 봉투를 만든다. 메서드에 `@Transactional(readOnly = true)`를 붙인다 (services/order-service/src/main/java/com/example/msa/order/service/OrderQueryService.java)
-- [ ] T067 [US4] 조회 컨트롤러에 `GET /admin/orders`를 더한다. `status`, `releaseStatus`, `page`, `size`를 선택 쿼리 매개변수 글자로 받아 `[제안]` `OrderSearch`와 `PageRequest`로 만들어 서비스에 넘기고, 200과 `OrderPage<AdminOrderResponse>`를 돌려준다 (services/order-service/src/main/java/com/example/msa/order/controller/OrderQueryController.java)
+- [x] T066 [US4] 조회 서비스에 관리자 조회 메서드를 더한다. `searchAll(OrderSearch, PageRequest)`(이름 `[제안]`)가 `selectAdminOrders`를 부르고 `AdminOrderResponse`로 바꿔 `OrderPage.of`로 봉투를 만든다. 메서드에 `@Transactional(readOnly = true)`를 붙인다 (services/order-service/src/main/java/com/example/msa/order/service/OrderQueryService.java)
+- [x] T067 [US4] 조회 컨트롤러에 `GET /admin/orders`를 더한다. `status`, `releaseStatus`, `page`, `size`를 선택 쿼리 매개변수 글자로 받아 `[제안]` `OrderSearch`와 `PageRequest`로 만들어 서비스에 넘기고, 200과 `OrderPage<AdminOrderResponse>`를 돌려준다 (services/order-service/src/main/java/com/example/msa/order/controller/OrderQueryController.java)
   - 컨트롤러는 권한 판단을 하지 않는다. `/admin/**` 규칙(T065)이 403을 낸다. 코딩 규약 3-1절이 컨트롤러의 업무 판단을 금지한다.
-- [ ] T068 [US4] 이 절의 테스트와 앞 단계의 테스트가 모두 통과하는지 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/AdminOrderSearchIntegrationTest.java)
+- [x] T068 [US4] 이 절의 테스트와 앞 단계의 테스트가 모두 통과하는지 확인한다 (services/order-service/src/test/java/com/example/msa/order/integration/AdminOrderSearchIntegrationTest.java)
   - 명령: `.\gradlew.bat :services:order-service:test`
   - 기대 결과: 종료 코드 0. 통과·실패 수를 보고에 적는다. 이 명령은 001의 테스트와 1단계 테스트도 함께 돈다.
 
@@ -739,32 +739,32 @@ description: "주문 조회(티켓 002)의 작업 목록. 단계(Phase)마다 PR
 
 ### 마무리와 확인
 
-- [ ] T069 주문 서비스의 아키텍처 테스트가 새 클래스에도 통과하는지 확인한다 (services/order-service/src/test/java/com/example/msa/order/architecture/ArchitectureTest.java)
+- [x] T069 주문 서비스의 아키텍처 테스트가 새 클래스에도 통과하는지 확인한다 (services/order-service/src/test/java/com/example/msa/order/architecture/ArchitectureTest.java)
   - 명령: `.\gradlew.bat :services:order-service:test --tests "com.example.msa.order.architecture.ArchitectureTest"`
   - 기대 결과: 종료 코드 0. T042와 같은 다섯 규칙이 새 `RealmRoleJwtConverter`(`config`), `ProblemAccessDeniedHandler`(`exception`), `OrderSearch`(`domain`), `AdminOrderResponse`(`dto`)에도 적용되어 통과해야 한다. 규칙을 고치지 않는다.
-- [ ] T070 주문 서비스 규칙 문서에 관리자 조회를 더한다. 1단계와 2단계로 나눠 고친다 `[제안]` (services/order-service/CLAUDE.md)
+- [x] T070 주문 서비스 규칙 문서에 관리자 조회를 더한다. 1단계와 2단계로 나눠 고친다 `[제안]` (services/order-service/CLAUDE.md)
   - "하는 일" 목록에 `GET /admin/orders`를 더한다. `ADMIN` 역할만 부를 수 있고, `/admin/` 아래 전체가 `ADMIN` 규칙에 걸린다는 것과 응답에 재고 해제 결과가 함께 나온다는 것을 적는다.
   - "패키지 구조"의 `exception/`, `config/`, `dto/` 줄에 `ProblemAccessDeniedHandler`, `RealmRoleJwtConverter`, `AdminOrderResponse`를 더한다.
   - 그 밖의 부분은 바꾸지 않는다.
-- [ ] T071 이 단계의 기준을 확인한다. 이 단계 머리의 "끝났다고 보는 기준" 표에서 GitHub Actions를 뺀 네 줄을 차례로 실행한다 (gradle.properties)
+- [x] T071 이 단계의 기준을 확인한다. 이 단계 머리의 "끝났다고 보는 기준" 표에서 GitHub Actions를 뺀 네 줄을 차례로 실행한다 (gradle.properties)
   - 먼저 `docker ps`로 로컬 인프라가 켜져 있는지 보고, 켜져 있으면 내릴지 사용자에게 묻는다 `[제안]`.
   - 기대 결과: `msa.stage=T002-P2` 한 줄, `.\gradlew.bat build` 종료 코드 0, 이 단계 인수 시나리오 테스트의 종료 코드 0, 재고 서비스 파일이 바뀌지 않음. 실행한 명령과 종료 코드, 테스트 통과·실패 수를 보고에 적는다.
   - `build`에서 `checkTestCaseIds`가 통과하는 것을 본다. T051에서 실패했던 두 개 번호가 통과로 바뀐 것이 이 단계의 기계 검사 결과다.
   - Spotless가 서식 위반으로 실패하면 `.\gradlew.bat spotlessApply`로 서식만 맞추고 다시 실행한다 `[제안]`.
 - [ ] T072 사용자가 push한 뒤 GitHub Actions 결과를 확인한다. push 전이면 "실행하지 않았다"로 보고한다 (.github/workflows/build.yml)
   - 명령: `gh run list --branch feat/002-view-orders-p2 --limit 1` → 결론이 `success`.
-- [ ] T073 시나리오 4.1~4.4를 하나씩 대조하고, 시나리오 16개를 모두 합쳐 확인한다. quickstart.md 5절의 방법이다 (파일 없음, 대화창 보고)
+- [x] T073 시나리오 4.1~4.4를 하나씩 대조하고, 시나리오 16개를 모두 합쳐 확인한다. quickstart.md 5절의 방법이다 (파일 없음, 대화창 보고)
   - 시나리오마다: (1) 해당 절을 읽는다. (2) `@DisplayName`이 그 절의 번호로 시작하는지 본다. 명령: `Get-ChildItem services/order-service/src/test/java -Recurse -Filter *.java | Select-String -Pattern '@DisplayName\("TC-'`. 나온 줄의 번호를 이 단계의 "이 절의 시나리오 원문" 블록 첫 줄의 번호와 하나씩 맞춰 본다. (3) 단언하는 값이 Then과 같은지 본다. (4) 문서에 없는 값을 단언한 테스트가 없는지 본다.
   - 시나리오 4.1, 4.2가 쓰는 번호는 001의 테스트도 같은 번호로 시작하므로 `Select-String` 결과만으로 이 티켓의 테스트가 있는지 알 수 없다. `AdminOrderSearchIntegrationTest` 안에서 그 번호로 시작하는 `@DisplayName`이 둘 있는지 따로 본다.
   - **계약 대조**: 관리자 응답의 필드(`releaseStatus` 포함)와 오류 응답(`FORBIDDEN`, `INVALID_QUERY_PARAMETER`)이 `specs/002-view-orders/contracts/order-query-api.yaml`과 같은지 눈으로 대조한다. 새 도구를 더하지 않는다.
   - 시나리오 16개(1.1~1.5, 2.1~2.6, 3.1, 4.1~4.4)가 모두 통과하는 테스트에 짝지어졌는지 하나씩 적는다. 이 표가 spec의 첫째 성공 기준의 증거다.
-- [ ] T074 research.md 4절의 "확인하지 못한 것" 가운데 이 단계에서 확인할 수 있는 것의 결과를 적는다 (파일 없음, 대화창 보고)
+- [x] T074 research.md 4절의 "확인하지 못한 것" 가운데 이 단계에서 확인할 수 있는 것의 결과를 적는다 (파일 없음, 대화창 보고)
   - `JwtAuthenticationConverter` 설정 방법이 Spring Security 7.1.1의 API와 맞는지: T057, T060의 결과.
   - Spring Security가 403을 `application/problem+json`으로 내는지: T052의 결과.
   - 상태·해제 결과 조건이 있는 관리자 조회가 Oracle에서 도는지: T059, T063의 결과.
   - Keycloak 26.8.0이 발급한 토큰에 `realm_access.roles`가 들어 있는지: 이 환경에서 확인하지 못했다. 티켓 003의 E2E에서 확인한다.
   - 관리자 조회(`STATUS`, `RELEASE_STATUS` 조건)의 실행 계획: 확인하지 않았다. 인덱스를 더하지 않았다.
-- [ ] T075 사용자에게 보고하고 멈춘다. 만들거나 고친 파일, 각 확인 작업의 명령과 결과, 시나리오 4.1~4.4와 16개 전체를 하나씩 대조한 결과, T074의 결과를 적는다. 커밋·push·PR은 사용자가 요청할 때 한다 (파일 없음, 대화창 보고)
+- [x] T075 사용자에게 보고하고 멈춘다. 만들거나 고친 파일, 각 확인 작업의 명령과 결과, 시나리오 4.1~4.4와 16개 전체를 하나씩 대조한 결과, T074의 결과를 적는다. 커밋·push·PR은 사용자가 요청할 때 한다 (파일 없음, 대화창 보고)
 
 이 목록에서는 항목 ID를 쓰지 않았다.
 
