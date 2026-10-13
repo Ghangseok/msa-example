@@ -54,4 +54,14 @@ public interface OrderMapper {
      */
     List<OrderWithItems> selectCustomerOrders(
             @Param("customerId") String customerId, @Param("offset") int offset, @Param("limit") int limit);
+
+    /**
+     * 관리자 조회다. 모든 고객의 주문을 주문 번호가 큰 순서로 읽는다. {@code status}와 {@code releaseStatus}는 null이면 조건에서 뺀다.
+     * 둘 다 주면 둘 다 맞는 주문만 읽는다. 쪽을 자르고 항목을 합치는 방식은 {@link #selectCustomerOrders}와 같다.
+     */
+    List<OrderWithItems> selectAdminOrders(
+            @Param("status") OrderStatus status,
+            @Param("releaseStatus") ReleaseStatus releaseStatus,
+            @Param("offset") int offset,
+            @Param("limit") int limit);
 }

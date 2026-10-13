@@ -1,7 +1,9 @@
 package com.example.msa.order.service;
 
 import com.example.msa.order.domain.OrderNumbers;
+import com.example.msa.order.domain.OrderSearch;
 import com.example.msa.order.domain.PageRequest;
+import com.example.msa.order.dto.AdminOrderResponse;
 import com.example.msa.order.dto.OrderDetailResponse;
 import com.example.msa.order.dto.OrderPage;
 import com.example.msa.order.dto.OrderWithItems;
@@ -46,6 +48,20 @@ public class OrderQueryService {
                 orderMapper.selectCustomerOrders(customerId, request.offset(), request.fetchSize()).stream()
                         .map(OrderDetailResponse::from)
                         .toList();
+        return OrderPage.of(read, request);
+    }
+
+    /**
+     * 관리자 조회다. 모든 고객의 주문 가운데 조건에 맞는 한 쪽을 주문 번호가 큰 순서로 읽는다. 재고 해제 결과가 함께 나온다.
+     * 권한 판단은 여기서 하지 않는다. 보안 설정의 {@code /admin/**} 규칙이 한다.
+     */
+    @Transactional(readOnly = true)
+    public OrderPage<AdminOrderResponse> searchAll(OrderSearch search, PageRequest request) {
+        List<AdminOrderResponse> read = orderMapper
+                .selectAdminOrders(search.status(), search.releaseStatus(), request.offset(), request.fetchSize())
+                .stream()
+                .map(AdminOrderResponse::from)
+                .toList();
         return OrderPage.of(read, request);
     }
 }

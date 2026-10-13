@@ -1,6 +1,8 @@
 package com.example.msa.order.controller;
 
+import com.example.msa.order.domain.OrderSearch;
 import com.example.msa.order.domain.PageRequest;
+import com.example.msa.order.dto.AdminOrderResponse;
 import com.example.msa.order.dto.OrderDetailResponse;
 import com.example.msa.order.dto.OrderPage;
 import com.example.msa.order.exception.ProblemDetailsHandler;
@@ -50,5 +52,19 @@ public class OrderQueryController {
             @RequestParam(name = "page", required = false) String page,
             @RequestParam(name = "size", required = false) String size) {
         return queryService.listMine(jwt.getSubject(), PageRequest.of(page, size));
+    }
+
+    /**
+     * 관리자가 모든 고객의 주문을 상태와 재고 해제 결과로 조회한다. 조건은 생략할 수 있고 둘을 함께 주면 모두 맞는 주문만 나온다.
+     * 권한 판단은 하지 않는다. 보안 설정의 {@code /admin/**} 규칙이 ADMIN 역할이 없는 요청을 403으로 막는다.
+     * 모든 값을 글자로 받아 {@link OrderSearch#of}와 {@link PageRequest#of}가 검사한다.
+     */
+    @GetMapping("/admin/orders")
+    public OrderPage<AdminOrderResponse> searchOrders(
+            @RequestParam(name = "status", required = false) String status,
+            @RequestParam(name = "releaseStatus", required = false) String releaseStatus,
+            @RequestParam(name = "page", required = false) String page,
+            @RequestParam(name = "size", required = false) String size) {
+        return queryService.searchAll(OrderSearch.of(status, releaseStatus), PageRequest.of(page, size));
     }
 }
