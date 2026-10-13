@@ -751,7 +751,7 @@ description: "주문 조회(티켓 002)의 작업 목록. 단계(Phase)마다 PR
   - 기대 결과: `msa.stage=T002-P2` 한 줄, `.\gradlew.bat build` 종료 코드 0, 이 단계 인수 시나리오 테스트의 종료 코드 0, 재고 서비스 파일이 바뀌지 않음. 실행한 명령과 종료 코드, 테스트 통과·실패 수를 보고에 적는다.
   - `build`에서 `checkTestCaseIds`가 통과하는 것을 본다. T051에서 실패했던 두 개 번호가 통과로 바뀐 것이 이 단계의 기계 검사 결과다.
   - Spotless가 서식 위반으로 실패하면 `.\gradlew.bat spotlessApply`로 서식만 맞추고 다시 실행한다 `[제안]`.
-- [ ] T072 사용자가 push한 뒤 GitHub Actions 결과를 확인한다. push 전이면 "실행하지 않았다"로 보고한다 (.github/workflows/build.yml)
+- [x] T072 사용자가 push한 뒤 GitHub Actions 결과를 확인한다. push 전이면 "실행하지 않았다"로 보고한다 (.github/workflows/build.yml)
   - 명령: `gh run list --branch feat/002-view-orders-p2 --limit 1` → 결론이 `success`.
 - [x] T073 시나리오 4.1~4.4를 하나씩 대조하고, 시나리오 16개를 모두 합쳐 확인한다. quickstart.md 5절의 방법이다 (파일 없음, 대화창 보고)
   - 시나리오마다: (1) 해당 절을 읽는다. (2) `@DisplayName`이 그 절의 번호로 시작하는지 본다. 명령: `Get-ChildItem services/order-service/src/test/java -Recurse -Filter *.java | Select-String -Pattern '@DisplayName\("TC-'`. 나온 줄의 번호를 이 단계의 "이 절의 시나리오 원문" 블록 첫 줄의 번호와 하나씩 맞춰 본다. (3) 단언하는 값이 Then과 같은지 본다. (4) 문서에 없는 값을 단언한 테스트가 없는지 본다.
