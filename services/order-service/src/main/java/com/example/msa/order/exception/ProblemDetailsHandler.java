@@ -1,5 +1,6 @@
 package com.example.msa.order.exception;
 
+import com.example.msa.order.domain.InvalidQueryException;
 import java.net.URI;
 import java.util.List;
 import org.springframework.http.HttpHeaders;
@@ -10,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
@@ -60,6 +62,32 @@ public class ProblemDetailsHandler extends ResponseEntityExceptionHandler {
                 "IDEMPOTENCY_KEY_CONFLICT",
                 "같은 요청 키에 다른 내용이 왔다",
                 "이 요청 키로 이미 다른 내용의 주문이 있다. 새 주문은 새 요청 키로 보낸다");
+    }
+
+    /**
+     * 주문을 찾을 수 없다(404 ORDER_NOT_FOUND). 다른 고객의 주문, 없는 주문, 숫자가 아닌 주문 번호가 모두 이 응답이다.
+     * title과 detail은 한 가지 글만 쓰고 요청한 주문 번호를 담지 않는다. 담으면 그 주문이 있는지 알 수 있게 된다.
+     */
+    public static ProblemDetail orderNotFound() {
+        return problem(HttpStatus.NOT_FOUND, "ORDER_NOT_FOUND", "주문을 찾을 수 없다", "요청한 주문이 없다");
+    }
+
+    /** 조회 조건(쿼리 매개변수)이 규칙에 맞지 않는다(400 INVALID_QUERY_PARAMETER). 틀린 매개변수 이름과 이유를 errors에 담는다. */
+    public static ProblemDetail invalidQueryParameter(List<FieldProblem> errors) {
+        ProblemDetail problem =
+                problem(HttpStatus.BAD_REQUEST, "INVALID_QUERY_PARAMETER", "조회 조건이 잘못됐다", "쿼리 매개변수가 규칙과 맞지 않는다");
+        problem.setProperty("errors", errors);
+        return problem;
+    }
+
+    /** 조회 조건이 틀렸다. 도메인의 {@link InvalidQueryException}을 400 Problem Details로 바꾼다. */
+    @ExceptionHandler(InvalidQueryException.class)
+    ResponseEntity<Object> handleInvalidQuery(InvalidQueryException ex, WebRequest request) {
+        List<FieldProblem> errors = ex.violations().stream()
+                .map(violation -> new FieldProblem(violation.field(), violation.message()))
+                .toList();
+        return handleExceptionInternal(
+                ex, invalidQueryParameter(errors), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
     }
 
     /** 요청 본문의 형식 검사(Bean Validation)에 실패했다. 예: 상품 ID가 비었다. */

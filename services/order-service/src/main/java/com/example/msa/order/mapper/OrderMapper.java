@@ -4,6 +4,7 @@ import com.example.msa.order.domain.OrderReason;
 import com.example.msa.order.domain.OrderStatus;
 import com.example.msa.order.domain.ReleaseStatus;
 import com.example.msa.order.dto.OrderWithItems;
+import java.util.List;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -40,4 +41,17 @@ public interface OrderMapper {
             @Param("status") OrderStatus status,
             @Param("reason") OrderReason reason,
             @Param("releaseStatus") ReleaseStatus releaseStatus);
+
+    /**
+     * 고객 본인의 주문 하나와 항목을 상품 ID 순으로 한 번에 읽는다(주문 시각 포함). 주문 번호와 고객이 모두 맞아야 읽힌다.
+     * 다른 고객의 주문은 없는 주문과 같이 null이다.
+     */
+    OrderWithItems selectCustomerOrder(@Param("orderNo") long orderNo, @Param("customerId") String customerId);
+
+    /**
+     * 고객 본인의 주문 목록을 주문 번호가 큰 순서로 읽는다. 주문을 먼저 정렬하고 {@code offset}만큼 건너뛰어 {@code limit}개로 자른 뒤
+     * 항목을 합쳐서, 항목이 여러 개인 주문이 쪽 경계에서 잘리지 않는다. 항목은 상품 ID 순이다. 주문이 없으면 빈 목록이다.
+     */
+    List<OrderWithItems> selectCustomerOrders(
+            @Param("customerId") String customerId, @Param("offset") int offset, @Param("limit") int limit);
 }

@@ -25,6 +25,11 @@
         </collection>
     </resultMap>
 
+    <!-- 조회용이다. 기존 resultMap을 이어받고 주문 시각(CREATED_AT)만 더한다. -->
+    <resultMap id="orderViewMap" type="com.example.msa.order.dto.OrderWithItems" extends="orderWithItemsMap">
+        <result property="createdAt" column="CREATED_AT"/>
+    </resultMap>
+
     <!-- 주문 번호는 INSERT 전에 시퀀스에서 받아 order.orderNo에 채운다(코딩 규약 3-2절). -->
     <insert id="insertOrder" parameterType="com.example.msa.order.dto.OrderWithItems">
         <selectKey keyProperty="orderNo" resultType="long" order="BEFORE">
@@ -57,6 +62,30 @@
          WHERE o.CUSTOMER_ID = #{customerId}
            AND o.REQUEST_KEY = #{requestKey}
          ORDER BY i.PRODUCT_ID
+    </select>
+
+    <!-- 고객 조건이 SQL에 있어서 다른 고객의 주문은 없는 주문과 같은 빈 결과가 된다. -->
+    <select id="selectCustomerOrder" resultMap="orderViewMap">
+        SELECT o.ORDER_NO, o.CUSTOMER_ID, o.REQUEST_KEY, o.STATUS, o.REASON, o.RELEASE_STATUS, o.CREATED_AT,
+               i.PRODUCT_ID, i.QUANTITY, i.REJECT_REASON
+          FROM ORDERS o
+          LEFT JOIN ORDER_ITEMS i ON i.ORDER_NO = o.ORDER_NO
+         WHERE o.ORDER_NO = #{orderNo}
+           AND o.CUSTOMER_ID = #{customerId}
+         ORDER BY i.PRODUCT_ID
+    </select>
+
+    <!-- 주문을 먼저 정렬하고 자른 안쪽 SELECT(인라인 뷰)에 항목을 합친다. 합친 뒤에 자르면 주문 하나가 쪽 사이에서 잘린다. -->
+    <select id="selectCustomerOrders" resultMap="orderViewMap">
+        SELECT o.ORDER_NO, o.CUSTOMER_ID, o.REQUEST_KEY, o.STATUS, o.REASON, o.RELEASE_STATUS, o.CREATED_AT,
+               i.PRODUCT_ID, i.QUANTITY, i.REJECT_REASON
+          FROM (SELECT ORDER_NO, CUSTOMER_ID, REQUEST_KEY, STATUS, REASON, RELEASE_STATUS, CREATED_AT
+                  FROM ORDERS
+                 WHERE CUSTOMER_ID = #{customerId}
+                 ORDER BY ORDER_NO DESC
+                OFFSET #{offset} ROWS FETCH NEXT #{limit} ROWS ONLY) o
+          LEFT JOIN ORDER_ITEMS i ON i.ORDER_NO = o.ORDER_NO
+         ORDER BY o.ORDER_NO DESC, i.PRODUCT_ID
     </select>
 
     <update id="updateItemRejectReason">
