@@ -53,7 +53,7 @@ public interface OrderMapper {
      * 항목을 합쳐서, 항목이 여러 개인 주문이 쪽 경계에서 잘리지 않는다. 항목은 상품 ID 순이다. 주문이 없으면 빈 목록이다.
      */
     List<OrderWithItems> selectCustomerOrders(
-            @Param("customerId") String customerId, @Param("offset") int offset, @Param("limit") int limit);
+            @Param("customerId") String customerId, @Param("offset") long offset, @Param("limit") int limit);
 
     /**
      * 관리자 조회다. 모든 고객의 주문을 주문 번호가 큰 순서로 읽는다. {@code status}와 {@code releaseStatus}는 null이면 조건에서 뺀다.
@@ -62,6 +62,6 @@ public interface OrderMapper {
     List<OrderWithItems> selectAdminOrders(
             @Param("status") OrderStatus status,
             @Param("releaseStatus") ReleaseStatus releaseStatus,
-            @Param("offset") int offset,
+            @Param("offset") long offset,
             @Param("limit") int limit);
 }

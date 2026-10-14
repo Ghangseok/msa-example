@@ -42,9 +42,9 @@ public record PageRequest(int page, int size) {
         return new PageRequest(page, size);
     }
 
-    /** 건너뛸 줄 수다. 앞 쪽들의 주문 수와 같다. */
-    public int offset() {
-        return page * size;
+    /** 건너뛸 줄 수다. 앞 쪽들의 주문 수와 같다. {@code page}가 int 최대값이어도 넘치지 않게 long으로 계산한다. */
+    public long offset() {
+        return (long) page * size;
     }
 
     /** 읽을 줄 수다. 한 줄 더 읽어서 다음 쪽이 있는지 안다. */
