@@ -50,4 +50,10 @@ class PageRequestTest {
     void offsetSkipsPreviousPages() {
         assertThat(PageRequest.of("1", "20").offset()).isEqualTo(20);
     }
+
+    @Test
+    @DisplayName("page=2147483647, size=100이어도 offset이 음수로 넘치지 않는다")
+    void offsetDoesNotOverflow() {
+        assertThat(PageRequest.of("2147483647", "100").offset()).isEqualTo(214_748_364_700L);
+    }
 }
